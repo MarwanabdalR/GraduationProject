@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
 
 export default function Login() {
@@ -16,12 +17,12 @@ export default function Login() {
             </h1>
             <ol className="justify-center bg-white m-0 p-0 relative z-0 flex flex-wrap list-none rounded">
               <li className="mr-3.5 pr-2.5 relative  before:w-1 before:h-1 before:rotate-45 before:absolute before:-right-1 before:top-1/2 before:rounded-sm before:bg-[#222]">
-                <a
-                  href="#"
+                <Link
+                  to="/e-prova/home"
                   className=" text-xs font-medium duration-0 touch-manipulation text-[#222]"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li className="inline-block">
                 <span className=" text-xs font-medium text-[#222]">
@@ -52,7 +53,7 @@ export default function Login() {
                 <div className="relative mb-[15px]">
                   <input
                     className="border outline-none border-gray-200  hover:border-[#e94328] px-5 py-0 h-[50px] w-full mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5 overflow-x-hidden overflow-y-auto"
-                    type="password"
+                    type= {showPassword ? "text" : "password"} 
                     placeholder="PASSWORD"
                     required
                   />
@@ -70,22 +71,22 @@ export default function Login() {
                 </div>
                 <div className="flex items-center mt-5 mb-[15px] font-medium">
                   <i className="mr-2 mt-1 text-base inline-block fa-solid fa-envelope fa-sm text-[#e94328]"></i>
-                  <a href="#" className="text-xs text-[#181818] duration-0">
+                  <Link to="/e-prova/forgotpassword" className="text-xs text-[#181818] duration-0">
                     Forgot your{" "}
                     <strong className="font-bold hover:text-[#e94328]">
                       Password ?
                     </strong>
-                  </a>
+                  </Link>
                 </div>
                 <div className="font-sans font-normal text-xs mx-0 mt-3 mb-5">
                   <p>
                     If you do not have an account, please{" "}
-                    <a
-                      href=""
+                    <Link
+                      to="/e-prova/register"
                       className="font-sans font-regular text-xs text-[#6aa1da] hover:text-[#e94328] duration-0"
                     >
                       Register Here
-                    </a>
+                    </Link>
                   </p>
                 </div>
                 <button
