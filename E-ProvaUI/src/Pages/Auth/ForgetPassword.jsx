@@ -3,9 +3,9 @@ import HedearSection from "./HedearSection";
 
 export default function ForgetPassword() {
   return (
-    <div>
+    <div className="my-40">
       <HedearSection />
-      <div className="pb-[30px]">
+      <div className="pb-44">
         <div className="justify-center flex flex-wrap">
           <div className=" lg:w-1/2 lg:mx-auto sm:w-full justify-center flex">
             <form action="/account/login" className=" md:w-2/3 lg:w-full">
