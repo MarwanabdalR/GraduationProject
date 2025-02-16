@@ -8,9 +8,9 @@ export default function Register() {
     <div>
       <main className="my-10 font-sans">
         <div className="overflow-hidden block">
-          <section className="relative mb-10 lg:mb-52">
+          <section className="relative mb-10 lg:mb-52 md:mt-32">
             <div className="relative block">
-              <h1 className=" text-center font-sans font-semibold text-2xl  text-[#181818] mb-1 relative leading-normal block md:text-xl">
+              <h1 className=" text-center font-sans font-semibold text-2xl  text-[#181818] mb-1 relative leading-normal block md:text-3xl">
                 CREATE ACCOUNT
               </h1>
               <ol className="justify-center bg-white m-0 p-0 relative z-0 flex flex-wrap list-none rounded">
@@ -24,19 +24,19 @@ export default function Register() {
                 </li>
                 <li className="inline-block">
                   <span className=" text-xs font-medium text-[#222]">
-                    Account
+                    Create Account
                   </span>
                 </li>
               </ol>
             </div>
           </section>
-          <div className="pb-[30px] w-full min-w-full px-[15px] block">
-            <div className="justify-center flex flex-wrap -mx-[15px]">
-              <div className="lg:w-1/2 lg:mx-auto sm:w-full justify-center flex flex-wrap -mx-[15px]">
-                <form action="/account/login" className="block mt-0 lg:w-full">
+          <div className="pb-[30px] flex justify-center">
+            <div className="w-full md:w-1/2 lg:w-1/2">
+              <div className="">
+                <form action="/account/login" className="w-full">
                   <div className="mb-[15px]">
                     <input
-                      className={`w-[700px] border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5 overflow-x-hidden overflow-y-auto`}
+                      className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
                       type="text"
                       placeholder="First Name"
                       required
@@ -44,7 +44,7 @@ export default function Register() {
                   </div>
                   <div className="mb-[15px]">
                     <input
-                      className={`w-[700px] border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5 overflow-x-hidden overflow-y-auto`}
+                      className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
                       type="text"
                       placeholder="Last Name"
                       required
@@ -52,7 +52,7 @@ export default function Register() {
                   </div>
                   <div className="mb-[15px]">
                     <input
-                      className={`w-[700px] border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5 overflow-x-hidden overflow-y-auto`}
+                      className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
                       type="email"
                       placeholder="Email"
                       required
@@ -60,7 +60,7 @@ export default function Register() {
                   </div>
                   <div className="relative mb-[15px]">
                     <input
-                      className={`w-[700px] border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5 overflow-x-hidden overflow-y-auto`}
+                      className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
                       type={showPassword ? "text" : "password"}
                       placeholder="PASSWORD"
                       required
@@ -69,7 +69,6 @@ export default function Register() {
                       className="block absolute bottom-px right-px px-4 py-0.5 leading-10 cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {" "}
                       <i
                         className={`fa-solid ${
                           showPassword ? "fa-eye-slash" : "fa-eye"
@@ -91,7 +90,7 @@ export default function Register() {
                       >
                         Sign up for our newsletter
                       </label>
-                    </div>  
+                    </div>
                   </div>
                   <div className="font-sans font-normal text-xs mx-0 mt-3 mb-5">
                     <p>

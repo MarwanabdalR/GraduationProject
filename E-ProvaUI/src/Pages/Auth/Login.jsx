@@ -13,7 +13,7 @@ export default function Login() {
           <div className="justify-center flex flex-wrap -mx-[15px]">
             <div className="lg:w-1/2 lg:mx-auto sm:w-full justify-center flex flex-wrap -mx-[15px]">
               <form action="/account/login" className="block mt-0 lg:w-full">
-                <h1 className="font-sans font-semibold text-xl md:text-3xl text-[#181818] lg:w-full">
+                <h1 className="font-sans font-semibold text-xl md:text-3xl text-[#181818] lg:w-full lg:text-2xl">
                   SIGN IN
                 </h1>
                 <p className="text-xs font-normal mb-[15px] text-[#181818]">

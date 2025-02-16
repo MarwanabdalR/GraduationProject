@@ -3,7 +3,7 @@ import { Link } from "react-router";
 export default function HedearSection() {
   return (
     <div>
-      <section className="relative mb-10 lg:mb-52">
+      <section className="relative mb-10 lg:mb-36">
         <div className="relative block">
           {/*font-family should be "DM Sans", sans-serif*/}
           <h1 className=" text-center font-sans font-semibold text-2xl  text-[#181818] mb-1 relative leading-normal block md:text-xl">
