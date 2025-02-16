@@ -7,8 +7,8 @@ export default function Footer() {
     <>
       <footer className="bg-white">
         <div className="mx-auto max-w-screen-xl px-4 pt-16 pb-6 sm:px-6 lg:px-8 lg:pt-24">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div>
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 border-t border-gray-200 pt-10">
+            <div className="border-r border-gray-200">
               <div className="flex justify-center sm:justify-start">
                 <img src={img} alt="logo" className="w-24 h-20" />
                 <img src={logo} alt="logo" className="w-24 h-20" />
@@ -65,7 +65,7 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:col-span-2">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:col-span-2">
               <div className="text-center sm:text-left">
                 <p className="text-lg font-medium text-gray-900">
                   Company Info
