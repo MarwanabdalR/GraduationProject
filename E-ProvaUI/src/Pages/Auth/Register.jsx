@@ -6,18 +6,18 @@ export default function Register() {
 
   return (
     <div>
-      <main className="mb-32 block font-sans">
+      <main className="my-10 font-sans">
         <div className="overflow-hidden block">
-          <section className="relative bg-no-repeat bg-cover block bg-white py-[clamp(0px,160px,35px)] mb-[clamp(0px,0px,40px)] border-t-1">
-            <div className="relative w-full pr-3.5 pl-3.5 mt-44 mb-24 block">
-              <h1 className=" text-center font-bold text-3xl  text-[#181818] mb-1 relative leading-normal block">
+          <section className="relative mb-10 lg:mb-52">
+            <div className="relative block">
+              <h1 className=" text-center font-sans font-semibold text-2xl  text-[#181818] mb-1 relative leading-normal block md:text-xl">
                 CREATE ACCOUNT
               </h1>
               <ol className="justify-center bg-white m-0 p-0 relative z-0 flex flex-wrap list-none rounded">
                 <li className="mr-3.5 pr-2.5 relative  before:w-1 before:h-1 before:rotate-45 before:absolute before:-right-1 before:top-1/2 before:rounded-sm before:bg-[#222]">
                   <Link
                     to="/e-prova/home"
-                    className=" text-xs font-medium duration-0 touch-manipulation text-[#222]"
+                    className=" text-xs font-light text-[#222]"
                   >
                     Home
                   </Link>
@@ -30,10 +30,10 @@ export default function Register() {
               </ol>
             </div>
           </section>
-          <div className="pb-[30px] w-full px-[15px] mx-auto block">
+          <div className="pb-[30px] w-full min-w-full px-[15px] block">
             <div className="justify-center flex flex-wrap -mx-[15px]">
-              <div className=" basis-1/2 w-full px-[15px]">
-                <form action="/account/login" className="block mt-0">
+              <div className="lg:w-1/2 lg:mx-auto sm:w-full justify-center flex flex-wrap -mx-[15px]">
+                <form action="/account/login" className="block mt-0 lg:w-full">
                   <div className="mb-[15px]">
                     <input
                       className={`w-[700px] border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5 overflow-x-hidden overflow-y-auto`}
