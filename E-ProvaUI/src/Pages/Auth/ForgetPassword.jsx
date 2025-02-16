@@ -5,20 +5,20 @@ export default function ForgetPassword() {
   return (
     <div>
       <HedearSection />
-      <div className="pb-[30px] w-full min-w-full px-[15px] block">
-        <div className="justify-center flex flex-wrap -mx-[15px]">
-          <div className="lg:w-1/2 lg:mx-auto sm:w-full justify-center flex flex-wrap -mx-[15px]">
-            <form action="/account/login" className="w-96 lg:w-full">
-              <h1 className="font-sans font-semibold text-xl md:text-3xl text-[#181818] lg:w-full">
+      <div className="pb-[30px]">
+        <div className="justify-center flex flex-wrap">
+          <div className=" lg:w-1/2 lg:mx-auto sm:w-full justify-center flex">
+            <form action="/account/login" className=" md:w-2/3 lg:w-full">
+              <h1 className="font-sans font-bold text-xs md:text-lg lg:text-sm text-[#181818]">
                 Reset your password
               </h1>
-              <hr className="my-5 border-t-2 border-[#8486e2] w-1/4" />
-              <div className="mb-[15px] sm:w-11/12 sm:mx-auto">
+              <hr className="my-2 border-t-2 border-[#8486e2] w-1/2 md:w-2/3 sm:w-1/2 lg:w-1/3" />
+              <div className="mb-[15px] ">
                 <p className="text-xs font-normal mb-[15px] text-gray-500">
                   We will send you an email to reset your password.
                 </p>
                 <input
-                  className="border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] w-full mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5 overflow-x-hidden overflow-y-auto"
+                  className="border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] w-full mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5  overflow-x-hidden overflow-y-auto"
                   type="text"
                   placeholder="ENTER YOUR EMAIL"
                   required
