@@ -42,7 +42,7 @@ function App() {
     ]
   )
   return (
-    <div className="px-6 py-6">
+    <div className="">
       <RouterProvider router={route} />
     </div>
   )
