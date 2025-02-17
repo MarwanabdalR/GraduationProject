@@ -677,6 +677,16 @@ video {
   margin-right: 0.75rem;
 }
 
+.my-0 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.my-32 {
+  margin-top: 8rem;
+  margin-bottom: 8rem;
+}
+
 .mb-0 {
   margin-bottom: 0px;
 }
@@ -739,6 +749,10 @@ video {
 
 .mt-8 {
   margin-top: 2rem;
+}
+
+.mt-32 {
+  margin-top: 8rem;
 }
 
 .block {
