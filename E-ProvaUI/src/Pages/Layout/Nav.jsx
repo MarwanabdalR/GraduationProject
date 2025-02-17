@@ -10,16 +10,15 @@ export default function Nav() {
   const [active, setActive] = useState("login");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // Scrolling Down → Hide Navbar
         setIsVisible(false);
       } else {
-        // Scrolling Up → Show Navbar
         setIsVisible(true);
       }
 
@@ -30,6 +29,18 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
       <header
@@ -38,8 +49,12 @@ export default function Nav() {
         }`}
       >
         <nav className="bg-white shadow-md">
-          <div className="transition-all duration-1000">
-            <div className="mx-auto max-w-screen-xl sm:px-6 md:p-7 lg:px-8">
+          <div
+            className={`transition-all duration-1000 ${
+              isScrolled ? "p-2" : "p-7"
+            }`}
+          >
+            <div className="mx-auto max-w-screen-xl sm:px-6 lg:px-8">
               <div className="flex h-16 items-center justify-between">
                 {/* Left Section */}
                 <div className="flex items-center gap-4">
@@ -84,14 +99,14 @@ export default function Nav() {
                       <CiSearch className="m-1 cursor-pointer " size={20} />
                     </div>
                     <Link to="/e-prova/wishlist">
-                    <span className="relative inline-block">
-                      <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                        <CiStar className="m-1 cursor-pointer " size={20} />
-                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                          5
-                        </span>
-                      </div>
-                    </span>
+                      <span className="relative inline-block">
+                        <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
+                          <CiStar className="m-1 cursor-pointer " size={20} />
+                          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                            5
+                          </span>
+                        </div>
+                      </span>
                     </Link>
                     <Link to="/e-prova/cart">
                       <span className="relative inline-block">
@@ -145,6 +160,19 @@ export default function Nav() {
                     </div>
                   </div>
                 </div>
+                <Link to="/e-prova/cart" className="md:hidden lg:hidden">
+                  <span className="relative inline-block">
+                    <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
+                      <MdOutlineShoppingBasket
+                        className="m-1 cursor-pointer "
+                        size={20}
+                      ></MdOutlineShoppingBasket>
+                      <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                        5
+                      </span>
+                    </div>
+                  </span>
+                </Link>
               </div>
 
               {/* Mobile Menu */}
