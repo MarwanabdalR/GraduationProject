@@ -73,7 +73,7 @@ export default function Nav() {
                     <img
                       src={img}
                       alt="Logo"
-                      className="w-24 h-16 mx-auto lg:mx-0"
+                      className="w-28 h-20 mx-auto lg:mx-0"
                     />
                   </Link>
                 </div>

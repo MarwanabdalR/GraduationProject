@@ -1,7 +1,36 @@
 import { Link } from "react-router";
 import HedearSection from "./HedearSection";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../Func/context/AuthContextProvider";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export default function ForgetPassword() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { ForgetPassword } = useContext(AuthContext);
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required")
+        .lowercase(),
+    }),
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      try {
+        await ForgetPassword(values.email);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+  });
   return (
     <div className="my-40">
       <HedearSection />
@@ -17,20 +46,36 @@ export default function ForgetPassword() {
                 <p className="text-xs font-normal mb-[15px] text-gray-500">
                   We will send you an email to reset your password.
                 </p>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-black"
+                >
+                  Email
+                </label>
                 <input
                   className="border outline-none border-gray-200 hover:border-[#e94328] px-5 py-0 h-[50px] w-full mb-0 rounded-3xl font-sans text-xs font-medium inline-block max-w-full leading-5  overflow-x-hidden overflow-y-auto"
-                  type="text"
-                  placeholder="ENTER YOUR EMAIL"
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   required
                 />
+                {formik.errors.email && formik.touched.email && (
+                  <p className="text-sm text-red-500">{formik.errors.email}</p>
+                )}
               </div>
               <div className="flex justify-start gap-5 uppercase">
                 <Link>
                   <button
                     type="submit"
                     className="px-8 py-3 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl text-xs font-medium text-center"
+                    disabled={isLoading}
+                    onClick={formik.handleSubmit}
                   >
-                    SUBMIT
+                    {isLoading ? "LOADING..." : "SUBMIT"}
                   </button>
                 </Link>
                 <Link to="/e-prova/login">

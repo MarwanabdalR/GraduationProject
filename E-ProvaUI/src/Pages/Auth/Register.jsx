@@ -1,8 +1,56 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { AuthContext } from "../../Func/context/AuthContextProvider";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { Register } = useContext(AuthContext);
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      gender: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .required("Name is required")
+        .min(3, "Name must be at least 3 characters")
+        .max(20, "Name must be at most 20 characters"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required")
+        .lowercase(),
+      password: Yup.string()
+        .required("Password is required")
+        .min(8, "Password must be at least 8 characters")
+        .max(20, "Password must be at most 20 characters"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Confirm Password is required"),
+      gender: Yup.string().required("Gender is required"),
+    }),
+    onSubmit: (values) => {
+      try {
+        Register(
+          values.name,
+          values.email,
+          values.password,
+          values.confirmPassword,
+          values.gender
+        );
+        
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
 
   return (
     <div>
@@ -33,36 +81,71 @@ export default function Register() {
           <div className="pb-[30px] flex justify-center">
             <div className="w-full md:w-1/2 lg:w-1/2">
               <div className="">
-                <form action="/account/login" className="w-full">
+                <form onSubmit={formik.handleSubmit} className="w-full">
                   <div className="mb-[15px]">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-black"
+                    >
+                      Name
+                    </label>
                     <input
                       className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
                       type="text"
-                      placeholder="First Name"
-                      required
+                      id="name"
+                      name="name"
+                      placeholder="Name"
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                     />
+                    {formik.errors.name && formik.touched.name && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.name}
+                      </p>
+                    )}
                   </div>
+
                   <div className="mb-[15px]">
-                    <input
-                      className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
-                      type="text"
-                      placeholder="Last Name"
-                      required
-                    />
-                  </div>
-                  <div className="mb-[15px]">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-black"
+                    >
+                      Email
+                    </label>
                     <input
                       className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
                       type="email"
+                      id="email"
+                      name="email"
                       placeholder="Email"
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       required
                     />
+                    {formik.errors.email && formik.touched.email && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.email}
+                      </p>
+                    )}
                   </div>
                   <div className="relative mb-[15px]">
+                    <label
+                      htmlFor="password"
+                      className="block text-sm font-medium text-black"
+                    >
+                      Password
+                    </label>
                     <input
                       className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
                       type={showPassword ? "text" : "password"}
                       placeholder="PASSWORD"
+                      id="password"
+                      name="password"
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       required
                     />
                     <div
@@ -75,7 +158,72 @@ export default function Register() {
                         } fa-xs text-[#7c7e83] hover:text-black`}
                       ></i>
                     </div>
+                    {formik.errors.password && formik.touched.password && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.password}
+                      </p>
+                    )}
                   </div>
+                  <div className="relative mb-[15px]">
+                    <label
+                      htmlFor="passwordConfirmation"
+                      className="block text-sm font-medium text-black"
+                    >
+                      Password Confirmation
+                    </label>
+                    <input
+                      className="border outline-none border-gray-200 hover:border-[#e94328] px-5 h-[50px] w-full rounded-3xl font-sans text-xs font-medium inline-block"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="PASSWORD CONFIRMATION"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={formik.values.confirmPassword}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      required
+                    />
+                    <div
+                      className="block absolute bottom-px right-px px-4 py-0.5 leading-10 cursor-pointer"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      <i
+                        className={`fa-solid ${
+                          showPassword ? "fa-eye-slash" : "fa-eye"
+                        } fa-xs text-[#7c7e83] hover:text-black`}
+                      ></i>
+                    </div>
+                    {formik.errors.confirmPassword &&
+                      formik.touched.confirmPassword && (
+                        <p className="text-sm text-red-500">
+                          {formik.errors.confirmPassword}
+                        </p>
+                      )}
+                  </div>
+
+                  <div>
+                    <select
+                      name="gender"
+                      id="gender"
+                      className="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm"
+                      value={formik.values.gender}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    >
+                      <option value="" disabled>
+                        Gender
+                      </option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                    {formik.errors.gender && formik.touched.gender && (
+                      <p className="text-sm text-red-500">
+                        {formik.errors.gender}
+                      </p>
+                    )}
+                  </div>
+
                   <div className="flex items-center mt-5 mb-[15px]">
                     <div className="flex items-center space-x-2">
                       <input
