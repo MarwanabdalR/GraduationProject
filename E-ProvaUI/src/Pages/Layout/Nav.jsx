@@ -4,13 +4,21 @@ import { Link } from "react-router-dom";
 import { HiBars3CenterLeft } from "react-icons/hi2";
 import { MdOutlineShoppingBasket } from "react-icons/md";
 import { CiSearch, CiStar } from "react-icons/ci";
+import {
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 
 export default function Nav() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [active, setActive] = useState("login");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,12 +66,12 @@ export default function Nav() {
               <div className="flex h-16 items-center justify-between">
                 {/* Left Section */}
                 <div className="flex items-center gap-4">
-                  <button
+                  <IconButton
                     className="block lg:hidden text-gray-600 p-2 rounded-md hover:bg-gray-200"
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    onClick={() => setIsDrawerOpen(true)}
                   >
                     <HiBars3CenterLeft size={20} />
-                  </button>
+                  </IconButton>
                   <button className="block lg:hidden text-gray-600 p-2 rounded-md hover:bg-gray-200 md:hidden">
                     <CiSearch size={20} />
                   </button>
@@ -175,25 +183,117 @@ export default function Nav() {
                 </Link>
               </div>
 
-              {/* Mobile Menu */}
-              {isMenuOpen && (
-                <div className="lg:hidden flex flex-col py-4">
-                  <ul className="flex flex-col gap-4 text-sm">
-                    {["Home", "New Arrivals", "Products", "Blog"].map(
-                      (item) => (
-                        <li key={item}>
-                          <a
-                            className="text-gray-500 hover:text-gray-700 transition"
-                            href={`#${item.toLowerCase()}`}
-                          >
-                            {item}
-                          </a>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
+              {/* Drawer for Mobile Menu */}
+              <Drawer
+                anchor="left"
+                open={isDrawerOpen}
+                onClose={() => setIsDrawerOpen(false)}
+                PaperProps={{ sx: { width: "350px" } }}
+              >
+                <List>
+                  <ListItem>
+                    <form className="flex items-center w-full">
+                      <input
+                        type="search"
+                        className="w-full px-4 py-2 text-sm border-2 border-gray-300 rounded-lg"
+                        placeholder="Search"
+                      />
+                      <button
+                        type="submit"
+                        className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg"
+                      >
+                        Search
+                      </button>
+                    </form>
+                  </ListItem>
+
+                  {["Home", "NewArrivals", "Products", "Blog"].map((item) => (
+                    <ListItem
+                      button
+                      key={item}
+                      onClick={() => setIsDrawerOpen(false)}
+                      component={Link}
+                      to={`/e-prova/${item.toLowerCase()}`}
+                      className="hover:text-red-600 transition"
+                    >
+                      <ListItemText primary={item} />
+                    </ListItem>
+                  ))}
+                  <ListItem>
+                    <Link
+                      to="/e-prova/login"
+                      className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-black rounded-lg"
+                    >
+                      Login
+                    </Link>
+                  </ListItem>
+                  <ListItem>
+                    <Link
+                      to="/e-prova/register"
+                      className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-[#e94328] rounded-lg"
+                    >
+                      Register
+                    </Link>
+                  </ListItem>
+                  <ListItem>
+                    <Typography variant="caption" className="font-light">
+                      Call us: +20 (112) 0636239
+                    </Typography>
+                  </ListItem>
+                  <ListItem>
+                    <Typography variant="caption" className="font-light">
+                      Email:{" "}
+                      <a href="mailto:marwanabdalrady13@gmail.com">
+                        marwanabdalrady13@gmail.com
+                      </a>
+                    </Typography>
+                  </ListItem>
+                  <ListItem>
+                    <ul className="mt-8 flex justify-center items-center gap-10">
+                      <li>
+                        <a
+                          href="https://www.facebook.com/mrwan.abdalrady.5"
+                          rel="noreferrer"
+                          target="_blank"
+                          className="text-black transition hover:text-red-600 hover:bg-black hover:border-black border-2 rounded-full p-2"
+                        >
+                          <i className="fa-brands fa-facebook-f"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://www.linkedin.com/in/marwan-abdalrady-57b87b222/"
+                          rel="noreferrer"
+                          target="_blank"
+                          className="text-black transition hover:text-red-600 hover:bg-black hover:border-black border-2 rounded-full p-2"
+                        >
+                          <i className="fa-brands fa-linkedin-in"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://github.com/MarwanabdalR"
+                          rel="noreferrer"
+                          target="_blank"
+                          className="text-black transition hover:text-red-600 hover:bg-black hover:border-black border-2 rounded-full p-2"
+                        >
+                          <i className="fa-brands fa-github"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://protofolio-git-main-marwans-projects-3f5c5d0c.vercel.app/"
+                          rel="noreferrer"
+                          target="_blank"
+                          className="text-black transition hover:text-red-600 hover:bg-black hover:border-black border-2 rounded-full p-2"
+                        >
+                          <i className="fa-solid fa-briefcase"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </ListItem>
+                </List>
+              </Drawer>
             </div>
           </div>
         </nav>
