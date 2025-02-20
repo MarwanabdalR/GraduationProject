@@ -12,6 +12,8 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { motion } from "framer-motion";
+
 
 export default function Nav() {
   const [active, setActive] = useState("login");
@@ -51,7 +53,10 @@ export default function Nav() {
 
   return (
     <>
-      <header
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: isVisible ? 0 : -100, opacity: isVisible ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
@@ -297,7 +302,7 @@ export default function Nav() {
             </div>
           </div>
         </nav>
-      </header>
+      </motion.header>
     </>
   );
 }

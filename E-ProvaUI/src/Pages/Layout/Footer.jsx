@@ -1,14 +1,27 @@
 import { Dropdown } from "flowbite-react";
 import img from "../../../public/image.png";
 import logo from "../../../public/LogoDesign.png";
+import { motion } from "framer-motion";
 
 export default function Footer() {
   return (
     <>
-      <footer className="bg-white">
+      <motion.footer
+        initial={{ opacity: 0, y: 0 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 2.5 }}
+        className="bg-white"
+      >
         <div className="mx-auto max-w-screen-xl px-4 pt-16 pb-6 sm:px-6 lg:px-8 lg:pt-24">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 border-t border-gray-200 pt-10">
-            <div className="border-r border-gray-200">
+            {/* first section */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="border-r border-gray-200"
+            >
               <div className="flex justify-center sm:justify-start">
                 <img src={img} alt="logo" className="w-24 h-20" />
                 <img src={logo} alt="logo" className="w-24 h-20" />
@@ -63,10 +76,17 @@ export default function Footer() {
                   </a>
                 </li>
               </ul>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:col-span-2">
-              <div className="text-center sm:text-left">
+              {/* second */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="text-center sm:text-left"
+              >
                 <p className="text-lg font-medium text-gray-900">
                   Company Info
                 </p>
@@ -116,9 +136,15 @@ export default function Footer() {
                     </a>
                   </li>
                 </ul>
-              </div>
-
-              <div className="text-center sm:text-left">
+              </motion.div>
+              {/* third */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="text-center sm:text-left"
+              >
                 <p className="text-lg font-medium text-gray-900">
                   Help & Support
                 </p>
@@ -172,9 +198,15 @@ export default function Footer() {
                     </a>
                   </li>
                 </ul>
-              </div>
-
-              <div className="text-center sm:text-left">
+              </motion.div>
+              {/* forth */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                viewport={{ once: true }}
+                className="text-center sm:text-left"
+              >
                 <p className="text-lg font-medium text-gray-900">MY ACCOUNT</p>
 
                 <ul className="mt-8 space-y-4 text-sm">
@@ -225,11 +257,17 @@ export default function Footer() {
                     </a>
                   </li>
                 </ul>
-              </div>
+              </motion.div>
             </div>
           </div>
-
-          <div className="mt-12 border-t border-gray-100 pt-6">
+          {/* copy right */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="mt-12 border-t border-gray-100 pt-6"
+          >
             <div className="text-center sm:flex sm:justify-between sm:text-left">
               <p className="text-sm text-gray-500">
                 <i className="fa-solid fa-location-crosshairs"></i>
@@ -281,22 +319,29 @@ export default function Footer() {
                 className="w-10 h-10 rounded-full"
               />
             </div>
-          </div>
-          <div className="flex justify-center gap-5 mt-5">
-          <Dropdown label="Dropdown" size="sm">
-            <Dropdown.Item>CAD | Candian</Dropdown.Item>
-            <Dropdown.Item>EUR | Germany</Dropdown.Item>
-            <Dropdown.Item>GBP | Great Britain</Dropdown.Item>
-            <Dropdown.Item>USD | USA</Dropdown.Item>
-          </Dropdown>
-          <Dropdown label="Dropdown" size="sm">
-            <Dropdown.Item>ENGLISH</Dropdown.Item>
-            <Dropdown.Item>DEUTISH</Dropdown.Item>
-            <Dropdown.Item>FRENCH</Dropdown.Item>
-          </Dropdown>
-          </div>
+          </motion.div>
+          {/* language */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="flex justify-center gap-5 mt-5"
+          >
+            <Dropdown label="Dropdown" size="sm">
+              <Dropdown.Item>CAD | Candian</Dropdown.Item>
+              <Dropdown.Item>EUR | Germany</Dropdown.Item>
+              <Dropdown.Item>GBP | Great Britain</Dropdown.Item>
+              <Dropdown.Item>USD | USA</Dropdown.Item>
+            </Dropdown>
+            <Dropdown label="Dropdown" size="sm">
+              <Dropdown.Item>ENGLISH</Dropdown.Item>
+              <Dropdown.Item>DEUTISH</Dropdown.Item>
+              <Dropdown.Item>FRENCH</Dropdown.Item>
+            </Dropdown>
+          </motion.div>
         </div>
-      </footer>
+      </motion.footer>
     </>
   );
 }
