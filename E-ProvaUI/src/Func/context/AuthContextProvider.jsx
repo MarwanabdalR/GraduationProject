@@ -1,70 +1,94 @@
 import { createContext } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useCookies } from "react-cookie";
 
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-  
-
-
-  async function Register(name, email, password, confirmPassword, gender) {
+  const [cookies, setCookie] = useCookies(["accessToken"]);
+  async function Register(username, email, password, confirmPassword, gender) {
     try {
-      const {data} = await axios.post("http://localhost:3000/auth/register",{
-        name,
-        email,
-        password,
-        confirmPassword,
-        gender
-      });
-      console.log("🚀 ~ Register ~ data:", data)
-      toast.success(data.message);
-
+      const { data } = await axios.post(
+        "https://e-prova.vercel.app/auth/register",
+        {
+          username,
+          email,
+          password,
+          confirmPassword,
+          gender,
+        }
+      );
+      toast.success(data.message, "then go to login", { duration: 2000 });
+      return data;
     } catch (error) {
-      return alert(error);
+      toast.error(error.response.data.message);
+      const RegisterErr = error.response;
+      return RegisterErr;
     }
   }
   async function Login(email, password) {
     try {
-      const {data} = await axios.post("http://localhost:3000/auth/login",{
-        email,
-        password,
-      });
-      console.log("🚀 ~ Login ~ data:", data)
+      const { data } = await axios.post(
+        "https://e-prova.vercel.app/auth/login",
+        {
+          email,
+          password,
+        }
+      );
       toast.success(data.message);
+      setCookie("accessToken", data.accessToken, {
+        path: "/",
+        maxAge: 86400, 
+      });
+      return data;
     } catch (error) {
-      return alert(error);
+      toast.error(error.response.data.message);
+      const LoginErr = error.response;
+      return LoginErr;
     }
   }
+
   async function ForgetPassword(email) {
     try {
-      const {data} = await axios.post("http://localhost:3000/auth/forget-code",{
-        email,
-      });
-      console.log("🚀 ~ Login ~ data:", data)
+      const { data } = await axios.post(
+        "https://e-prova.vercel.app/auth/forget-code",
+        {
+          email,
+        }
+      );
       toast.success(data.message);
+      return data;
     } catch (error) {
-      return alert(error);
+      const errorF = error;
+      toast.error(error.response.data.message);
+      return errorF;
     }
   }
 
   async function ResetCode(email, code, password, confirmPassword) {
     try {
-      const {data} = await axios.post("http://localhost:3000/auth/reset-password",{
-        email,
-        code,
-        password,
-        confirmPassword
-      });
-      console.log("🚀 ~ Login ~ data:", data)
+      const { data } = await axios.post(
+        "https://e-prova.vercel.app/auth/reset-password",
+        {
+          email,
+          code,
+          password,
+          confirmPassword,
+        }
+      );
       toast.success(data.message);
+      return data;
     } catch (error) {
-      return alert(error);
+      toast.error(error.response.data.message);
+      return error;
     }
   }
 
   return (
-    <AuthContext.Provider value={{Register, Login, ForgetPassword, ResetCode}}>
+    <AuthContext.Provider
+      value={{ Register, Login, ForgetPassword, ResetCode, cookies }}
+    >
       {children}
     </AuthContext.Provider>
   );

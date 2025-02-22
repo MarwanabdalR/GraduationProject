@@ -4,11 +4,15 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { PacmanLoader } from "react-spinners";
 
 export default function ForgetPassword() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { ForgetPassword } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -23,9 +27,12 @@ export default function ForgetPassword() {
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
-        await ForgetPassword(values.email);
+        const res = await ForgetPassword(values.email);
+        if (res.success) {
+          navigate("/e-prova/resetcode");
+        }
       } catch (error) {
-        console.log(error);
+        console.log("🚀 ~ onSubmit: ~ error:", error)
       } finally {
         setIsLoading(false);
       }
@@ -39,7 +46,7 @@ export default function ForgetPassword() {
           <div className=" lg:w-1/2 lg:mx-auto sm:w-full justify-center flex">
             <form action="/account/login" className=" md:w-2/3 lg:w-full">
               <h1 className="font-sans font-bold text-xs md:text-lg lg:text-sm text-[#181818]">
-                Reset your password
+                Forget your password
               </h1>
               <hr className="my-2 border-t-2 border-[#8486e2] w-1/2 md:w-2/3 sm:w-1/2 lg:w-1/3" />
               <div className="mb-[15px] ">
@@ -75,7 +82,7 @@ export default function ForgetPassword() {
                     disabled={isLoading}
                     onClick={formik.handleSubmit}
                   >
-                    {isLoading ? "LOADING..." : "SUBMIT"}
+                    {isLoading ? <PacmanLoader color="#fff" size={10} /> : "SUBMIT"}
                   </button>
                 </Link>
                 <Link to="/e-prova/login">
@@ -83,7 +90,7 @@ export default function ForgetPassword() {
                     type="submit"
                     className="px-8 py-3 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl text-xs font-medium text-center"
                   >
-                    CANCEL
+                    Back
                   </button>
                 </Link>
               </div>

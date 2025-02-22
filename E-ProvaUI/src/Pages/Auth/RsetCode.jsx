@@ -4,12 +4,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom"; // Fixed the import path
 import HedearSection from "./HedearSection";
+import { useNavigate } from "react-router-dom";
+import { PacmanLoader } from "react-spinners";
 
 export default function RsetCode() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { ResetCode } = useContext(AuthContext); // Fixed the function name
+
+  const { ResetCode } = useContext(AuthContext); 
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -35,14 +40,17 @@ export default function RsetCode() {
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
-        await ResetCode(
+        const res = await ResetCode(
           values.email,
           values.code,
           values.password,
           values.confirmPassword
         );
+        if (res.success) {
+          navigate("/e-prova/login");
+        }
       } catch (error) {
-        console.log(error);
+      console.log("🚀 ~ onSubmit: ~ error:", error)
       } finally {
         setIsLoading(false);
       }
@@ -189,14 +197,14 @@ export default function RsetCode() {
                   className="px-8 py-3 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl text-xs font-medium text-center"
                   disabled={isLoading}
                 >
-                  {isLoading ? "LOADING..." : "SUBMIT"}
+                  {isLoading ? <PacmanLoader color="#fff" size={10} /> : "SUBMIT"}
                 </button>
-                <Link to="/e-prova/login">
+                <Link to="/e-prova/forgotpassword">
                   <button
                     type="button"
                     className="px-8 py-3 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl text-xs font-medium text-center"
                   >
-                    CANCEL
+                    BACK
                   </button>
                 </Link>
               </div>

@@ -3,12 +3,17 @@ import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
+import { useNavigate } from "react-router-dom";
+import { PacmanLoader } from "react-spinners";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { Register } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -36,18 +41,23 @@ export default function Register() {
         .required("Confirm Password is required"),
       gender: Yup.string().required("Gender is required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      setIsLoading(true);
       try {
-        Register(
+        const res = await Register(
           values.name,
           values.email,
           values.password,
           values.confirmPassword,
           values.gender
         );
-        
+        if (res.success) {
+          navigate("/e-prova/login");
+        }
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     },
   });
@@ -253,9 +263,16 @@ export default function Register() {
                   </div>
                   <button
                     type="submit"
-                    className="w-full min-w-[clamp(60px,140px,140px)] h-10 px-5 py-0 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl font-semibold text-xs text-center"
+                    className={`w-full min-w-[clamp(60px,140px,140px)] h-10 px-5 py-0 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl font-semibold text-xs text-center ${
+                      isLoading ? "cursor-wait" : "cursor-pointer"
+                    }`}
+                    disabled={isLoading}
                   >
-                    Register
+                    {isLoading ? (
+                      <PacmanLoader color="#fff" size={10} />
+                    ) : (
+                      "Register"
+                    )}
                   </button>
                 </form>
               </div>

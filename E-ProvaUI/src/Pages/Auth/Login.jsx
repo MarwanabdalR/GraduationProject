@@ -1,14 +1,18 @@
 import { useContext, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import HedearSection from "./HedearSection";
 import { useFormik } from "formik";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
 import * as Yup from "yup";
+import { PacmanLoader } from "react-spinners";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const { Login } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -28,7 +32,10 @@ export default function Login() {
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
-        await Login(values.email, values.password);
+        const res = await Login(values.email, values.password);
+        if (res.success) {
+          navigate("/e-prova/home");
+        }
       } catch (error) {
         console.log(error);
       } finally {
@@ -137,10 +144,16 @@ export default function Login() {
                 </div>
                 <button
                   type="submit"
-                  className={`w-full min-w-[clamp(60px,140px,140px)] h-10 px-5 py-0 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl font-semibold text-xs text-center ${isLoading ? "cursor-wait" : "cursor-pointer"}`}
+                  className={`w-full min-w-[clamp(60px,140px,140px)] h-10 px-5 py-0 text-white bg-[#181818] hover:bg-[#0b0b0b] font-sans rounded-3xl font-semibold text-xs text-center ${
+                    isLoading ? "cursor-wait" : "cursor-pointer"
+                  }`}
                   disabled={isLoading}
                 >
-                  {isLoading ? "LOADING..." : "LOGIN"}
+                  {isLoading ? (
+                    <PacmanLoader color="#fff" size={10} />
+                  ) : (
+                    "LOGIN"
+                  )}
                 </button>
               </form>
             </div>
