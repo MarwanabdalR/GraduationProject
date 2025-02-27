@@ -14,6 +14,18 @@ import { AuthProvider } from "./Func/context/AuthContextProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import ResetCode from "./Pages/Auth/RsetCode";
+import AdminLayout from "./Pages/Layout/Admin/AdminLayout";
+import Dashboard from "./Pages/Admin/Dashboard";
+import AdminProducts from "./Pages/Admin/AdminProducts";
+import ManageAdmin from "./Pages/Admin/ManageAdmin";
+import ManageProduct from "./Pages/Admin/ManageProduct";
+import AdminCategories from "./Pages/Admin/AdminCategories";
+import ManageCategories from "./Pages/Admin/ManageCategories";
+import AdminBrands from "./Pages/Admin/AdminBrands";
+import ManageBrands from "./Pages/Admin/ManageBrands";
+import AdminOrders from "./Pages/Admin/AdminOrders";
+import AdminReviews from "./Pages/Admin/AdminReviews";
+import AdminOffer from "./Pages/Admin/AdminOffer";
 
 const queryClient = new QueryClient();
 
@@ -73,12 +85,76 @@ function App() {
         }
       ],
     },
+    {
+      path: "/e-prova/admin",
+      element: <AdminLayout />,
+      children: [
+        {
+          path: "/e-prova/admin/dashboard",
+          element: <Dashboard />,
+        },
+        {
+          path: "/e-prova/admin/*",
+          element: <NotFound />,
+        },
+        {
+          path: "/e-prova/admin",
+          element: <Dashboard />,
+        },
+        {
+          path: "/e-prova/admin/add-admin",
+          element: <ManageAdmin />,
+        },
+        {
+          path: "/e-prova/admin/products/manage",
+          element: <ManageProduct />,
+        },
+        {
+          path: "/e-prova/admin/products",
+          element: <AdminProducts />,
+        },
+        {
+          path: "/e-prova/admin/categories",
+          element: <AdminCategories />,
+        },
+        {
+          path: "/e-prova/admin/categories/manage",
+          element: <ManageCategories />,
+        },
+        {
+          path: "/e-prova/admin/brands",
+          element: <AdminBrands />,
+        },
+        {
+          path: "/e-prova/admin/brands/manage",
+          element: <ManageBrands />,
+        },
+        {
+          path: "/e-prova/admin/orders",
+          element: <AdminOrders />,
+        },
+        {
+          path: "/e-prova/admin/reviews",
+          element: <AdminReviews />,
+        },
+        {
+          path: "/e-prova/admin/offers",
+          element: <AdminOffer />,
+        }
+
+
+      ],
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    }
   ]);
   return (
     <div className="">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Toaster position="bottom-center" reverseOrder={false} />
+          <Toaster position="top-right" reverseOrder={false} />
           <RouterProvider router={route} />
         </AuthProvider>
       </QueryClientProvider>
