@@ -1,4 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { AuthProvider } from "./Func/context/AuthContextProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 import Login from "./Pages/Auth/Login";
 import Layout from "./Pages/Layout/Layout";
 import Register from "./Pages/Auth/Register";
@@ -10,9 +13,6 @@ import Products from "./Pages/products/Products";
 import NewArrivals from "./Pages/NewArrivals/NewArrivals";
 import Blog from "./Pages/blog/Blog";
 import Cart from "./Pages/Cart/Cart";
-import { AuthProvider } from "./Func/context/AuthContextProvider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "react-hot-toast";
 import ResetCode from "./Pages/Auth/RsetCode";
 import AdminLayout from "./Pages/Layout/Admin/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard";
@@ -31,6 +31,7 @@ const queryClient = new QueryClient();
 
 function App() {
   const route = createBrowserRouter([
+    // User
     {
       path: "/e-prova",
       element: <Layout />,
@@ -85,6 +86,7 @@ function App() {
         }
       ],
     },
+    // Admin
     {
       path: "/e-prova/admin",
       element: <AdminLayout />,
@@ -145,6 +147,7 @@ function App() {
 
       ],
     },
+    // 404
     {
       path: "*",
       element: <NotFound />,

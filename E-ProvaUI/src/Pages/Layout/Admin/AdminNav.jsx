@@ -1,5 +1,5 @@
 import img from "../../../../public/LogoDesign.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HiBars3CenterLeft } from "react-icons/hi2";
 import { MdInsertComment } from "react-icons/md";
@@ -15,14 +15,35 @@ import { motion } from "framer-motion";
 
 export default function AdminNav() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
     <>
       <motion.header
         initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        animate={{ y: isVisible ? 0 : -100, opacity: isVisible ? 1 : 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md"
+        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
       >
         <nav>
           <div className="p-4 flex justify-between items-center">
