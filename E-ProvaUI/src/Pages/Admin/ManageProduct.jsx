@@ -32,7 +32,6 @@ export default function ManageProduct() {
               <th className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
                 Action
               </th>
-              <th className="px-4 py-2"></th>
             </tr>
           </thead>
 
@@ -51,54 +50,6 @@ export default function ManageProduct() {
                 Shoes
               </td>
               <td className="px-4 py-2 whitespace-nowrap text-gray-700">Men</td>
-              <td className="px-4 py-2 whitespace-nowrap">
-                <a
-                  href="#"
-                  className="inline-block rounded-sm bg-red-500 px-4 py-2 text-xs font-medium text-white hover:bg-red-700"
-                >
-                  <AiFillDelete size={20} />
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
-                2
-              </td>
-              <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
-                Adidas Ultraboost
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                $150
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                Shoes
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                Women
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap">
-                <a
-                  href="#"
-                  className="inline-block rounded-sm bg-red-500 px-4 py-2 text-xs font-medium text-white hover:bg-red-700"
-                >
-                  <AiFillDelete size={20} />
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
-                3
-              </td>
-              <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
-                Samsung Galaxy S22 Ultra
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                $1,200
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                Mobile Phones
-              </td>
-              <td className="px-4 py-2 whitespace-nowrap text-gray-700">All</td>
               <td className="px-4 py-2 whitespace-nowrap">
                 <a
                   href="#"
