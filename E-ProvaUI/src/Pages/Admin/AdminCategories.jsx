@@ -19,7 +19,7 @@ export default function AdminCategories() {
               <div className="md:col-span-2">
                 <div className="bg-white shadow rounded-lg p-6">
                   <h2 className="text-xl font-semibold mb-4">
-                    Product Title *
+                    Category Title *
                   </h2>
                   <input
                     type="text"
@@ -76,7 +76,7 @@ export default function AdminCategories() {
                     className="w-full bg-blue-600 text-white py-2 rounded"
                     disabled
                   >
-                    Add Product
+                    Add Category
                   </button>
                 </div>
               </div>
