@@ -46,7 +46,7 @@ export default function AdminNav() {
         }`}
       >
         <nav>
-          <div className="p-4 flex justify-between items-center bg-white">
+          <div className="p-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
               <IconButton
                 className="block lg:hidden text-gray-600 p-2 rounded-md hover:bg-gray-200"
