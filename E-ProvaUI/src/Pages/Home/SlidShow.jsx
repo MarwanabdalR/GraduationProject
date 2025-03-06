@@ -1,4 +1,4 @@
-import { Swiper, SwiperSlide } from "swiper/react";
+{/*import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectFade, Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import "swiper/css/effect-fade";
@@ -50,4 +50,4 @@ export default function SlidShow() {
       </SwiperSlide>
     </Swiper>
   );
-}
+}*/}
