@@ -21,13 +21,14 @@ import Dashboard from "./Pages/Admin/Dashboard";
 import ManageAdmin from "./Pages/Admin/ManageAdmin";
 import AdminOrders from "./Pages/Admin/AdminOrders";
 import AdminReviews from "./Pages/Admin/AdminReviews";
-import AdminOffer from "./Pages/Admin/AdminOffer";
 import ManageProduct from "./Pages/Admin/Product/ManageProduct";
 import AdminProducts from "./Pages/Admin/Product/AdminProducts";
 import AdminCategories from "./Pages/Admin/Category/AdminCategories";
 import ManageCategories from "./Pages/Admin/Category/ManageCategories";
 import AdminBrands from "./Pages/Admin/Brand/AdminBrands";
 import ManageBrands from "./Pages/Admin/Brand/ManageBrands";
+import AdminOffer from "./Pages/Admin/Offer/AdminOffer";
+import AddOffer from "./Pages/Admin/Offer/AddOffer";
 
 const queryClient = new QueryClient();
 
@@ -144,6 +145,10 @@ function App() {
         {
           path: "/e-prova/admin/offers",
           element: <AdminOffer />,
+        },
+        {
+          path: "/e-prova/admin/add-offer",
+          element: <AddOffer />,
         }
 
 

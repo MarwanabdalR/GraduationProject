@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Bounce, Roll } from "react-awesome-reveal";
 import { GoArrowUpRight, GoArrowRight } from "react-icons/go";
+import { Button } from "../../Components/Button";
 
 const MenWomenSection = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
@@ -33,30 +34,8 @@ const MenWomenSection = () => {
               Hello Sweet Customer
             </h1>
             <div className="mt-4 md:mt-6 flex flex-col md:flex-row gap-2 md:gap-7">
-              <button
-                className="bg-white text-black font-semibold text-sm px-4 py-2 md:px-6 md:py-2 rounded-full hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center"
-                onMouseEnter={() => handleMouseEnter("women")}
-                onMouseLeave={handleMouseLeave}
-              >
-                Women
-                {hoveredButton === "women" ? (
-                  <GoArrowRight className="inline-block ml-2" />
-                ) : (
-                  <GoArrowUpRight className="inline-block ml-2" />
-                )}
-              </button>
-              <button
-                className="bg-white text-black font-semibold text-sm px-4 py-2 md:px-6 md:py-2 rounded-full hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center"
-                onMouseEnter={() => handleMouseEnter("men")}
-                onMouseLeave={handleMouseLeave}
-              >
-                Men
-                {hoveredButton === "men" ? (
-                  <GoArrowRight className="inline-block ml-2" />
-                ) : (
-                  <GoArrowUpRight className="inline-block ml-2" />
-                )}
-              </button>
+              <Button Name="Women" />
+              <Button Name="Men" />
             </div>
           </Bounce>
         </div>

@@ -55,8 +55,7 @@ export default function AdminOrders() {
               {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.zip}, {order.shippingAddress.country}
             </p>
             <div className="mt-4">
-              <Button Name="View Detaials" />
-
+              <Button Name="View Details" />
             </div>
           </Card>
         ))}
