@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { AuthProvider } from "./Func/context/AuthContextProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+// User
 import Login from "./Pages/Auth/Login";
 import Layout from "./Pages/Layout/Layout";
 import Register from "./Pages/Auth/Register";
@@ -16,16 +17,17 @@ import Cart from "./Pages/Cart/Cart";
 import ResetCode from "./Pages/Auth/RsetCode";
 import AdminLayout from "./Pages/Layout/Admin/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard";
-import AdminProducts from "./Pages/Admin/AdminProducts";
+// Admin
 import ManageAdmin from "./Pages/Admin/ManageAdmin";
-import ManageProduct from "./Pages/Admin/ManageProduct";
-import AdminCategories from "./Pages/Admin/AdminCategories";
-import ManageCategories from "./Pages/Admin/ManageCategories";
-import AdminBrands from "./Pages/Admin/AdminBrands";
-import ManageBrands from "./Pages/Admin/ManageBrands";
 import AdminOrders from "./Pages/Admin/AdminOrders";
 import AdminReviews from "./Pages/Admin/AdminReviews";
 import AdminOffer from "./Pages/Admin/AdminOffer";
+import ManageProduct from "./Pages/Admin/Product/ManageProduct";
+import AdminProducts from "./Pages/Admin/Product/AdminProducts";
+import AdminCategories from "./Pages/Admin/Category/AdminCategories";
+import ManageCategories from "./Pages/Admin/Category/ManageCategories";
+import AdminBrands from "./Pages/Admin/Brand/AdminBrands";
+import ManageBrands from "./Pages/Admin/Brand/ManageBrands";
 
 const queryClient = new QueryClient();
 

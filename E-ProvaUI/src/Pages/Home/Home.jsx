@@ -2,7 +2,9 @@
 import SaleTimer from "./SaleTimer";
 import MenWomen from "./MenWomen";
 import ScrollBar from "./ScrollBar";
-import SlidShow from "./SlidShow";
+import ImageTab from "./ImageTab";
+import PolicySection from "./Policy";
+import Slideshow from "./SlidShow";
 
 
 
@@ -12,7 +14,10 @@ export default function Home() {
 
       <SaleTimer />
       <ScrollBar />
+      <Slideshow />
       <MenWomen />
+      <ImageTab />
+      <PolicySection />
 
     </>
   )

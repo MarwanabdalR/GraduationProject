@@ -1,3 +1,4 @@
+// 
 import { FaLeaf, FaTruck, FaMoneyBill, FaLock } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Zoom } from "react-awesome-reveal";
