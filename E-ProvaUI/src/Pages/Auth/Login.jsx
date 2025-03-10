@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
 import * as Yup from "yup";
 import { PacmanLoader } from "react-spinners";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,8 +34,14 @@ export default function Login() {
       setIsLoading(true);
       try {
         const res = await Login(values.email, values.password);
+        console.log("🚀 ~ onSubmit: ~ res:", res)
         if (res.success) {
-          navigate("/e-prova/home");
+          const { role } = jwtDecode(res.accessToken); // Assuming you have a function to decode JWT
+          if (role === "admin") {
+            navigate("/e-prova/admin");
+          } else {
+            navigate("/e-prova/home");
+          }
         }
       } catch (error) {
         console.log(error);

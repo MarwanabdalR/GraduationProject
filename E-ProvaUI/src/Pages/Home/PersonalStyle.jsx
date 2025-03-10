@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../../Components/Button';
 
 const PersonalStyle = () => {
     return (
@@ -10,9 +11,9 @@ const PersonalStyle = () => {
                 <p className="text-gray-600 mb-6 ">
                     Discover outfit ideas tailored uniquely to your style. Our AI learns from your wardrobe to suggest looks for any occasion.
                 </p>
-                <a href="#" className="inline-block bg-blue-500 text-black px-6 py-2 rounded-full hover:bg-blue-600 transition-colors">
-                    Learn More
-                </a>
+                <Button Name={"Learn More"}/>
+
+                
             </div>
             <div className="md:w-1/2 flex justify-center">
                 <img

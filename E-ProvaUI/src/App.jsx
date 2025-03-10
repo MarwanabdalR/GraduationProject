@@ -29,6 +29,8 @@ import AdminBrands from "./Pages/Admin/Brand/AdminBrands";
 import ManageBrands from "./Pages/Admin/Brand/ManageBrands";
 import AdminOffer from "./Pages/Admin/Offer/AdminOffer";
 import AddOffer from "./Pages/Admin/Offer/AddOffer";
+import { BrandContextProvider } from "./Func/context/Admin/BrandContextProvider";
+import ProtectedPath from "./Pages/Auth/ProtectedPath";
 
 const queryClient = new QueryClient();
 
@@ -86,87 +88,117 @@ function App() {
         {
           path: "/e-prova/resetcode",
           element: <ResetCode />,
-        }
+        },
       ],
     },
     // Admin
     {
       path: "/e-prova/admin",
-      element: <AdminLayout />,
+      element: (
+          <AdminLayout />
+      ),
       children: [
         {
           path: "/e-prova/admin/dashboard",
-          element: <Dashboard />,
+          element: (
+              <Dashboard />
+          ),
         },
         {
           path: "/e-prova/admin/*",
-          element: <NotFound />,
+          element: (
+              <NotFound />
+          ),
         },
         {
           path: "/e-prova/admin",
-          element: <Dashboard />,
+          element: (
+              <Dashboard />
+          ),
         },
         {
           path: "/e-prova/admin/add-admin",
-          element: <ManageAdmin />,
+          element: (
+              <ManageAdmin />
+          ),
         },
         {
           path: "/e-prova/admin/products/manage",
-          element: <ManageProduct />,
+          element: (
+              <ManageProduct />
+          ),
         },
         {
           path: "/e-prova/admin/products",
-          element: <AdminProducts />,
+          element: (
+              <AdminProducts />
+          ),
         },
         {
           path: "/e-prova/admin/categories",
-          element: <AdminCategories />,
+          element: (
+              <AdminCategories />
+          ),
         },
         {
           path: "/e-prova/admin/categories/manage",
-          element: <ManageCategories />,
+          element: (
+              <ManageCategories />
+          ),
         },
         {
           path: "/e-prova/admin/brands",
-          element: <AdminBrands />,
+          element: (
+              <AdminBrands />
+          ),
         },
         {
           path: "/e-prova/admin/brands/manage",
-          element: <ManageBrands />,
+          element: (
+              <ManageBrands />
+          ),
         },
         {
           path: "/e-prova/admin/orders",
-          element: <AdminOrders />,
+          element: (
+              <AdminOrders />
+          ),
         },
         {
           path: "/e-prova/admin/reviews",
-          element: <AdminReviews />,
+          element: (
+              <AdminReviews />
+          ),
         },
         {
           path: "/e-prova/admin/offers",
-          element: <AdminOffer />,
+          element: (
+              <AdminOffer />
+          ),
         },
         {
           path: "/e-prova/admin/add-offer",
-          element: <AddOffer />,
-        }
-
-
+          element: (
+              <AddOffer />
+          ),
+        },
       ],
     },
     // 404
     {
       path: "*",
       element: <NotFound />,
-    }
+    },
   ]);
   return (
     <div className="">
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <Toaster position="top-right" reverseOrder={false} />
-          <RouterProvider router={route} />
-        </AuthProvider>
+        <BrandContextProvider>
+          <AuthProvider>
+            <Toaster position="top-right" reverseOrder={false} />
+            <RouterProvider router={route} />
+          </AuthProvider>
+        </BrandContextProvider>
       </QueryClientProvider>
     </div>
   );
