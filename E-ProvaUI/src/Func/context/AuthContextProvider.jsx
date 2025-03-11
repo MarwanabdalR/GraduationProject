@@ -37,10 +37,10 @@ export const AuthProvider = ({ children }) => {
         }
       );
       toast.success(data.message);
-      // setCookie("accessToken", data.accessToken, {
-      //   path: "/",
-      //   maxAge: 86400, 
-      // });
+      setCookie("accessToken", data.accessToken, {
+        path: "/",
+        maxAge: 86400, 
+      });
       return data;
     } catch (error) {
       toast.error(error.response.data.message);

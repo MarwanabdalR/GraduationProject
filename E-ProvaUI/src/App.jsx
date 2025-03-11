@@ -95,91 +95,121 @@ function App() {
     {
       path: "/e-prova/admin",
       element: (
+        <ProtectedPath>
           <AdminLayout />
+        </ProtectedPath>
       ),
       children: [
         {
           path: "/e-prova/admin/dashboard",
           element: (
+            <ProtectedPath>
               <Dashboard />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/*",
           element: (
+            <ProtectedPath>
               <NotFound />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin",
           element: (
+            <ProtectedPath>
               <Dashboard />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/add-admin",
           element: (
+            <ProtectedPath>
               <ManageAdmin />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/products/manage",
           element: (
+            <ProtectedPath>
               <ManageProduct />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/products",
           element: (
+            <ProtectedPath>
               <AdminProducts />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/categories",
           element: (
+            <ProtectedPath>
               <AdminCategories />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/categories/manage",
           element: (
+            <ProtectedPath>
               <ManageCategories />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/brands",
           element: (
+            <ProtectedPath>
               <AdminBrands />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/brands/manage",
           element: (
+            <ProtectedPath>
               <ManageBrands />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/orders",
           element: (
+            <ProtectedPath>
               <AdminOrders />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/reviews",
           element: (
+            <ProtectedPath>
               <AdminReviews />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/offers",
           element: (
+            <ProtectedPath>
               <AdminOffer />
+            </ProtectedPath>
           ),
         },
         {
           path: "/e-prova/admin/add-offer",
           element: (
+            <ProtectedPath>
               <AddOffer />
+            </ProtectedPath>
           ),
         },
       ],
@@ -193,12 +223,12 @@ function App() {
   return (
     <div className="">
       <QueryClientProvider client={queryClient}>
-        <BrandContextProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <BrandContextProvider>
             <Toaster position="top-right" reverseOrder={false} />
             <RouterProvider router={route} />
-          </AuthProvider>
-        </BrandContextProvider>
+          </BrandContextProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </div>
   );

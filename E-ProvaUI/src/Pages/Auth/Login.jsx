@@ -34,7 +34,6 @@ export default function Login() {
       setIsLoading(true);
       try {
         const res = await Login(values.email, values.password);
-        console.log("🚀 ~ onSubmit: ~ res:", res)
         if (res.success) {
           const { role } = jwtDecode(res.accessToken); // Assuming you have a function to decode JWT
           if (role === "admin") {
