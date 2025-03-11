@@ -19,7 +19,7 @@ export const CategoryContextProvider = ({ children }) => {
 
     try {
       return await axios.delete(
-        `https://e-prova.vercel.app/Category/delete-Category/${id}`,
+        `https://e-prova.vercel.app/Category/delete-category/${id}`,
         {
           headers: { token },
         }

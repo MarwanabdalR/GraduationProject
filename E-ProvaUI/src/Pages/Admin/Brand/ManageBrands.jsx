@@ -6,8 +6,10 @@ import { FaStopwatch20 } from "react-icons/fa6"; // Ensure correct import
 import { BrandContext } from "../../../Func/context/Admin/BrandContextProvider";
 import { useContext } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import BounceLoader from "react-spinners/BounceLoader";
 import toast from "react-hot-toast";
+import Loader from "../../../Components/Loader";
+import CantFetch from "../../../Components/CantFetch";
+import NoData from "../../../Components/NoData";
 
 export default function ManageBrands() {
   const { GetBrand, DeleteBrand } = useContext(BrandContext);
@@ -44,26 +46,20 @@ export default function ManageBrands() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <BounceLoader color="#e01515" loading speedMultiplier={-1} />
-      </div>
+      <Loader></Loader>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <h1>Can't Fetch Data</h1>
-      </div>
+      <CantFetch></CantFetch>
     );
   }
 
   return (
     <div>
       {data?.data?.data.length === 0 && (
-        <div className="flex justify-center items-center h-screen">
-          No Data to show
-        </div>
+        <NoData></NoData>
       )}
       {data?.data?.data.map((brand) => (
         <Fade key={brand._id} delay={200} duration={1000} fraction={0.5} direction="down">
