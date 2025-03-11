@@ -13,13 +13,7 @@ import { AuthContext } from "../AuthContextProvider";
         console.log("🚀 ~ GetBrand ~ error:", error);
       }
     }
-    async function CreateBrand() {
-      try {
-        return await axios.post("https://e-prova.vercel.app/Brand/create-brand");
-      } catch (error) {
-        console.log("🚀 ~ GetBrand ~ error:", error);
-      }
-    }
+
     async function DeleteBrand(id) {
     console.log("🚀 ~ DeleteBrand ~ id:", id)
 
@@ -34,6 +28,25 @@ import { AuthContext } from "../AuthContextProvider";
         console.log("🚀 ~ DeleteBrand ~ error:", error);
       }
     }
+
+    async function CreateBrand(img, name, categoryId) {
+      try {
+        const formData = new FormData();
+        formData.append("brand", img); 
+        formData.append("name", name);
+        formData.append("categories[0]", categoryId);
+    
+        return await axios.post("https://e-prova.vercel.app/Brand/create-brand", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            token, 
+          },
+        });
+      } catch (error) {
+        console.log("🚀 ~ CreateBrand ~ error:", error);
+      }
+    }
+    
 
     return (
       <BrandContext.Provider value={{ GetBrand, DeleteBrand, CreateBrand }}>

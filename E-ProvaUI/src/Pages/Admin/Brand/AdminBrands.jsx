@@ -1,6 +1,16 @@
+import { useContext } from "react";
 import { Fade } from "react-awesome-reveal";
+import { BrandContext } from "../../../Func/context/Admin/BrandContextProvider";
+import { useQuery } from "@tanstack/react-query";
 
 export default function AdminBrands() {
+  const { CreateBrand } = useContext(BrandContext);
+  useQuery(
+    {
+      queryKey: ["createBrand"],
+      queryFn: CreateBrand,
+    }
+  )
   return (
     <div>
             <Fade

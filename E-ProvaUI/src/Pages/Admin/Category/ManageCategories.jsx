@@ -2,6 +2,7 @@ import { Fade } from "react-awesome-reveal";
 import { AiFillDelete } from "react-icons/ai";
 
 export default function ManageCategories() {
+  
   return (
     <div>
       <Fade
