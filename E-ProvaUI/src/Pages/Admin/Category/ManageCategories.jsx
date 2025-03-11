@@ -23,25 +23,36 @@ export default function ManageCategories() {
     // Delete mutation
     const deleteMutation = useMutation({
       mutationFn: DeleteCategory,
-      onMutate: (id) => setDeletingId(id), // Set deleting ID before mutation starts
+      onMutate: (id) => {
+        setDeletingId(id);
+      },
       onSuccess: (_, id) => {
-        // Optimistically update cache after deletion
+        // Optimistically update the cache
         queryClient.setQueryData(["getCategory"], (oldData) => {
+          if (!oldData || !oldData.data?.categories) return oldData; // Ensure data exists
+    
           return {
             ...oldData,
             data: {
               ...oldData.data,
-              data: oldData.data.data.filter((category) => category._id !== id),
+              categories: oldData.data.categories.filter((category) => category._id !== id),
             },
           };
         });
-        toast.success("Brand deleted successfully");
+    
+        toast.success("Category deleted successfully");
+    
+        // Force re-fetch to sync with backend
+        queryClient.invalidateQueries(["getCategory"]);
       },
-      onError: (_, id) => {
-        toast.error("Failed to delete brand");
+      onError: () => {
+        toast.error("Failed to delete category");
       },
-      onSettled: () => setDeletingId(null), // Reset deleting ID when done
+      onSettled: () => {
+        setDeletingId(null);
+      },
     });
+    
 
   if (isLoading) {
     return <Loader></Loader>;
