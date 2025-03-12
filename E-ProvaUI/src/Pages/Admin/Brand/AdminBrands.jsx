@@ -30,7 +30,6 @@ export default function AdminBrands() {
       category: Yup.string().required("Category is required"),
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      console.log("Submitting form with values:", values);
       try {
         await CreateBrand(values.logo, values.title, values.category);
         toast.success("Brand created successfully");
@@ -47,7 +46,7 @@ export default function AdminBrands() {
     <div>
       <Fade delay={200} duration={1000} triggerOnce fraction={0.5} direction="left">
         <div>
-          <form key={Date.now()} className="container mx-auto p-0 mb-10" onSubmit={formik.handleSubmit}>
+          <form className="container mx-auto p-0 mb-10" onSubmit={formik.handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
                 {/* Brand Title */}

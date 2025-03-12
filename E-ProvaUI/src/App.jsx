@@ -32,6 +32,7 @@ import AddOffer from "./Pages/Admin/Offer/AddOffer";
 import { BrandContextProvider } from "./Func/context/Admin/BrandContextProvider";
 import ProtectedPath from "./Pages/Auth/ProtectedPath";
 import { CategoryContextProvider } from "./Func/context/Admin/CategoryContextProvider";
+import { ProductContextProvider } from "./Func/context/Admin/ProductContextProvider";
 
 const queryClient = new QueryClient();
 
@@ -227,8 +228,10 @@ function App() {
         <AuthProvider>
           <CategoryContextProvider>
             <BrandContextProvider>
-              <Toaster position="top-right" reverseOrder={false} />
-              <RouterProvider router={route} />
+              <ProductContextProvider>
+                <Toaster position="top-right" reverseOrder={false} />
+                <RouterProvider router={route} />
+              </ProductContextProvider>
             </BrandContextProvider>
           </CategoryContextProvider>
         </AuthProvider>

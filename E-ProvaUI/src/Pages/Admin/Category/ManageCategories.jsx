@@ -71,7 +71,7 @@ export default function ManageCategories() {
         setEditingCategory(null);
         queryClient.invalidateQueries(["getCategory"]);
       } catch (error) {
-      console.log("🚀 ~ onSubmit: ~ error:", error)
+        
       } finally {
         setSubmitting(false);
       }
@@ -149,6 +149,7 @@ export default function ManageCategories() {
                   className="w-full p-2 border rounded"
                   placeholder="Enter category name"
                   {...formik.getFieldProps("title")}
+                  disabled={formik.isSubmitting}
                 />
                 {formik.touched.title && formik.errors.title && <div className="text-red-500">{formik.errors.title}</div>}
               </div>
@@ -160,6 +161,7 @@ export default function ManageCategories() {
                   rows="6"
                   placeholder="Enter description"
                   {...formik.getFieldProps("description")}
+                  disabled={formik.isSubmitting}
                 />
                 {formik.touched.description && formik.errors.description && <div className="text-red-500">{formik.errors.description}</div>}
               </div>
@@ -168,7 +170,7 @@ export default function ManageCategories() {
             <div>
               <div className="bg-white shadow rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4">Sub-Category</h2>
-                <select name="category" className="w-full p-2 border rounded" {...formik.getFieldProps("category")}>
+                <select name="category" className="w-full p-2 border rounded" {...formik.getFieldProps("category")} disabled={formik.isSubmitting}>
                   <option value="" label="Select category" />
                   <option value="male" label="Male" />
                   <option value="female" label="Female" />
@@ -176,8 +178,8 @@ export default function ManageCategories() {
                 {formik.touched.category && formik.errors.category && <div className="text-red-500">{formik.errors.category}</div>}
               </div>
               <div className="bg-white shadow rounded-lg p-6 mt-4">
-                <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
-                  Update Category
+                <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded" disabled={formik.isSubmitting}>
+                  {formik.isSubmitting ? "Updating..." : "Update Category"}
                 </button>
               </div>
             </div>
@@ -187,3 +189,4 @@ export default function ManageCategories() {
     </div>
   );
 }
+

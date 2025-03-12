@@ -11,13 +11,11 @@ export const CategoryContextProvider = ({ children }) => {
     try {
       return await axios.get("https://e-prova.vercel.app/Category/categories");
     } catch (error) {
-      console.log("🚀 ~ GetCategory ~ error:", error);
+      toast.error(error.response.data.message);
     }
   }
 
   async function DeleteCategory(id) {
-    console.log("🚀 ~ DeleteCategory ~ id:", id);
-
     try {
       return await axios.delete(
         `https://e-prova.vercel.app/Category/delete-category/${id}`,
@@ -26,7 +24,7 @@ export const CategoryContextProvider = ({ children }) => {
         }
       );
     } catch (error) {
-      console.log("🚀 ~ DeleteCategory ~ error:", error);
+      toast.error(error.response.data.message);
     }
   }
 
@@ -43,10 +41,8 @@ export const CategoryContextProvider = ({ children }) => {
         }
       );
       toast.success("Category created successfully");
-      console.log("Response from API:", response.data);
       return response.data;
     } catch (error) {
-      console.log("🚀 ~ CreateCategory ~ error:", error);
       toast.error(error.response.data.message);
     }
   }
@@ -67,10 +63,8 @@ export const CategoryContextProvider = ({ children }) => {
         }
       );
       toast.success("Category updated successfully");
-      console.log("Response from API:", response.data);
       return response.data;
     } catch (error) {
-      console.log("🚀 ~ UpdateCategory ~ error:", error);
       toast.error(error.response.data.message);
     }
   }

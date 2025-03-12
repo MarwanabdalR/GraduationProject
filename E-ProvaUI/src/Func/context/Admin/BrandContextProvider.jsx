@@ -11,12 +11,11 @@ import toast from "react-hot-toast";
       try {
         return await axios.get("https://e-prova.vercel.app/Brand/all-brand")
       } catch (error) {
-        console.log("🚀 ~ GetBrand ~ error:", error);
+        toast.error(error.response.data.message);
       }
     }
 
     async function DeleteBrand(id) {
-    console.log("🚀 ~ DeleteBrand ~ id:", id)
 
       try {
         return await axios.delete(
@@ -26,7 +25,7 @@ import toast from "react-hot-toast";
           }
         );
       } catch (error) {
-        console.log("🚀 ~ DeleteBrand ~ error:", error);
+        toast.error(error.response.data.message);
       }
     }
 
@@ -43,14 +42,12 @@ import toast from "react-hot-toast";
           },
         });
       } catch (error) {
-        console.log("🚀 ~ CreateBrand ~ error:", error);
+        toast.error(error.response.data.message);
       }
     }
     
 
     async function UpdateBrand(id, { name, brand } = {}) {
-      console.log("🚀 ~ UpdateBrand ~ brand:", brand)
-      console.log("🚀 ~ UpdateBrand ~ name:", name)
       const formData = new FormData();
       formData.append("name", name);
       formData.append("brand", brand);
@@ -65,10 +62,8 @@ import toast from "react-hot-toast";
           }
         );
         toast.success("Brand updated successfully");
-        console.log("Response from API:", response.data);
         return response.data;
       } catch (error) {
-        console.log("🚀 ~ UpdateBrand ~ error:", error.response.data);
         toast.error(error.response.data.message);
       }
     }

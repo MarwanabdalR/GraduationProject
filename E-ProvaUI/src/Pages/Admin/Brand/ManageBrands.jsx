@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from "react";
-import { Fade } from "react-awesome-reveal";
 import { AiFillDelete } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { FaStopwatch20 } from "react-icons/fa6";
@@ -17,6 +16,7 @@ export default function ManageBrands() {
   const queryClient = useQueryClient();
   const [deletingId, setDeletingId] = useState(null);
   const [editingBrand, setEditingBrand] = useState(null);
+  const [formEnabled, setFormEnabled] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["getBrand"],
@@ -66,6 +66,7 @@ export default function ManageBrands() {
         toast.success("Brand updated successfully");
         resetForm();
         setEditingBrand(null);
+        setFormEnabled(false);
         queryClient.invalidateQueries(["getBrand"]);
       } catch (error) {
         toast.error("Error updating brand");
@@ -73,6 +74,7 @@ export default function ManageBrands() {
         setSubmitting(false);
       }
     },
+    enableReinitialize: true,
   });
 
   useEffect(() => {
@@ -81,6 +83,7 @@ export default function ManageBrands() {
         title: editingBrand.name,
         logo: editingBrand.logo,
       });
+      setFormEnabled(true);
     }
   }, [editingBrand]);
 
@@ -103,12 +106,12 @@ export default function ManageBrands() {
             </thead>
             <tbody className="divide-y divide-gray-200 text-center">
               <tr>
-                <td className="px-4 py-2 font-medium text-gray-900">{brand._id}</td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 font-medium text-gray-900 ">{brand._id}</td>
+                <td className="px-4 py-2 flex justify-center items-center">
                   <img src={brand.logo.url} alt="logo" className="w-14 h-14 rounded-md" />
                 </td>
                 <td className="px-4 py-2 text-gray-700">{brand.name}</td>
-                <td className="flex justify-center gap-5 px-4 py-2">
+                <td className="flex justify-center gap-5 px-4 py-2 flex justify-center items-center">
                   <button
                     onClick={() => deleteMutation.mutate(brand._id)}
                     disabled={deletingId === brand._id}
@@ -131,7 +134,7 @@ export default function ManageBrands() {
         </div>
       ))}
 
-      <form className="container mx-auto p-0 mb-10" onSubmit={formik.handleSubmit}>
+      <form className="container mx-auto p-0 mb-10" onSubmit={formik.handleSubmit} disabled={!formEnabled}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
             <div className="bg-white shadow rounded-lg p-6">
@@ -159,7 +162,7 @@ export default function ManageBrands() {
               <button
                 type="submit"
                 className="w-full bg-blue-600 text-white py-2 rounded"
-                disabled={formik.isSubmitting}
+                disabled={formik.isSubmitting || !formEnabled}
               >
                 {formik.isSubmitting ? "Updating..." : "Update Brand"}
               </button>
@@ -170,3 +173,4 @@ export default function ManageBrands() {
     </div>
   );
 }
+
