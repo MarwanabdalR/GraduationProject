@@ -3,7 +3,6 @@ import { Fade } from "react-awesome-reveal";
 import { CategoryContext } from "../../../Func/context/Admin/CategoryContextProvider";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import toast from "react-hot-toast";
 
 export default function AdminCategories() {
   const { CreateCategory } = useContext(CategoryContext);

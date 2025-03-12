@@ -59,9 +59,13 @@ export const CategoryContextProvider = ({ children }) => {
 
   async function UpdateCategory(id, { name, description, gender } = {}) {
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `https://e-prova.vercel.app/Category/update-category/${id}`,
-        { name, description, gender },
+        {
+            name,
+            description,
+            gender
+        },
         {
           headers: {
             token,
