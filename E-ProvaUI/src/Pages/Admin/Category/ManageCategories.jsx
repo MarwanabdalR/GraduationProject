@@ -20,39 +20,40 @@ export default function ManageCategories() {
   });
   console.log("🚀 ~ ManageCategories ~ data:", data);
 
-    // Delete mutation
-    const deleteMutation = useMutation({
-      mutationFn: DeleteCategory,
-      onMutate: (id) => {
-        setDeletingId(id);
-      },
-      onSuccess: (_, id) => {
-        // Optimistically update the cache
-        queryClient.setQueryData(["getCategory"], (oldData) => {
-          if (!oldData || !oldData.data?.categories) return oldData; // Ensure data exists
-    
-          return {
-            ...oldData,
-            data: {
-              ...oldData.data,
-              categories: oldData.data.categories.filter((category) => category._id !== id),
-            },
-          };
-        });
-    
-        toast.success("Category deleted successfully");
-    
-        // Force re-fetch to sync with backend
-        queryClient.invalidateQueries(["getCategory"]);
-      },
-      onError: () => {
-        toast.error("Failed to delete category");
-      },
-      onSettled: () => {
-        setDeletingId(null);
-      },
-    });
-    
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: DeleteCategory,
+    onMutate: (id) => {
+      setDeletingId(id);
+    },
+    onSuccess: (_, id) => {
+      // Optimistically update the cache
+      queryClient.setQueryData(["getCategory"], (oldData) => {
+        if (!oldData || !oldData.data?.categories) return oldData; // Ensure data exists
+
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            categories: oldData.data.categories.filter(
+              (category) => category._id !== id
+            ),
+          },
+        };
+      });
+
+      toast.success("Category deleted successfully");
+
+      // Force re-fetch to sync with backend
+      queryClient.invalidateQueries(["getCategory"]);
+    },
+    onError: () => {
+      toast.error("Failed to delete category");
+    },
+    onSettled: () => {
+      setDeletingId(null);
+    },
+  });
 
   if (isLoading) {
     return <Loader></Loader>;
@@ -139,6 +140,54 @@ export default function ManageCategories() {
           </Fade>
         </>
       ))}
+      <div className="container mx-auto p-0 my-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <div className="bg-white shadow rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4">Category Title *</h2>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="Enter product name"
+                readOnly
+                disabled
+              />
+            </div>
+
+            <div className="bg-white shadow rounded-lg p-6 mt-4">
+              <h2 className="text-xl font-semibold mb-4">Description *</h2>
+              <textarea
+                className="w-full p-2 border rounded"
+                rows="6"
+                placeholder="Enter long description"
+                readOnly
+                disabled
+              ></textarea>
+            </div>
+          </div>
+
+          <div>
+            <div className="bg-white shadow rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4">Sub-Category</h2>
+              <div className="space-y-2">
+                <label htmlFor="category" className="block text-gray-700">
+                  Category
+                </label>
+                <select
+                  name="category"
+                  className="w-full p-2 border rounded"
+                  readOnly
+                  disabled
+                >
+                  <option value="" label="Select category" />
+                  <option value="male" label="male" />
+                  <option value="female" label="female" />
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

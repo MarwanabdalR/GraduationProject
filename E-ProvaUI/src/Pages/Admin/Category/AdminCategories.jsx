@@ -1,6 +1,47 @@
+import { useContext } from "react";
 import { Fade } from "react-awesome-reveal";
+import { CategoryContext } from "../../../Func/context/Admin/CategoryContextProvider";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import toast from "react-hot-toast";
 
 export default function AdminCategories() {
+  const { CreateCategory } = useContext(CategoryContext);
+
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      description: "",
+      category: "",
+    },
+    validationSchema: Yup.object({
+      title: Yup.string()
+        .min(3, "Must be 3 characters or more")
+        .max(50, "Must be 50 characters or less")
+        .required("Required"),
+      description: Yup.string()
+        .min(10, "Must be 10 characters or more")
+        .max(200, "Must be 200 characters or less")
+        .required("Required"),
+      category: Yup.string().oneOf(["male", "female"]).required("Required"),
+    }),
+    onSubmit: async (values, 
+      { setSubmitting, 
+        resetForm
+       }) => {
+      console.log("Submitting form with values:", values); // Debugging log
+      try {
+        await CreateCategory(values.title, values.description, values.category);
+        console.log("Category created successfully"); // Debugging log
+        resetForm();
+      } catch (error) {
+        console.log("Error creating category:", error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
   return (
     <div>
       <Fade
@@ -13,7 +54,7 @@ export default function AdminCategories() {
         <div>
           <form
             className="container mx-auto p-0 mb-10"
-            onSubmit="return false;"
+            onSubmit={formik.handleSubmit}
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
@@ -25,8 +66,13 @@ export default function AdminCategories() {
                     type="text"
                     className="w-full p-2 border rounded"
                     placeholder="Enter product name"
-                    // onChange={(e) => setProductName(e.target.value)}
+                    {...formik.getFieldProps("title")}
                   />
+                  {formik.touched.title && formik.errors.title ? (
+                    <div className="text-red-500 text-sm">
+                      {formik.errors.title}
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="bg-white shadow rounded-lg p-6 mt-4">
@@ -35,48 +81,46 @@ export default function AdminCategories() {
                     className="w-full p-2 border rounded"
                     rows="6"
                     placeholder="Enter long description"
-                    // onChange={(e) => setLongDescription(e.target.value)}
+                    {...formik.getFieldProps("description")}
                   ></textarea>
+                  {formik.touched.description && formik.errors.description ? (
+                    <div className="text-red-500 text-sm">
+                      {formik.errors.description}
+                    </div>
+                  ) : null}
                 </div>
-
               </div>
 
               <div>
-
-
                 <div className="bg-white shadow rounded-lg p-6">
                   <h2 className="text-xl font-semibold mb-4">Sub-Category</h2>
                   <div className="space-y-2">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="category"
-                        value="men"
-                        className="mr-2"
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                      />
-                      Men
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="category"
-                        value="women"
-                        className="mr-2"
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                      />
-                      Women
-                    </label>
+                    <label htmlFor="category" className="block text-gray-700">Category</label>
+                    <select
+                      name="category"
+                      className="w-full p-2 border rounded"
+                      {...formik.getFieldProps("category")}
+                    >
+                      <option value="" label="Select category" />
+                      <option value="male" label="male" />
+                      <option value="female" label="female" />
+                    </select>
+                    {formik.touched.category && formik.errors.category ? (
+                      <div className="text-red-500 text-sm">
+                        {formik.errors.category}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
                 <div className="bg-white shadow rounded-lg p-6 mt-4">
                   <button
-                    type="button"
+                    type="submit"
                     className="w-full bg-blue-600 text-white py-2 rounded"
-                    disabled
+                    disabled={formik.isSubmitting}
+                    
                   >
-                    Add Category
+                    {formik.isSubmitting ? "Loading..." : "Add Category"}
                   </button>
                 </div>
               </div>
