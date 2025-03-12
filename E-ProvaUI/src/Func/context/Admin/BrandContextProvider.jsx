@@ -1,6 +1,7 @@
   import axios from "axios";
   import { createContext, useContext } from "react";
 import { AuthContext } from "../AuthContextProvider";
+import toast from "react-hot-toast";
   
   export const BrandContext = createContext();
   export const BrandContextProvider = ({ children }) => {
@@ -38,7 +39,6 @@ import { AuthContext } from "../AuthContextProvider";
     
         return await axios.post("https://e-prova.vercel.app/Brand/create-brand", formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
             token, 
           },
         });
@@ -48,8 +48,33 @@ import { AuthContext } from "../AuthContextProvider";
     }
     
 
+    async function UpdateBrand(id, { name, brand } = {}) {
+      console.log("🚀 ~ UpdateBrand ~ brand:", brand)
+      console.log("🚀 ~ UpdateBrand ~ name:", name)
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("brand", brand);
+      try {
+        const response = await axios.patch(
+          `https://e-prova.vercel.app/Brand/update-brand/${id}`,
+          formData,
+          {
+            headers: {
+              token,
+            },
+          }
+        );
+        toast.success("Brand updated successfully");
+        console.log("Response from API:", response.data);
+        return response.data;
+      } catch (error) {
+        console.log("🚀 ~ UpdateBrand ~ error:", error.response.data);
+        toast.error(error.response.data.message);
+      }
+    }
+
     return (
-      <BrandContext.Provider value={{ GetBrand, DeleteBrand, CreateBrand }}>
+      <BrandContext.Provider value={{ GetBrand, DeleteBrand, CreateBrand, UpdateBrand }}>
         {children}
       </BrandContext.Provider>
     );

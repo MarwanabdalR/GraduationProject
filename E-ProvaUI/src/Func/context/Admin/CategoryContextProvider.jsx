@@ -31,12 +31,6 @@ export const CategoryContextProvider = ({ children }) => {
   }
 
   async function CreateCategory(name, description, gender) {
-    console.log(
-      "CreateCategory function called with:",
-      name,
-      description,
-      gender
-    ); 
 
     try {
       const response = await axios.post(
