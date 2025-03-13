@@ -11,7 +11,6 @@ export const ProductContextProvider = ({ children }) => {
   async function GetProduct() {
     try {
       return await axios.get("https://e-prova.vercel.app/Product");
-      
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -31,6 +30,8 @@ export const ProductContextProvider = ({ children }) => {
       toast.error(error.response.data.message);
     }
   }
+
+  
 
   return (
     <ProductContext.Provider value={{ GetProduct, DeleteProduct }}>

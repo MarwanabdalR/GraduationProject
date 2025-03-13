@@ -77,53 +77,51 @@ export default function ManageProduct() {
         </thead>
         <tbody className="divide-y divide-gray-200 text-center">
           {data?.data?.products?.map((product) => (
-            <>
-              <tr key={product._id}>
-                <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
-                  {product._id}
-                </td>
-                <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
-                  {product.name}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                  {product.price} <BsCurrencyDollar className="inline-block" />
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                  {product.category?.name || "N/A"}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-gray-700">
-                  {Array.from(
-                    { length: Math.floor(product.averageRating) },
-                    (_, i) => (
-                      <AiFillStar
-                        key={i}
-                        className="inline-block text-yellow-500"
-                      />
-                    )
+            <tr key={product._id}>
+              <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
+                {product._id}
+              </td>
+              <td className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
+                {product.name}
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
+                {product.price} <BsCurrencyDollar className="inline-block" />
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
+                {product.category?.name || "N/A"}
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
+                {Array.from(
+                  { length: Math.floor(product.averageRating) },
+                  (_, i) => (
+                    <AiFillStar
+                      key={i}
+                      className="inline-block text-yellow-500"
+                    />
+                  )
+                )}
+                {product.averageRating % 1 !== 0 && (
+                  <AiOutlineStar className="inline-block text-yellow-500" />
+                )}
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap">
+                <button
+                  onClick={() => deleteMutation.mutate(product._id)}
+                  disabled={deletingId === product._id}
+                  className={`inline-block rounded-sm px-4 py-2 text-xs font-medium text-white ${
+                    deletingId === product._id
+                      ? "bg-gray-400"
+                      : "bg-red-500 hover:bg-red-700"
+                  }`}
+                >
+                  {deletingId === product._id ? (
+                    "Deleting..."
+                  ) : (
+                    <AiFillDelete size={20} />
                   )}
-                  {product.averageRating % 1 !== 0 && (
-                    <AiOutlineStar className="inline-block text-yellow-500" />
-                  )}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap">
-                  <button
-                    onClick={() => deleteMutation.mutate(product._id)}
-                    disabled={deletingId === product._id}
-                    className={`inline-block rounded-sm px-4 py-2 text-xs font-medium text-white ${
-                      deletingId === product._id
-                        ? "bg-gray-400"
-                        : "bg-red-500 hover:bg-red-700"
-                    }`}
-                  >
-                    {deletingId === product._id ? (
-                      "Deleting..."
-                    ) : (
-                      <AiFillDelete size={20} />
-                    )}
-                  </button>
-                </td>
-              </tr>
-            </>
+                </button>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
