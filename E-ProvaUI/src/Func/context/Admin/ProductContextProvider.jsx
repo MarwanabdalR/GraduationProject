@@ -10,8 +10,8 @@ export const ProductContextProvider = ({ children }) => {
 
   async function GetProduct() {
     try {
-      const response = await axios.get("https://e-prova.vercel.app/Product");
-      return response;
+      return await axios.get("https://e-prova.vercel.app/Product");
+      
     } catch (error) {
       toast.error(error.response.data.message);
     }
