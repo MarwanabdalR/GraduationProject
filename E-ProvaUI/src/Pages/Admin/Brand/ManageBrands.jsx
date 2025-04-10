@@ -111,7 +111,7 @@ export default function ManageBrands() {
                   <img src={brand.logo.url} alt="logo" className="w-14 h-14 rounded-md" />
                 </td>
                 <td className="px-4 py-2 text-gray-700">{brand.name}</td>
-                <td className="flex justify-center gap-5 px-4 py-2 flex justify-center items-center">
+                <td className="flex justify-center gap-5 px-4 py-2 items-center">
                   <button
                     onClick={() => deleteMutation.mutate(brand._id)}
                     disabled={deletingId === brand._id}

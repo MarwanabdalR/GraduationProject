@@ -71,6 +71,7 @@ export default function ManageCategories() {
         setEditingCategory(null);
         queryClient.invalidateQueries(["getCategory"]);
       } catch (error) {
+        console.log("🚀 ~ onSubmit: ~ error:", error)
         
       } finally {
         setSubmitting(false);
