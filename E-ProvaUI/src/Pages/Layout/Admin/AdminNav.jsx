@@ -1,9 +1,11 @@
 import img from "../../../../public/LogoDesign.png";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { HiBars3CenterLeft } from "react-icons/hi2";
-import { MdInsertComment } from "react-icons/md";
-import { FaUsersCog, FaGift } from "react-icons/fa";
+import { MdInsertComment} from "react-icons/md";
+import { IoMdLogOut } from "react-icons/io";
+import { FaHome } from "react-icons/fa";
+import { AuthContext } from "../../../Func/context/AuthContextProvider";
 import {
   Drawer,
   IconButton,
@@ -17,6 +19,8 @@ export default function AdminNav() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +38,11 @@ export default function AdminNav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/e-prova/login");
+  };
 
   return (
     <>
@@ -125,32 +134,37 @@ export default function AdminNav() {
               </li>
             </ul>
             <div className="flex items-center gap-4">
+              {/* home */}
+              <Link
+                to="/e-prova/home"
+                className="text-black hover:bg-black hover:text-white p-2 rounded-full transition-all duration-700"
+              >
+                <FaHome size={20} />
+              </Link>
+              {/* review */}
               <Link
                 to="/e-prova/admin/reviews"
                 className="text-black hover:bg-black hover:text-white p-2 rounded-full transition-all duration-700"
               >
                 <MdInsertComment size={20} />
               </Link>
-              <Link
-                to="/e-prova/admin/offers"
+              {/* logout */}
+              <button
+                onClick={handleLogout}
                 className="text-black hover:bg-black hover:text-white p-2 rounded-full transition-all duration-700"
               >
-                <FaGift size={20} />
-              </Link>
-              <Link
-                to="/e-prova/admin/add-admin"
-                className="text-black hover:bg-black hover:text-white p-2 rounded-full transition-all duration-700"
-              >
-                <FaUsersCog size={20} />
-              </Link>
+                <IoMdLogOut size={20} />
+              </button>
             </div>
           </div>
+          {/* drawer */}
           <Drawer
             anchor="left"
             open={isDrawerOpen}
             onClose={() => setIsDrawerOpen(false)}
           >
             <List>
+              {/* dashboard */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -159,14 +173,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Dashboard" />
               </ListItem>
-              <ListItem
-                button
-                onClick={() => setIsDrawerOpen(false)}
-                component={Link}
-                to="/e-prova/admin/add-admin"
-              >
-                <ListItemText primary="Add Admin" />
-              </ListItem>
+
+              {/* products */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -175,6 +183,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Products" />
               </ListItem>
+
+              {/* manage products */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -183,6 +193,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Products Management" />
               </ListItem>
+
+              {/* categories */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -191,6 +203,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Categories" />
               </ListItem>
+
+              {/* manage categories */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -199,6 +213,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Categories Management" />
               </ListItem>
+
+              {/* brands */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -207,6 +223,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Brands" />
               </ListItem>
+
+              {/* manage brands */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -215,6 +233,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Brands Management" />
               </ListItem>
+
+              {/* orders */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -223,6 +243,8 @@ export default function AdminNav() {
               >
                 <ListItemText primary="Orders" />
               </ListItem>
+
+              {/* reviews */}
               <ListItem
                 button
                 onClick={() => setIsDrawerOpen(false)}
@@ -230,14 +252,6 @@ export default function AdminNav() {
                 to="/e-prova/admin/reviews"
               >
                 <ListItemText primary="Reviews" />
-              </ListItem>
-              <ListItem
-                button
-                onClick={() => setIsDrawerOpen(false)}
-                component={Link}
-                to="/e-prova/admin/offers"
-              >
-                <ListItemText primary="Offers" />
               </ListItem>
             </List>
           </Drawer>

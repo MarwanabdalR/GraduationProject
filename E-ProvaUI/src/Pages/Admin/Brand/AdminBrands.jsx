@@ -35,7 +35,7 @@ export default function AdminBrands() {
         toast.success("Brand created successfully");
         resetForm();
       } catch (error) {
-        toast.error("Error creating brand");
+        toast.error("Error creating brand", error);
       } finally {
         setSubmitting(false);
       }

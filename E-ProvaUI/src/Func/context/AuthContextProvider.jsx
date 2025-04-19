@@ -6,7 +6,13 @@ import { useCookies } from "react-cookie";
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-  const [cookies, setCookie] = useCookies(["accessToken"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
+
+  const logout = () => {
+    removeCookie("accessToken", { path: "/" });
+    window.sessionStorage.clear();
+  };
+
   async function Register(username, email, password, confirmPassword, gender) {
     try {
       const { data } = await axios.post(
@@ -39,7 +45,7 @@ export const AuthProvider = ({ children }) => {
       toast.success(data.message);
       setCookie("accessToken", data.accessToken, {
         path: "/",
-        maxAge: 86400, 
+        maxAge: 86400,
       });
       return data;
     } catch (error) {
@@ -87,7 +93,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ Register, Login, ForgetPassword, ResetCode, cookies }}
+      value={{ Register, Login, ForgetPassword, ResetCode, cookies, logout }}
     >
       {children}
     </AuthContext.Provider>

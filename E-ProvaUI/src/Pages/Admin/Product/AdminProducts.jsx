@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { AuthContext } from "../../../Func/context/AuthContextProvider";
+import { ClipLoader } from "react-spinners";
 
 export default function AdminProducts() {
   const { GetCategory } = useContext(CategoryContext);
@@ -252,7 +253,7 @@ export default function AdminProducts() {
 
               {/* sub images */}
               <div>
-                <h2 className="text-xl font-semibold mb-4">Sub Images *</h2>
+                <h2 className="text-xl font-semibold mb-4">Sub Images * <span className="text-sm text-gray-500">(max 5)</span> </h2>
                 <input
                   type="file"
                   accept="image/*"
@@ -460,7 +461,7 @@ export default function AdminProducts() {
                 className="w-full bg-blue-600 text-white py-2 rounded"
                 disabled={formik.isSubmitting}
               >
-                Add Product
+                {formik.isSubmitting ? <ClipLoader color="white" size={20} /> : "Create Product"}
               </button>
             </div>
           </div>

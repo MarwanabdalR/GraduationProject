@@ -15,20 +15,23 @@ import axios from "axios";
 import { AuthContext } from "../../../Func/context/AuthContextProvider";
 import { BrandContext } from "../../../Func/context/Admin/BrandContextProvider";
 import { CategoryContext } from "../../../Func/context/Admin/CategoryContextProvider";
+import NoData from "../../../Components/NoData";
+import { ClipLoader } from "react-spinners";
 
 export default function ManageProduct() {
   const [editingProduct, setEditingProduct] = useState(null); // Track the product being edited
   const [isFormVisible, setIsFormVisible] = useState(false); // Track form visibility
+  const [deletingId, setDeletingId] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { GetProduct, DeleteProduct } = useContext(ProductContext);
   const { GetBrand } = useContext(BrandContext);
   const { GetCategory } = useContext(CategoryContext);
   const { cookies } = useContext(AuthContext);
   const token = cookies.accessToken;
   const queryClient = useQueryClient();
-  const [deletingId, setDeletingId] = useState(null);
 
   // Fetch products
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["GetProduct"],
     queryFn: () => GetProduct(),
   });
@@ -61,10 +64,9 @@ export default function ManageProduct() {
           },
         };
       });
-      toast.success("Product deleted successfully");
     },
     onError: () => {
-      toast.error("Failed to delete product");
+      console.log("Failed to delete product");
     },
     onSettled: () => setDeletingId(null), // Reset deleting ID when done
   });
@@ -91,21 +93,24 @@ export default function ManageProduct() {
 
       // Append only the fields that are provided
       if (name !== undefined) formData.append("name", name);
-      if (description !== undefined)
-        formData.append("description", description);
+      if (description !== undefined) formData.append("description", description);
       if (price !== undefined) formData.append("price", price);
       if (category !== undefined) formData.append("category", category); // Send only the category ID
       if (stock !== undefined) formData.append("stock", stock);
       if (discount !== undefined) formData.append("discount", discount);
       if (brandId !== undefined) formData.append("brandId", brandId); // Send only the brand ID
-      if (defaultImage !== undefined)
+      if (defaultImage instanceof File) {
         formData.append("defaultImage", defaultImage);
-
-      if (images !== undefined) {
+      }
+      
+      if (Array.isArray(images)) {
         images.forEach((image) => {
-          formData.append("images", image);
+          if (image instanceof File) {
+            formData.append("images", image);
+          }
         });
       }
+      
 
       if (attributes !== undefined) {
         formData.append("attributes", JSON.stringify(attributes));
@@ -136,7 +141,11 @@ export default function ManageProduct() {
   }
 
   return (
+    <>
+    {data?.data?.products.length === 0 && <NoData />}
+
     <div className="overflow-x-auto">
+      {/* Table */}
       <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
         <thead className="ltr:text-left rtl:text-right">
           <tr>
@@ -151,6 +160,9 @@ export default function ManageProduct() {
             </th>
             <th className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
               Category
+            </th>
+            <th className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
+              Brand
             </th>
             <th className="px-4 py-2 font-medium whitespace-nowrap text-gray-900">
               Rate
@@ -174,6 +186,9 @@ export default function ManageProduct() {
               </td>
               <td className="px-4 py-2 whitespace-nowrap text-gray-700">
                 {product.category?.name || "N/A"}
+              </td>
+              <td className="px-4 py-2 whitespace-nowrap text-gray-700">
+                {product.brandId?.name || "N/A"}
               </td>
               <td className="px-4 py-2 whitespace-nowrap text-gray-700">
                 {Array.from(
@@ -227,6 +242,8 @@ export default function ManageProduct() {
           ))}
         </tbody>
       </table>
+
+      {/* edit product */}
 
       {isFormVisible && (
         <div className="container mx-auto p-0 mb-10">
@@ -505,31 +522,36 @@ export default function ManageProduct() {
               {/* Submit Button */}
               <div className="bg-white shadow rounded-lg p-6 mt-4">
                 <button
+                  disabled={isUpdating}
                   type="button"
                   className="w-full bg-blue-600 text-white py-2 rounded"
                   onClick={async () => {
+                    setIsUpdating(true);
                     try {
                       await UpdateProduct({
                         id: editingProduct._id,
                         name: editingProduct.name,
                         description: editingProduct.description,
                         price: editingProduct.price,
-                        category: editingProduct.category, // Send only the category ID
+                        category: editingProduct.category,
                         stock: editingProduct.stock,
                         attributes: editingProduct.attributes,
                         defaultImage: editingProduct.defaultImage,
                         images: editingProduct.images,
-                        brandId: editingProduct.brandId, // Send only the brand ID
+                        brandId: editingProduct.brandId,
                         discount: editingProduct.discount,
                       });
-                      toast.success("Product updated successfully");
-                      setIsFormVisible(false); // Hide the form after successful update
+                      setIsFormVisible(false);
                     } catch (error) {
-                      toast.error("Failed to update product");
+                      console.log("🚀 ~ onClick={ ~ error:", error)
+                    }
+                    finally {
+                      setIsUpdating(false);
+                      refetch();
                     }
                   }}
                 >
-                  Update Product
+                  {isUpdating ? <ClipLoader color="#fff" size={20} /> : "Update Product"}
                 </button>
               </div>
             </div>
@@ -537,5 +559,6 @@ export default function ManageProduct() {
         </div>
       )}
     </div>
+    </>
   );
 }

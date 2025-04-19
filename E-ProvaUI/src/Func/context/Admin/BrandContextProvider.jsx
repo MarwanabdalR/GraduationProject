@@ -15,20 +15,6 @@ import toast from "react-hot-toast";
       }
     }
 
-    async function DeleteBrand(id) {
-
-      try {
-        return await axios.delete(
-          `https://e-prova.vercel.app/Brand/delete-brand/${id}`,
-          {
-            headers: { token },
-          }
-        );
-      } catch (error) {
-        toast.error(error.response.data.message);
-      }
-    }
-
     async function CreateBrand(img, name, categoryId) {
       try {
         const formData = new FormData();
@@ -50,7 +36,10 @@ import toast from "react-hot-toast";
     async function UpdateBrand(id, { name, brand } = {}) {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("brand", brand);
+      if (brand instanceof File) {
+        formData.append("brand", brand);
+      }
+      
       try {
         const response = await axios.patch(
           `https://e-prova.vercel.app/Brand/update-brand/${id}`,
@@ -69,7 +58,7 @@ import toast from "react-hot-toast";
     }
 
     return (
-      <BrandContext.Provider value={{ GetBrand, DeleteBrand, CreateBrand, UpdateBrand }}>
+      <BrandContext.Provider value={{ GetBrand, CreateBrand, UpdateBrand }}>
         {children}
       </BrandContext.Provider>
     );

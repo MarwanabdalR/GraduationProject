@@ -3,16 +3,20 @@ import { AiFillDelete } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { FaStopwatch20 } from "react-icons/fa6";
 import { BrandContext } from "../../../Func/context/Admin/BrandContextProvider";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import toast from "react-hot-toast";
 import Loader from "../../../Components/Loader";
 import CantFetch from "../../../Components/CantFetch";
 import NoData from "../../../Components/NoData";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { AuthContext } from "../../../Func/context/AuthContextProvider";
 
 export default function ManageBrands() {
-  const { GetBrand, DeleteBrand, UpdateBrand } = useContext(BrandContext);
+  const { GetBrand, UpdateBrand } = useContext(BrandContext);
+  const { cookies } = useContext(AuthContext);
+  const token = cookies.accessToken;
   const queryClient = useQueryClient();
   const [deletingId, setDeletingId] = useState(null);
   const [editingBrand, setEditingBrand] = useState(null);
@@ -23,26 +27,31 @@ export default function ManageBrands() {
     queryFn: GetBrand,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: DeleteBrand,
-    onMutate: (id) => setDeletingId(id),
-    onSuccess: (_, id) => {
-      queryClient.setQueryData(["getBrand"], (oldData) => {
-        return {
-          ...oldData,
-          data: {
-            ...oldData.data,
-            data: oldData.data.data.filter((brand) => brand._id !== id),
-          },
-        };
-      });
-      toast.success("Brand deleted successfully");
-    },
-    onError: () => {
-      toast.error("Failed to delete brand");
-    },
-    onSettled: () => setDeletingId(null),
-  });
+  useEffect(() => {
+    const deleteBrand = async (id) => {
+      if (!id) return;
+      
+      try {
+        setDeletingId(id);
+        await axios.delete(
+          `https://e-prova.vercel.app/Brand/delete-brand/${id}`,
+          {
+            headers: { token },
+          }
+        );
+        queryClient.invalidateQueries(["getBrand"]);
+        toast.success("Brand deleted successfully");
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to delete brand");
+      } finally {
+        setDeletingId(null);
+      }
+    };
+
+    if (deletingId) {
+      deleteBrand(deletingId);
+    }
+  }, [deletingId, token, queryClient]);
 
   const formik = useFormik({
     initialValues: {
@@ -63,12 +72,12 @@ export default function ManageBrands() {
           name: values.title,
           brand: values.logo || editingBrand.logo,
         });
-        toast.success("Brand updated successfully");
         resetForm();
         setEditingBrand(null);
         setFormEnabled(false);
         queryClient.invalidateQueries(["getBrand"]);
       } catch (error) {
+        console.log(error);
         toast.error("Error updating brand");
       } finally {
         setSubmitting(false);
@@ -106,20 +115,32 @@ export default function ManageBrands() {
             </thead>
             <tbody className="divide-y divide-gray-200 text-center">
               <tr>
-                <td className="px-4 py-2 font-medium text-gray-900 ">{brand._id}</td>
+                <td className="px-4 py-2 font-medium text-gray-900">
+                  {brand._id}
+                </td>
                 <td className="px-4 py-2 flex justify-center items-center">
-                  <img src={brand.logo.url} alt="logo" className="w-14 h-14 rounded-md" />
+                  <img
+                    src={brand.logo.url}
+                    alt="logo"
+                    className="w-14 h-14 rounded-md"
+                  />
                 </td>
                 <td className="px-4 py-2 text-gray-700">{brand.name}</td>
                 <td className="flex justify-center gap-5 px-4 py-2 items-center">
                   <button
-                    onClick={() => deleteMutation.mutate(brand._id)}
+                    onClick={() => setDeletingId(brand._id)}
                     disabled={deletingId === brand._id}
                     className={`px-4 py-2 text-xs font-medium text-white rounded-lg ${
-                      deletingId === brand._id ? "bg-gray-400" : "bg-red-500 hover:bg-red-700"
+                      deletingId === brand._id
+                        ? "bg-gray-400"
+                        : "bg-red-500 hover:bg-red-700"
                     }`}
                   >
-                    {deletingId === brand._id ? <FaStopwatch20 size={20} /> : <AiFillDelete size={20} />}
+                    {deletingId === brand._id ? (
+                      <FaStopwatch20 size={20} />
+                    ) : (
+                      <AiFillDelete size={20} />
+                    )}
                   </button>
                   <button
                     onClick={() => setEditingBrand(brand)}
@@ -134,42 +155,53 @@ export default function ManageBrands() {
         </div>
       ))}
 
-      <form className="container mx-auto p-0 mb-10" onSubmit={formik.handleSubmit} disabled={!formEnabled}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Brand Title *</h2>
-              <input
-                type="text"
-                className="w-full p-2 border rounded"
-                placeholder="Enter brand name"
-                {...formik.getFieldProps("title")}
-              />
-              {formik.touched.title && formik.errors.title && <div className="text-red-500">{formik.errors.title}</div>}
+      {/* edit brand */}
+      {editingBrand && (
+        <form
+          className="container mx-auto p-0 mb-10"
+          onSubmit={formik.handleSubmit}
+          disabled={!formEnabled}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <div className="bg-white shadow rounded-lg p-6">
+                <h2 className="text-xl font-semibold mb-4">Brand Title *</h2>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded"
+                  placeholder="Enter brand name"
+                  {...formik.getFieldProps("title")}
+                />
+                {formik.touched.title && formik.errors.title && (
+                  <div className="text-red-500">{formik.errors.title}</div>
+                )}
+              </div>
+              <div className="bg-white shadow rounded-lg p-6 mt-4">
+                <h2 className="text-xl font-semibold mb-4">Brand Logo *</h2>
+                <input
+                  type="file"
+                  className="w-full p-2 border rounded"
+                  accept="image/*"
+                  onChange={(e) =>
+                    formik.setFieldValue("logo", e.target.files[0])
+                  }
+                />
+              </div>
             </div>
-            <div className="bg-white shadow rounded-lg p-6 mt-4">
-              <h2 className="text-xl font-semibold mb-4">Brand Logo *</h2>
-              <input
-                type="file"
-                className="w-full p-2 border rounded"
-                accept="image/*"
-                onChange={(e) => formik.setFieldValue("logo", e.target.files[0])}
-              />
+            <div>
+              <div className="bg-white shadow rounded-lg p-6 mt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded"
+                  disabled={formik.isSubmitting || !formEnabled}
+                >
+                  {formik.isSubmitting ? "Updating..." : "Update Brand"}
+                </button>
+              </div>
             </div>
           </div>
-          <div>
-            <div className="bg-white shadow rounded-lg p-6 mt-4">
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded"
-                disabled={formik.isSubmitting || !formEnabled}
-              >
-                {formik.isSubmitting ? "Updating..." : "Update Brand"}
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   );
 }

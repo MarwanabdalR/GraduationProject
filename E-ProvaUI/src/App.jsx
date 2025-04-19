@@ -18,7 +18,6 @@ import ResetCode from "./Pages/Auth/RsetCode";
 import AdminLayout from "./Pages/Layout/Admin/AdminLayout";
 import Dashboard from "./Pages/Admin/Dashboard";
 // Admin
-import ManageAdmin from "./Pages/Admin/ManageAdmin";
 import AdminOrders from "./Pages/Admin/AdminOrders";
 import AdminReviews from "./Pages/Admin/AdminReviews";
 import ManageProduct from "./Pages/Admin/Product/ManageProduct";
@@ -27,8 +26,6 @@ import AdminCategories from "./Pages/Admin/Category/AdminCategories";
 import ManageCategories from "./Pages/Admin/Category/ManageCategories";
 import AdminBrands from "./Pages/Admin/Brand/AdminBrands";
 import ManageBrands from "./Pages/Admin/Brand/ManageBrands";
-import AdminOffer from "./Pages/Admin/Offer/AdminOffer";
-import AddOffer from "./Pages/Admin/Offer/AddOffer";
 import { BrandContextProvider } from "./Func/context/Admin/BrandContextProvider";
 import ProtectedPath from "./Pages/Auth/ProtectedPath";
 import { CategoryContextProvider } from "./Func/context/Admin/CategoryContextProvider";
@@ -127,14 +124,6 @@ function App() {
           ),
         },
         {
-          path: "/e-prova/admin/add-admin",
-          element: (
-            <ProtectedPath>
-              <ManageAdmin />
-            </ProtectedPath>
-          ),
-        },
-        {
           path: "/e-prova/admin/products/manage",
           element: (
             <ProtectedPath>
@@ -195,22 +184,6 @@ function App() {
           element: (
             <ProtectedPath>
               <AdminReviews />
-            </ProtectedPath>
-          ),
-        },
-        {
-          path: "/e-prova/admin/offers",
-          element: (
-            <ProtectedPath>
-              <AdminOffer />
-            </ProtectedPath>
-          ),
-        },
-        {
-          path: "/e-prova/admin/add-offer",
-          element: (
-            <ProtectedPath>
-              <AddOffer />
             </ProtectedPath>
           ),
         },
