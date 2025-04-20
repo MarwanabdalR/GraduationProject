@@ -45,49 +45,49 @@ const SaleTimer = () => {
   return (
     <div className="overflow-hidden -mx-3 -mt-3">
       <div
-        className="relative bg-black py-6 lg:py-10 h-full bg-cover bg-no-repeat bg-center flex items-center between"
+        className="relative bg-black py-4 sm:py-6 lg:py-10 h-full bg-cover bg-no-repeat bg-center flex items-center"
         style={{ backgroundImage: `url(${saleTimerBackground})` }}
       >
-        <div className="container flex flex-col lg:flex-row md:flex-row justify-between between items-center px-6 sm:px-10 lg:px-12">
+        <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 lg:px-8 gap-4 sm:gap-6 lg:gap-8">
           <Fade direction="left" triggerOnce>
-            <div>
-            <div className="text-white my-3 md:text-xl font-semibold sm:mb-8 lg:mb-0">
-              DON'T MISS{" "}
-              <span className="text-yellow-400 font-bold">70% OFF</span> ALL
-              SALE! NO CODE NEEDED!
-            </div>
+            <div className="text-center sm:text-left">
+              <div className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-4 sm:mb-0">
+                DON'T MISS{" "}
+                <span className="text-yellow-400 font-bold">70% OFF</span> ALL
+                SALE! NO CODE NEEDED!
+              </div>
             </div>
           </Fade>
 
-        <div>
-          <div className="flex items-center gap-3 sm:gap-6 lg:gap-10">
-            <Fade cascade direction="right" triggerOnce>
-              {Object.entries(timeLeft).map(([unit, value]) => (
-                <div
-                  key={unit}
-                  className="bg-white text-black rounded-full py-1 px-2 flex flex-col items-center justify-center text-center shadow-md sm:p-2"
-                >
-                  <span className="text-sm sm:text-xl font-bold md:font-semibold md:text-xl xl:text-xl xl:font-normal">{value}</span>
-                  <span className="text-xs sm:text-sm md:font-semibold md:text-xl xl:text-sm xl:font-semibold ">
-                    {unit.charAt(0).toUpperCase() + unit.slice(1)}
-                  </span>
-                </div>
-              ))}
-            </Fade>
-            <button
-              className="text-white font-semibold text-xs md:text-sm p-1 md:px-4 md:py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center overflow-hidden border border-white"
-              onMouseEnter={() => handleMouseEnter("View All Details")}
-              onMouseLeave={handleMouseLeave}
-            >
-              <span className="p-2 md:p-1">View All Details</span>
-              {hoveredButton === "View All Details" ? (
-                <GoArrowRight className="inline-block ml-1 md:ml-2" />
-              ) : (
-                <GoArrowUpRight className="inline-block ml-1 md:ml-2" />
-              )}
-            </button>
+          <div>
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
+              <Fade cascade direction="right" triggerOnce>
+                {Object.entries(timeLeft).map(([unit, value]) => (
+                  <div
+                    key={unit}
+                    className="bg-white text-black rounded-full p-2 sm:p-3 lg:p-4 flex flex-col items-center justify-center text-center shadow-md min-w-[60px] sm:min-w-[70px] lg:min-w-[80px]"
+                  >
+                    <span className="text-base sm:text-lg lg:text-xl font-bold">{value}</span>
+                    <span className="text-xs sm:text-sm lg:text-base font-medium">
+                      {unit.charAt(0).toUpperCase() + unit.slice(1)}
+                    </span>
+                  </div>
+                ))}
+              </Fade>
+              <button
+                className="text-white font-semibold text-xs sm:text-sm lg:text-base px-3 py-2 sm:px-4 sm:py-2 lg:px-6 lg:py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center border border-white whitespace-nowrap"
+                onMouseEnter={() => handleMouseEnter("View All Details")}
+                onMouseLeave={handleMouseLeave}
+              >
+                <span>View All Details</span>
+                {hoveredButton === "View All Details" ? (
+                  <GoArrowRight className="inline-block ml-1 sm:ml-2" />
+                ) : (
+                  <GoArrowUpRight className="inline-block ml-1 sm:ml-2" />
+                )}
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </div>

@@ -1,9 +1,10 @@
 import img from "../../../public/LogoDesign.png";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { HiBars3CenterLeft } from "react-icons/hi2";
 import { MdOutlineShoppingBasket } from "react-icons/md";
 import { CiSearch, CiStar } from "react-icons/ci";
+import { IoMdLogOut } from "react-icons/io";
 import {
   Drawer,
   IconButton,
@@ -13,14 +14,33 @@ import {
   Typography,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import { WishListContext } from "../../Func/context/WishListContextProvider";
+import { useQuery } from "@tanstack/react-query";
+import { AuthContext } from "../../Func/context/AuthContextProvider";
 
 
 export default function Nav() {
+  const { GetWishList } = useContext(WishListContext);
+  const { cookies, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [active, setActive] = useState("login");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const { data } = useQuery({
+    queryKey: ["WishList"],
+    queryFn: () => GetWishList(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0
+  });
+
+  const handleLogout = () => {
+    logout();
+    navigate("/e-prova/login");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,80 +131,96 @@ export default function Nav() {
                     <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
                       <CiSearch className="m-1 cursor-pointer " size={20} />
                     </div>
-                    <Link to="/e-prova/wishlist">
-                      <span className="relative inline-block">
-                        <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                          <CiStar className="m-1 cursor-pointer " size={20} />
-                          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                            5
+                    {cookies.accessToken && (
+                      <>
+                        <Link to="/e-prova/wishlist">
+                          <span className="relative inline-block">
+                            <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
+                              <CiStar className="m-1 cursor-pointer " size={20} />
+                              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                                {data?.data?.wishList?.products?.length || 0}
+                              </span>
+                            </div>
                           </span>
-                        </div>
-                      </span>
-                    </Link>
-                    <Link to="/e-prova/cart">
-                      <span className="relative inline-block">
-                        <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                          <MdOutlineShoppingBasket
-                            className="m-1 cursor-pointer "
-                            size={20}
-                          ></MdOutlineShoppingBasket>
-                          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                            5
+                        </Link>
+                        <Link to="/e-prova/cart">
+                          <span className="relative inline-block">
+                            <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
+                              <MdOutlineShoppingBasket
+                                className="m-1 cursor-pointer "
+                                size={20}
+                              ></MdOutlineShoppingBasket>
+                              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                                5
+                              </span>
+                            </div>
                           </span>
-                        </div>
-                      </span>
-                    </Link>
+                        </Link>
+                      </>
+                    )}
+                    {cookies.accessToken && (
+                      <div 
+                        onClick={handleLogout}
+                        className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md"
+                      >
+                        <IoMdLogOut className="m-1 cursor-pointer" size={20} />
+                      </div>
+                    )}
                   </div>
 
                   {/* Login & Register Buttons */}
                   <div className="hidden md:flex gap-2">
-                    <div className="relative w-52 h-12 bg-gray-100 rounded-full flex items-center p-1">
-                      {/* Sliding Background */}
-                      <div
-                        className={`absolute left-1 top-1 bottom-1 w-24 rounded-full bg-white transition-all duration-300 ${
-                          active === "register"
-                            ? "translate-x-[100%]"
-                            : "translate-x-0"
-                        }`}
-                      ></div>
+                    {!cookies.accessToken && (
+                      <div className="relative w-52 h-12 bg-gray-100 rounded-full flex items-center p-1">
+                        {/* Sliding Background */}
+                        <div
+                          className={`absolute left-1 top-1 bottom-1 w-24 rounded-full bg-white transition-all duration-300 ${
+                            active === "register"
+                              ? "translate-x-[100%]"
+                              : "translate-x-0"
+                          }`}
+                        ></div>
 
-                      <button
-                        className={`w-1/2 text-center text-sm font-medium z-10 ${
-                          active === "login" ? "text-black" : "text-gray-500"
-                        }`}
-                        onMouseEnter={() => setActive("login")}
-                      >
-                        <Link className="text-xs" to="/e-prova/login">
-                          LOGIN
-                        </Link>
-                      </button>
+                        <button
+                          className={`w-1/2 text-center text-sm font-medium z-10 ${
+                            active === "login" ? "text-black" : "text-gray-500"
+                          }`}
+                          onMouseEnter={() => setActive("login")}
+                        >
+                          <Link className="text-xs" to="/e-prova/login">
+                            LOGIN
+                          </Link>
+                        </button>
 
-                      {/* Register Button */}
-                      <button
-                        className={`w-1/2 text-center text-sm font-medium z-10 ${
-                          active === "register" ? "text-black" : "text-gray-500"
-                        }`}
-                        onMouseEnter={() => setActive("register")}
-                      >
-                        <Link to="/e-prova/register" className="text-xs">
-                          REGISTER
-                        </Link>
-                      </button>
-                    </div>
+                        {/* Register Button */}
+                        <button
+                          className={`w-1/2 text-center text-sm font-medium z-10 ${
+                            active === "register" ? "text-black" : "text-gray-500"
+                          }`}
+                          onMouseEnter={() => setActive("register")}
+                        >
+                          <Link to="/e-prova/register" className="text-xs">
+                            REGISTER
+                          </Link>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Link to="/e-prova/cart" className="md:hidden lg:hidden">
-                  <span className="relative inline-block">
-                    <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                      <MdOutlineShoppingBasket
-                        className="m-1 cursor-pointer "
-                        size={20}
-                      ></MdOutlineShoppingBasket>
-                      <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                        5
-                      </span>
-                    </div>
-                  </span>
+                  {cookies.accessToken && (
+                    <span className="relative inline-block">
+                      <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
+                        <MdOutlineShoppingBasket
+                          className="m-1 cursor-pointer "
+                          size={20}
+                        ></MdOutlineShoppingBasket>
+                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                          5
+                        </span>
+                      </div>
+                    </span>
+                  )}
                 </Link>
               </div>
 
@@ -225,20 +261,26 @@ export default function Nav() {
                     </ListItem>
                   ))}
                   <ListItem>
-                    <Link
-                      to="/e-prova/login"
-                      className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-black rounded-lg"
-                    >
-                      Login
-                    </Link>
+                    {!cookies.accessToken && (
+                      <>
+                        <Link
+                          to="/e-prova/login"
+                          className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-black rounded-lg"
+                        >
+                          Login
+                        </Link>
+                      </>
+                    )}
                   </ListItem>
                   <ListItem>
-                    <Link
-                      to="/e-prova/register"
-                      className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-[#e94328] rounded-lg"
-                    >
-                      Register
-                    </Link>
+                    {!cookies.accessToken && (
+                      <Link
+                        to="/e-prova/register"
+                        className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-[#e94328] rounded-lg"
+                      >
+                        Register
+                      </Link>
+                    )}
                   </ListItem>
                   <ListItem>
                     <Typography variant="caption" className="font-light">
@@ -296,6 +338,16 @@ export default function Nav() {
                         </a>
                       </li>
                     </ul>
+                  </ListItem>
+                  <ListItem>
+                    {cookies.accessToken && (
+                      <div 
+                        onClick={handleLogout}
+                        className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-[#e94328] rounded-lg cursor-pointer"
+                      >
+                        Logout
+                      </div>
+                    )}
                   </ListItem>
                 </List>
               </Drawer>

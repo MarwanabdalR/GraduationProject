@@ -9,7 +9,7 @@ export const Button = ({ Name }) => {
 
   return (
     <button
-      className="bg-white text-black font-semibold text-sm px-4 py-2 md:px-6 md:py-2 rounded-full hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center"
+      className="bg-white text-black px-4 py-2 md:px-6 md:py-2 rounded-full hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
