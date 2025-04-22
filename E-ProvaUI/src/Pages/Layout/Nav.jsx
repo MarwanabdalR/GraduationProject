@@ -5,6 +5,8 @@ import { HiBars3CenterLeft } from "react-icons/hi2";
 import { MdOutlineShoppingBasket } from "react-icons/md";
 import { CiSearch, CiStar } from "react-icons/ci";
 import { IoMdLogOut } from "react-icons/io";
+import { IoTrashOutline } from "react-icons/io5";
+import { FiMinus, FiPlus } from "react-icons/fi";
 import {
   Drawer,
   IconButton,
@@ -12,30 +14,46 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  Divider,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { WishListContext } from "../../Func/context/WishListContextProvider";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
-
+import { CartContext } from "../../Func/context/CartContextProvider";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function Nav() {
   const { GetWishList } = useContext(WishListContext);
+  const { GetCart, UpdateCart, RemoveFromCart, ClearCart } = useContext(CartContext);
   const { cookies, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [active, setActive] = useState("login");
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const [loadingStates, setLoadingStates] = useState({});
+  const [isClearingCart, setIsClearingCart] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["WishList"],
     queryFn: () => GetWishList(),
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    staleTime: 0
+    staleTime: 0,
   });
+
+  const { data: cart } = useQuery({
+    queryKey: ["Cart"],
+    queryFn: () => GetCart(),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+  console.log("🚀 ~ Nav ~ cart:", cart)
 
   const handleLogout = () => {
     logout();
@@ -70,6 +88,43 @@ export default function Nav() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleUpdateQuantity = async (productId, count) => {
+    try {
+      setLoadingStates(prev => ({ ...prev, [productId]: true }));
+      await UpdateCart(productId, count);
+      await queryClient.invalidateQueries({ queryKey: ["Cart"] });
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const handleRemoveFromCart = async (productId) => {
+    console.log("🚀 ~ handleRemoveFromCart ~ productId:", productId)
+    try {
+      setLoadingStates(prev => ({ ...prev, [productId]: true }));
+      await RemoveFromCart(productId);
+      await queryClient.invalidateQueries({ queryKey: ["Cart"] });
+    } catch (error) {
+      console.error("Error deleting from cart:", error);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const handleClearCart = async () => {
+    try {
+      setIsClearingCart(true);
+      await ClearCart();
+      await queryClient.invalidateQueries({ queryKey: ["Cart"] });
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+    } finally {
+      setIsClearingCart(false);
+    }
+  };
 
   return (
     <>
@@ -136,30 +191,34 @@ export default function Nav() {
                         <Link to="/e-prova/wishlist">
                           <span className="relative inline-block">
                             <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                              <CiStar className="m-1 cursor-pointer " size={20} />
+                              <CiStar
+                                className="m-1 cursor-pointer "
+                                size={20}
+                              />
                               <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
                                 {data?.data?.wishList?.products?.length || 0}
                               </span>
                             </div>
                           </span>
                         </Link>
-                        <Link to="/e-prova/cart">
-                          <span className="relative inline-block">
-                            <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                              <MdOutlineShoppingBasket
-                                className="m-1 cursor-pointer "
-                                size={20}
-                              ></MdOutlineShoppingBasket>
-                              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                                5
-                              </span>
-                            </div>
-                          </span>
-                        </Link>
+                        <span className="relative inline-block">
+                          <div
+                            onClick={() => setIsCartDrawerOpen(true)}
+                            className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md"
+                          >
+                            <MdOutlineShoppingBasket
+                              className="m-1 cursor-pointer "
+                              size={20}
+                            ></MdOutlineShoppingBasket>
+                            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                              {cart?.data?.cart?.products?.length || 0}
+                            </span>
+                          </div>
+                        </span>
                       </>
                     )}
                     {cookies.accessToken && (
-                      <div 
+                      <div
                         onClick={handleLogout}
                         className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md"
                       >
@@ -195,7 +254,9 @@ export default function Nav() {
                         {/* Register Button */}
                         <button
                           className={`w-1/2 text-center text-sm font-medium z-10 ${
-                            active === "register" ? "text-black" : "text-gray-500"
+                            active === "register"
+                              ? "text-black"
+                              : "text-gray-500"
                           }`}
                           onMouseEnter={() => setActive("register")}
                         >
@@ -207,21 +268,45 @@ export default function Nav() {
                     )}
                   </div>
                 </div>
-                <Link to="/e-prova/cart" className="md:hidden lg:hidden">
+                {/* Mobile Icons */}
+
+                <span className="md:hidden lg:hidden flex gap-5">
                   {cookies.accessToken && (
-                    <span className="relative inline-block">
-                      <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                        <MdOutlineShoppingBasket
-                          className="m-1 cursor-pointer "
-                          size={20}
-                        ></MdOutlineShoppingBasket>
-                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                          5
-                        </span>
-                      </div>
-                    </span>
+                    <>
+                      
+
+                      <Link to="/e-prova/wishlist">
+                          <span className="relative inline-block">
+                            <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
+                              <CiStar
+                                className="m-1 cursor-pointer "
+                                size={20}
+                              />
+                              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                                {data?.data?.wishList?.products?.length || 0}
+                              </span>
+                            </div>
+                          </span>
+                        </Link>
+
+
+                      <span className="relative inline-block mr-3">
+                        <div
+                          onClick={() => setIsCartDrawerOpen(true)}
+                          className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md"
+                        >
+                          <MdOutlineShoppingBasket
+                            className="m-1 cursor-pointer "
+                            size={20}
+                          ></MdOutlineShoppingBasket>
+                          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                            {cart?.data?.cart?.products?.length || 0}
+                          </span>
+                        </div>
+                      </span>
+                    </>
                   )}
-                </Link>
+                </span>
               </div>
 
               {/* Drawer for Mobile Menu */}
@@ -248,18 +333,20 @@ export default function Nav() {
                     </form>
                   </ListItem>
 
-                  {["Home", "NewArrivals", "Products", "Blog"].map((item) => (
-                    <ListItem
-                      button
-                      key={item}
-                      onClick={() => setIsDrawerOpen(false)}
-                      component={Link}
-                      to={`/e-prova/${item.toLowerCase()}`}
-                      className="hover:text-red-600 transition"
-                    >
-                      <ListItemText primary={item} />
-                    </ListItem>
-                  ))}
+                  {["Home", "NewArrivals", "Products", "Wishlist", "Blog"].map(
+                    (item) => (
+                      <ListItem
+                        button
+                        key={item}
+                        onClick={() => setIsDrawerOpen(false)}
+                        component={Link}
+                        to={`/e-prova/${item.toLowerCase()}`}
+                        className="hover:text-red-600 transition"
+                      >
+                        <ListItemText primary={item} />
+                      </ListItem>
+                    )
+                  )}
                   <ListItem>
                     {!cookies.accessToken && (
                       <>
@@ -341,7 +428,7 @@ export default function Nav() {
                   </ListItem>
                   <ListItem>
                     {cookies.accessToken && (
-                      <div 
+                      <div
                         onClick={handleLogout}
                         className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-[#e94328] rounded-lg cursor-pointer"
                       >
@@ -350,6 +437,122 @@ export default function Nav() {
                     )}
                   </ListItem>
                 </List>
+              </Drawer>
+
+              {/* Cart Drawer */}
+              <Drawer
+                anchor="right"
+                open={isCartDrawerOpen}
+                onClose={() => setIsCartDrawerOpen(false)}
+                PaperProps={{ sx: { width: "350px" } }}
+              >
+                <div className="p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <Typography variant="h6" className="font-bold">
+                      Shopping Cart
+                    </Typography>
+                    <IconButton onClick={() => setIsCartDrawerOpen(false)}>
+                      <i className="fas fa-times"></i>
+                    </IconButton>
+                  </div>
+                  <Divider />
+
+                  {cart?.data?.cart?.products?.length > 0 ? (
+                    <>
+                      <List>
+                        {cart?.data?.cart?.products?.map((product) => (
+                          <ListItem key={product._id} className="flex flex-col items-start p-4">
+                            <div className="flex items-center w-full gap-4">
+                              <img
+                                src={product.productId.defaultImage.url}
+                                alt={product.productId.name}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                              <div className="flex-1">
+                                <Typography variant="subtitle1" className="font-medium">
+                                  {product.productId.name}
+                                </Typography>
+                                
+                                <Typography variant="body2" color="textSecondary">
+                                  Color: <span className="capitalize">{product.productId.attributes.color}</span>
+                                </Typography>
+                                <Typography variant="body2" className="font-bold">
+                                  ${product.productId.finalPrice.toFixed(2)}
+                                </Typography>
+                              </div>
+                              {/* Remove Button */}
+                              <button
+                                onClick={() => handleRemoveFromCart(product.productId._id)}
+                                disabled={loadingStates[product.productId._id]}
+                                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                              >
+                                {loadingStates[product.productId._id] ? (
+                                  <AiOutlineLoading3Quarters className="animate-spin" size={20} />
+                                ) : (
+                                  <IoTrashOutline size={20} className="text-red-500" />
+                                )}
+                              </button>
+                            </div>
+                            
+                            {/* Quantity Controls */}
+                            <div className="flex items-center gap-4 mt-4 self-center">
+                              <button
+                                onClick={() => handleUpdateQuantity(product.productId._id, product.quantity - 1)}
+                                disabled={product.quantity <= 1 || loadingStates[product.productId._id]}
+                                className="p-1 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
+                              >
+                                <FiMinus size={16} />
+                              </button>
+                              <span className="w-8 text-center">{product.quantity}</span>
+                              <button
+                                onClick={() => handleUpdateQuantity(product.productId._id, product.quantity + 1)}
+                                disabled={loadingStates[product.productId._id]}
+                                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                              >
+                                <FiPlus size={16} />
+                              </button>
+                            </div>
+                          </ListItem>
+                        ))}
+                      </List>
+                      <div className="mt-4">
+                        <Divider />
+                        <div className="flex justify-between items-center py-4">
+                          <Typography variant="h6">Total:</Typography>
+                          <Typography variant="h6" className="font-bold">
+                            ${cart?.data?.cart?.totalPrice.toFixed(2) || 0}
+                          </Typography>
+                        </div>
+                        <div className="flex gap-2">
+                          <Link
+                            to="/e-prova/cart"
+                            className="flex-1 px-4 py-2 text-center text-sm font-medium text-white bg-black rounded-lg"
+                            onClick={() => setIsCartDrawerOpen(false)}
+                          >
+                            View Cart
+                          </Link>
+                          <button
+                            onClick={handleClearCart}
+                            disabled={isClearingCart}
+                            className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {isClearingCart ? (
+                              <AiOutlineLoading3Quarters className="animate-spin mx-auto" size={20} />
+                            ) : (
+                              "Clear All"
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Typography variant="body1" color="textSecondary">
+                        Your cart is empty
+                      </Typography>
+                    </div>
+                  )}
+                </div>
               </Drawer>
             </div>
           </div>

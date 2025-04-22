@@ -31,6 +31,7 @@ import ProtectedPath from "./Pages/Auth/ProtectedPath";
 import { CategoryContextProvider } from "./Func/context/Admin/CategoryContextProvider";
 import { ProductContextProvider } from "./Func/context/Admin/ProductContextProvider";
 import { WishListContextProvider } from "./Func/context/WishListContextProvider";
+import { CartContextProvider } from "./Func/context/CartContextProvider";
 
 const queryClient = new QueryClient();
 
@@ -204,8 +205,10 @@ function App() {
             <BrandContextProvider>
               <ProductContextProvider>
                 <WishListContextProvider>
-                  <Toaster position="top-right" reverseOrder={false} />
-                  <RouterProvider router={route} />
+                  <CartContextProvider>
+                    <Toaster position="top-right" reverseOrder={false} />
+                    <RouterProvider router={route} />
+                  </CartContextProvider>
                 </WishListContextProvider>
               </ProductContextProvider>
             </BrandContextProvider>
