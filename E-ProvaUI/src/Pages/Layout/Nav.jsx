@@ -53,7 +53,6 @@ export default function Nav() {
     refetchOnMount: true,
     staleTime: 0,
   });
-  console.log("🚀 ~ Nav ~ cart:", cart)
 
   const handleLogout = () => {
     logout();

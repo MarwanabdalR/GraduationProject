@@ -259,7 +259,7 @@ export default function NewArrivalH() {
           to="/e-prova/newarrivals"
           className="my-2 p-5 text-xl flex items-center justify-center transition-all duration-300 rounded-full text-nowrap hover:scale-105 hover:shadow-lg"
         >
-          <Button Name={"SHOP ALL NEW ARRIVALS"} />
+          <Button Name={"SHOP ALL PRODUCT"} />
         </Link>
       </div>
 

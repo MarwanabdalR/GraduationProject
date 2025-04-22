@@ -2,14 +2,12 @@ import axios from "axios";
 import { createContext, useContext } from "react";
 import { AuthContext } from "./AuthContextProvider";
 import toast from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const CartContext = createContext();
 
 export const CartContextProvider = ({ children }) => {
   const { cookies } = useContext(AuthContext);
   const token = cookies.accessToken;
-  const queryClient = useQueryClient();
 
   async function GetCart() {
     if (!token) return { data: { cart: { products: [] } } };
