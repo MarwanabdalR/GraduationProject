@@ -43,7 +43,7 @@ const SaleTimer = () => {
   }, []);
 
   return (
-    <div className="overflow-hidden -mx-3 -mt-3">
+    <div className="overflow-hidden -mx-3 mt-2">
       <div
         className="relative bg-black py-4 sm:py-6 lg:py-10 h-full bg-cover bg-no-repeat bg-center flex items-center"
         style={{ backgroundImage: `url(${saleTimerBackground})` }}
