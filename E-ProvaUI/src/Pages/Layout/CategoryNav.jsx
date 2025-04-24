@@ -1,22 +1,33 @@
-import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 
 const DropdownItem = ({ href, children }) => (
   <a
     href={href}
-    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+    className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
   >
     {children}
   </a>
 );
 
+DropdownItem.propTypes = {
+  href: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
+
 const NavItem = ({ href, children }) => (
   <a
     href={href}
-    className="block text-center items-center py-[10px] lg:px-3 md:px-0 md:text-sm text-gray-900 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-white"
+    className="block text-center items-center py-3 px-4 text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
   >
     {children}
   </a>
 );
+
+NavItem.propTypes = {
+  href: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
 
 export default function CategoryNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,32 +71,32 @@ export default function CategoryNav() {
   ];
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-50 shadow-md hidden md:block lg:block -mx-3 -my-2">
-      <div className=" flex items-center justify-between mx-auto ">
+    <nav className="bg-white border-b border-gray-100 shadow-sm">
+      <div className="flex items-center justify-between mx-auto max-w-7xl">
         <div className="w-full flex items-center justify-between" id="navbar-default">
-          <ul className="flex space-x-8">
+          <ul className="flex space-x-1">
             <li>
               <div className="relative inline-block">
                 <button
                   id="dropdownInformationButton"
                   onClick={toggleDropdown}
-                  className=" hover:text-black text-center inline-flex items-center  py-2 px-3 text-gray-900  hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-white"
+                  className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-4 py-3 rounded-md transition-colors duration-200 inline-flex items-center"
                   type="button"
                 >
                   Categories
-                  <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 4">
+                  <svg className="w-2.5 h-2.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 4">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
                   </svg>
                 </button>
                 <div
                   id="dropdownInformation"
-                  className={`absolute z-10  ${isOpen ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 shadow-sm w-72 dark:bg-gray-600 dark:divide-gray-500`}
-                  style={{ maxHeight: '500px', overflowY: 'auto' }} // Enable scrolling
+                  className={`absolute z-10 ${isOpen ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-md shadow-lg w-72 border border-gray-100`}
+                  style={{ maxHeight: '500px', overflowY: 'auto' }}
                 >
                   <DropdownItem href="/new-arrivals">New Arrivals</DropdownItem>
-                  <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformationButton">
+                  <ul className="py-2 text-sm" aria-labelledby="dropdownInformationButton">
                     <li>
-                      <div className="px-4 py-3 text-lg text-gray-900 dark:text-white">
+                      <div className="px-4 py-2.5 text-base font-medium text-gray-900">
                         <div>Women</div>
                       </div>
                     </li>
@@ -95,9 +106,9 @@ export default function CategoryNav() {
                       </li>
                     ))}
                   </ul>
-                  <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformationButton">
+                  <ul className="py-2 text-sm" aria-labelledby="dropdownInformationButton">
                     <li>
-                      <div className="px-4 py-3 text-lg text-gray-900 dark:text-white">
+                      <div className="px-4 py-2.5 text-base font-medium text-gray-900">
                         <div>Men</div>
                       </div>
                     </li>

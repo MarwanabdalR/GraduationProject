@@ -7,6 +7,8 @@ export const CategoryContext = createContext();
 export const CategoryContextProvider = ({ children }) => {
   const { cookies } = useContext(AuthContext);
   const token = cookies.accessToken;
+
+  
   async function GetCategory() {
     try {
       return await axios.get("https://e-prova.vercel.app/Category/categories");

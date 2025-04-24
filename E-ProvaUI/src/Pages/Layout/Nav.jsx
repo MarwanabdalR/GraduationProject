@@ -272,8 +272,6 @@ export default function Nav() {
                 <span className="md:hidden lg:hidden flex gap-5">
                   {cookies.accessToken && (
                     <>
-                      
-
                       <Link to="/e-prova/wishlist">
                           <span className="relative inline-block">
                             <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">

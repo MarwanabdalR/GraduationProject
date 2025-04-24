@@ -8,19 +8,21 @@ import { IoClose } from "react-icons/io5";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 // Components and Hooks
-import { useContext, useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button } from "../../Components/Button";
 import { Link } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PropTypes from "prop-types";
+import axios from "axios";
 
 // Context Providers
-import { ProductContext } from "../../Func/context/Admin/ProductContextProvider";
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { CartContext } from "../../Func/context/CartContextProvider";
-import { CategoryContext } from "../../Func/context/Admin/CategoryContextProvider";
+
+// Components
 import PolicySection from "../Home/Policy";
 import banner from "../../../public/Images/Screenshot 2025-04-22 062516.png";
+import { CategoryContext } from "../../Func/context/Admin/CategoryContextProvider";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * Star Rating Component
@@ -51,13 +53,17 @@ StarRating.propTypes = {
 
 export default function NewArrivals() {
   // Context hooks
-  const { GetProduct } = useContext(ProductContext);
   const { AddToWishList } = useContext(WishListContext);
   const { AddCart } = useContext(CartContext);
   const { GetCategory } = useContext(CategoryContext);
-  const queryClient = useQueryClient();
 
   // State management
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState("newest");
   const [loadingWishlist, setLoadingWishlist] = useState({});
   const [loadingCart, setLoadingCart] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -66,18 +72,74 @@ export default function NewArrivals() {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [productToAddToCart, setProductToAddToCart] = useState(null);
-  const [sortBy, setSortBy] = useState("newest");
 
-  // Data fetching
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["GetProduct"],
-    queryFn: () => GetProduct(),
+  // Fetch products with pagination
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`https://e-prova.vercel.app/Product?page=${currentPage}`);
+        console.log("🚀 ~ Products Response:", response.data);
+        setProducts(response.data.products);
+        setTotalPages(response.data.totalPages);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [currentPage]);
+
+  const { data: category } = useQuery({
+    queryKey: ["categories"],
+    queryFn: GetCategory,
   });
 
-  const { data: categories } = useQuery({
-    queryKey: ["getCategory"],
-    queryFn: () => GetCategory(),
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      console.log('Changing to page:', newPage);
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Sort products
+  const sortedProducts = [...(products || [])].sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      case "price-low":
+        return a.finalPrice - b.finalPrice;
+      case "price-high":
+        return b.finalPrice - a.finalPrice;
+      case "discount":
+        return b.discount - a.discount;
+      default:
+        return 0;
+    }
   });
+
+  // Loading state
+  if (loading && !products.length) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <AiOutlineLoading3Quarters className="animate-spin" size={40} />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500 text-xl">Error loading products: {error}</p>
+      </div>
+    );
+  }
 
   // Wishlist handlers
   async function handleAddToWishList(e, productId) {
@@ -128,7 +190,6 @@ export default function NewArrivals() {
     try {
       setLoadingCart((prev) => ({ ...prev, [productToAddToCart._id]: true }));
       await AddCart(productToAddToCart._id, 1, selectedSize, selectedColor);
-      await queryClient.invalidateQueries({ queryKey: ["Cart"] });
       closeSizeModal();
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -165,39 +226,6 @@ export default function NewArrivals() {
       prev === allImages.length - 1 ? 0 : prev + 1
     );
   };
-
-  // Loading and error states
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <AiOutlineLoading3Quarters className="animate-spin" size={40} />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-500 text-xl">Error loading products</p>
-      </div>
-    );
-  }
-
-  // Sort products
-  const sortedProducts = [...(data?.data?.products || [])].sort((a, b) => {
-    switch (sortBy) {
-      case "newest":
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      case "price-low":
-        return a.finalPrice - b.finalPrice;
-      case "price-high":
-        return b.finalPrice - a.finalPrice;
-      case "discount":
-        return b.discount - a.discount;
-      default:
-        return 0;
-    }
-  });
 
   return (
     <div>
@@ -257,97 +285,123 @@ export default function NewArrivals() {
             No products available
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {sortedProducts.map((product) => (
-              <Link
-                key={product._id}
-                to={`/e-prova/products/${product._id}`}
-                className="group block overflow-hidden"
-              >
-                {/* image */}
-                <div className="relative h-[350px] sm:h-[400px] rounded-lg overflow-hidden">
-                  <img
-                    src={product.defaultImage.url}
-                    alt={product.name}
-                    className="absolute inset-0 h-full w-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-300"
-                  />
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+              {sortedProducts.map((product) => (
+                <Link
+                  key={product._id}
+                  to={`/e-prova/products/${product._id}`}
+                  className="group block overflow-hidden"
+                >
+                  {/* image */}
+                  <div className="relative h-[350px] sm:h-[400px] rounded-lg overflow-hidden">
+                    <img
+                      src={product.defaultImage.url}
+                      alt={product.name}
+                      className="absolute inset-0 h-full w-full object-cover opacity-100 group-hover:opacity-0 transition-opacity duration-300"
+                    />
 
-                  <img
-                    src={product.images[0]?.url || product.defaultImage.url}
-                    alt={`${product.name} Hover`}
-                    className="absolute inset-0 h-full w-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  {/* icons */}
-                  <div className="absolute top-4 right-4 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                    <button
-                      onClick={(e) => handleAddToWishList(e, product._id)}
-                      disabled={loadingWishlist[product._id]}
-                      className="my-2 bg-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {loadingWishlist[product._id] ? (
-                        <AiOutlineLoading3Quarters
-                          className="animate-spin"
-                          size={20}
-                        />
-                      ) : (
-                        <CiStar size={20} />
-                      )}
-                    </button>
-                    <button
-                      onClick={(e) => handleOpenCarousel(e, product)}
-                      className="bg-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md"
-                    >
-                      <PiImages size={20} />
-                    </button>
-                  </div>
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                    <button
-                      onClick={(e) => openSizeModal(e, product)}
-                      disabled={loadingCart[product._id]}
-                      className="my-2 text-xs bg-white flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md text-nowrap disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {loadingCart[product._id] ? (
-                        <AiOutlineLoading3Quarters
-                          className="animate-spin"
-                          size={20}
-                        />
-                      ) : (
-                        <Button Name={"ADD TO CART"} />
-                      )}
-                    </button>
-                  </div>
-                  {product.discount > 0 && (
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-                        {product.discount}% OFF
-                      </span>
+                    <img
+                      src={product.images[0]?.url || product.defaultImage.url}
+                      alt={`${product.name} Hover`}
+                      className="absolute inset-0 h-full w-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                    {/* icons */}
+                    <div className="absolute top-4 right-4 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                      <button
+                        onClick={(e) => handleAddToWishList(e, product._id)}
+                        disabled={loadingWishlist[product._id]}
+                        className="my-2 bg-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {loadingWishlist[product._id] ? (
+                          <AiOutlineLoading3Quarters
+                            className="animate-spin"
+                            size={20}
+                          />
+                        ) : (
+                          <CiStar size={20} />
+                        )}
+                      </button>
+                      <button
+                        onClick={(e) => handleOpenCarousel(e, product)}
+                        className="bg-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md"
+                      >
+                        <PiImages size={20} />
+                      </button>
                     </div>
-                  )}
-                </div>
-                {/* details */}
-                <div className="relative bg-white pt-4">
-                  <span className="text-xs text-gray-500 hover:text-red-500">
-                    {product.category.name}
-                  </span>
-                  <h3 className="text-sm sm:text-base text-gray-700 group-hover:underline group-hover:underline-offset-4 hover:text-red-500 truncate">
-                    {product.name}
-                  </h3>
-
-                  <StarRating rating={parseFloat(product.rate)} />
-                  <div className="mt-2 flex items-center justify-between text-gray-900">
-                    <p className="font-medium text-red-500 tracking-wide">
-                      ${product.finalPrice.toFixed(2)}
-                    </p>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                      <button
+                        onClick={(e) => openSizeModal(e, product)}
+                        disabled={loadingCart[product._id]}
+                        className="my-2 text-xs bg-white flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md text-nowrap disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {loadingCart[product._id] ? (
+                          <AiOutlineLoading3Quarters
+                            className="animate-spin"
+                            size={20}
+                          />
+                        ) : (
+                          <Button Name={"ADD TO CART"} />
+                        )}
+                      </button>
+                    </div>
                     {product.discount > 0 && (
-                      <p className="text-sm text-gray-500 line-through">
-                        ${product.price.toFixed(2)}
-                      </p>
+                      <div className="absolute top-4 left-4">
+                        <span className="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                          {product.discount}% OFF
+                        </span>
+                      </div>
                     )}
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                  {/* details */}
+                  <div className="relative bg-white pt-4">
+                    <span className="text-xs text-gray-500 hover:text-red-500">
+                      {product.category.name}
+                    </span>
+                    <h3 className="text-sm sm:text-base text-gray-700 group-hover:underline group-hover:underline-offset-4 hover:text-red-500 truncate">
+                      {product.name}
+                    </h3>
+
+                    <StarRating rating={parseFloat(product.rate)} />
+                    <div className="mt-2 flex items-center justify-between text-gray-900">
+                      <p className="font-medium text-red-500 tracking-wide">
+                        ${product.finalPrice.toFixed(2)}
+                      </p>
+                      {product.discount > 0 && (
+                        <p className="text-sm text-gray-500 line-through">
+                          ${product.price.toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Simple Pagination */}
+            <div className="flex justify-center items-center gap-4 mt-8 mb-8">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || loading}
+                className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-red-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+
+              <span className="text-sm text-gray-700">
+                Page <span className="font-semibold text-gray-900">{currentPage}</span> of{" "}
+                <span className="font-semibold text-gray-900">{totalPages}</span>
+              </span>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || loading}
+                className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-red-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
 
         {/* Size and Color Selection Modal */}
@@ -516,7 +570,7 @@ export default function NewArrivals() {
         )}
 
         {/* Categories and Tags Section */}
-        <div className="my-8 ">
+        <div className="my-8">
           {/* Tags */}
           <div className="mt-20 mb-10 flex">
             <FaTag className="mt-1" />
@@ -524,28 +578,25 @@ export default function NewArrivals() {
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4 ml-5">
-            {categories?.data?.categories.map((category) => (
+            {category?.data?.categories?.map((cat) => (
               <Link
-                key={category._id}
-                to={`/e-prova/categories/${category.slug}`}
+                key={cat._id}
+                to={`/e-prova/categories/${cat.name.toLowerCase()}`}
                 className="text-sm font-medium text-gray-600 transition-colors bg-gray-100 px-3 py-1 rounded-full outline outline-1 outline-gray-300 hover:text-red-500 duration-300"
               >
-                {category.name}
+                {cat.name}
               </Link>
             ))}
           </div>
 
           {/* Flash deal section */}
-          <div className="space-y-4 ">
+          <div className="space-y-4">
             <details
               className="group border-s-4 border-gray-200 bg-white p-4 [&_summary::-webkit-details-marker]:hidden"
               open
             >
               <summary className="flex items-center justify-between gap-1.5 text-gray-900">
-                <h2 className="text-lg font-medium">
-                  Flash Deal
-                </h2>
-
+                <h2 className="text-lg font-medium">Flash Deal</h2>
                 <svg
                   className="size-5 shrink-0 transition-transform duration-300 group-open:-rotate-180"
                   xmlns="http://www.w3.org/2000/svg"
@@ -561,7 +612,6 @@ export default function NewArrivals() {
                   />
                 </svg>
               </summary>
-
               <p className="pt-4 text-gray-900">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic
                 veritatis molestias culpa in, recusandae laboriosam neque aliquid
