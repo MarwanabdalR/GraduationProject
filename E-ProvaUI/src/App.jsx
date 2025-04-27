@@ -32,6 +32,7 @@ import { CategoryContextProvider } from "./Func/context/Admin/CategoryContextPro
 import { ProductContextProvider } from "./Func/context/Admin/ProductContextProvider";
 import { WishListContextProvider } from "./Func/context/WishListContextProvider";
 import { CartContextProvider } from "./Func/context/CartContextProvider";
+import ProductDetails from "./Pages/products/ProductDetails";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,10 @@ function App() {
         {
           path: "/e-prova/products",
           element: <Products />,
+        },
+        {
+          path: "/e-prova/products/:id",
+          element: <ProductDetails />,
         },
         {
           path: "/e-prova/newarrivals",

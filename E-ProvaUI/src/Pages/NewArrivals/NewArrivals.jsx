@@ -12,17 +12,17 @@ import { useState, useEffect, useContext } from "react";
 import { Button } from "../../Components/Button";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import axios from "axios";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Context Providers
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { CartContext } from "../../Func/context/CartContextProvider";
+import { ProductContext } from "../../Func/context/Admin/ProductContextProvider";
+import { CategoryContext } from "../../Func/context/Admin/CategoryContextProvider";
 
 // Components
 import PolicySection from "../Home/Policy";
 import banner from "../../../public/Images/Screenshot 2025-04-22 062516.png";
-import { CategoryContext } from "../../Func/context/Admin/CategoryContextProvider";
-import { useQuery } from "@tanstack/react-query";
 
 /**
  * Star Rating Component
@@ -56,6 +56,8 @@ export default function NewArrivals() {
   const { AddToWishList } = useContext(WishListContext);
   const { AddCart } = useContext(CartContext);
   const { GetCategory } = useContext(CategoryContext);
+  const { GetPaginatedProducts } = useContext(ProductContext);
+  const queryClient = useQueryClient();
 
   // State management
   const [products, setProducts] = useState([]);
@@ -78,8 +80,7 @@ export default function NewArrivals() {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`https://e-prova.vercel.app/Product?page=${currentPage}`);
-        console.log("🚀 ~ Products Response:", response.data);
+        const response = await GetPaginatedProducts(currentPage, sortBy);
         setProducts(response.data.products);
         setTotalPages(response.data.totalPages);
         setError(null);
@@ -92,7 +93,7 @@ export default function NewArrivals() {
     };
 
     fetchProducts();
-  }, [currentPage]);
+  }, [currentPage, sortBy, GetPaginatedProducts]);
 
   const { data: category } = useQuery({
     queryKey: ["categories"],
@@ -107,21 +108,8 @@ export default function NewArrivals() {
     }
   };
 
-  // Sort products
-  const sortedProducts = [...(products || [])].sort((a, b) => {
-    switch (sortBy) {
-      case "newest":
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      case "price-low":
-        return a.finalPrice - b.finalPrice;
-      case "price-high":
-        return b.finalPrice - a.finalPrice;
-      case "discount":
-        return b.discount - a.discount;
-      default:
-        return 0;
-    }
-  });
+  // Products are now sorted on the server side
+  const sortedProducts = products || [];
 
   // Loading state
   if (loading && !products.length) {
@@ -190,6 +178,7 @@ export default function NewArrivals() {
     try {
       setLoadingCart((prev) => ({ ...prev, [productToAddToCart._id]: true }));
       await AddCart(productToAddToCart._id, 1, selectedSize, selectedColor);
+      await queryClient.invalidateQueries({ queryKey: ["Cart"] });
       closeSizeModal();
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -213,7 +202,7 @@ export default function NewArrivals() {
 
   const handlePrevImage = () => {
     if (!selectedProduct) return;
-    const allImages = [selectedProduct.defaultImage, ...selectedProduct.images];
+    const allImages = [selectedProduct.defaultImage, ...(selectedProduct.images || [])];
     setCurrentImageIndex((prev) =>
       prev === 0 ? allImages.length - 1 : prev - 1
     );
@@ -221,7 +210,7 @@ export default function NewArrivals() {
 
   const handleNextImage = () => {
     if (!selectedProduct) return;
-    const allImages = [selectedProduct.defaultImage, ...selectedProduct.images];
+    const allImages = [selectedProduct.defaultImage, ...(selectedProduct.images || [])];
     setCurrentImageIndex((prev) =>
       prev === allImages.length - 1 ? 0 : prev + 1
     );

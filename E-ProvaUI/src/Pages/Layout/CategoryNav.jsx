@@ -18,7 +18,7 @@ DropdownItem.propTypes = {
 const NavItem = ({ href, children }) => (
   <a
     href={href}
-    className="block text-center items-center py-3 px-4 text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+    className="block text-center items-center py-3 px-2 sm:px-3 md:px-4 text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200 text-sm md:text-base"
   >
     {children}
   </a>
@@ -72,15 +72,15 @@ export default function CategoryNav() {
 
   return (
     <nav className="bg-white border-b border-gray-100 shadow-sm">
-      <div className="flex items-center justify-between mx-auto max-w-7xl">
-        <div className="w-full flex items-center justify-between" id="navbar-default">
-          <ul className="flex space-x-1">
-            <li>
+      <div className="flex items-center justify-center md:justify-between mx-auto max-w-7xl px-2 sm:px-4 lg:px-6">
+        <div className="w-full flex items-center justify-center md:justify-between" id="navbar-default">
+          <ul className="flex items-center">
+            <li className="md:mr-4">
               <div className="relative inline-block">
                 <button
                   id="dropdownInformationButton"
                   onClick={toggleDropdown}
-                  className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-4 py-3 rounded-md transition-colors duration-200 inline-flex items-center"
+                  className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-4 py-3 rounded-md transition-colors duration-200 inline-flex items-center justify-center text-base"
                   type="button"
                 >
                   Categories
@@ -90,7 +90,7 @@ export default function CategoryNav() {
                 </button>
                 <div
                   id="dropdownInformation"
-                  className={`absolute z-10 ${isOpen ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-md shadow-lg w-72 border border-gray-100`}
+                  className={`absolute z-10 ${isOpen ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-md shadow-lg w-full sm:w-72 border border-gray-100 left-0 md:left-auto`}
                   style={{ maxHeight: '500px', overflowY: 'auto' }}
                 >
                   <DropdownItem href="/new-arrivals">New Arrivals</DropdownItem>
@@ -121,11 +121,13 @@ export default function CategoryNav() {
                 </div>
               </div>
             </li>
-            {navItems.map((item) => (
-              <li key={item.name}>
-                <NavItem href={item.link}>{item.name}</NavItem>
-              </li>
-            ))}
+            <div className="hidden md:flex space-x-1">
+              {navItems.map((item) => (
+                <li key={item.name}>
+                  <NavItem href={item.link}>{item.name}</NavItem>
+                </li>
+              ))}
+            </div>
           </ul>
         </div>
       </div>

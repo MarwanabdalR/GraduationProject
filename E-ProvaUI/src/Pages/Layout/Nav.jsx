@@ -3,10 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiBars3CenterLeft } from "react-icons/hi2";
 import { MdOutlineShoppingBasket } from "react-icons/md";
-import { CiSearch, CiStar } from "react-icons/ci";
+import { CiStar } from "react-icons/ci";
 import { IoMdLogOut } from "react-icons/io";
 import { IoTrashOutline } from "react-icons/io5";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import Search from "../../Components/Search";
 import {
   Drawer,
   IconButton,
@@ -152,7 +153,7 @@ export default function Nav() {
                     <HiBars3CenterLeft size={20} />
                   </IconButton>
                   <button className="block lg:hidden text-gray-600 p-2 rounded-md hover:bg-gray-200 md:hidden">
-                    <CiSearch size={20} />
+                    <Search />
                   </button>
 
                   {/* Logo */}
@@ -182,9 +183,7 @@ export default function Nav() {
                 {/* Right Section: Icons & Buttons */}
                 <div className="flex items-center gap-4">
                   <div className="hidden md:flex items-center gap-4">
-                    <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                      <CiSearch className="m-1 cursor-pointer " size={20} />
-                    </div>
+                    <Search />
                     {cookies.accessToken && (
                       <>
                         <Link to="/e-prova/wishlist">

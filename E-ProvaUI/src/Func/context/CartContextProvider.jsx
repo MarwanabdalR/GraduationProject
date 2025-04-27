@@ -22,7 +22,7 @@ export const CartContextProvider = ({ children }) => {
     }
   }
 
-  async function AddCart(productId, quantity) {
+  async function AddCart(productId, quantity, size, color) {
     if (!token) return { data: { message: "Please login to add to cart" } };
     try {
       const response = await axios.post(
@@ -30,6 +30,8 @@ export const CartContextProvider = ({ children }) => {
         {
           productId,
           quantity,
+          size,
+          color
         },
         { headers: { token } }
       );

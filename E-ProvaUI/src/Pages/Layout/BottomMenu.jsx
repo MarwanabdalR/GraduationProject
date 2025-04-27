@@ -9,7 +9,7 @@ import { GoPerson } from "react-icons/go";
 export default function BottomMenu() {
     const [count, setCount] = useState(0)
     return(
-        <div className='block md:hidden fixed w-full bottom-0 z-[101px] left-0 bg-white shadow-[0_-2px_5px_-2px_#0000001a] px-[15px] text-center'>
+        <div className='z-50 block md:hidden fixed w-full bottom-0 z-[101px] left-0 bg-white shadow-[0_-2px_5px_-2px_#0000001a] px-[15px] text-center'>
             <div className='flex flex-wrap mx-[-15]'>
                 <div className='border-r border-[#e2e2e2] h-[55px] items-center justify-center flex basis-0 flex-grow max-w-full w-full px-[15px]'>
                     <Link 
