@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useContext } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
@@ -12,11 +12,28 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 // Components
 import PolicySection from "../Home/Policy";
+import ProductDetailsModal from "../../Components/ProductDetailsModal";
 
 // Context
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { CartContext } from "../../Func/context/CartContextProvider";
-import { CategoryContext } from "../../Func/context/Admin/CategoryContextProvider";
+import { AuthContext } from "../../Func/context/AuthContextProvider";
+
+// Add this color mapping object at the top of the file after imports
+const colorMap = {
+  red: { label: 'Red', class: 'bg-red-500' },
+  blue: { label: 'Blue', class: 'bg-blue-500' },
+  green: { label: 'Green', class: 'bg-green-500' },
+  yellow: { label: 'Yellow', class: 'bg-yellow-500' },
+  purple: { label: 'Purple', class: 'bg-purple-500' },
+  pink: { label: 'Pink', class: 'bg-pink-500' },
+  gray: { label: 'Gray', class: 'bg-gray-500' },
+  black: { label: 'Black', class: 'bg-black' },
+  white: { label: 'White', class: 'bg-white border border-gray-300' },
+  brown: { label: 'Brown', class: 'bg-[#964B00]' },
+  orange: { label: 'Orange', class: 'bg-orange-500' },
+  navy: { label: 'Navy', class: 'bg-[#000080]' },
+};
 
 // Star Rating Component
 const StarRating = ({ rating }) => {
@@ -42,19 +59,21 @@ StarRating.propTypes = {
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { AddToWishList } = useContext(WishListContext);
   const { AddCart } = useContext(CartContext);
-  const { GetCategory } = useContext(CategoryContext);
+  const { cookies } = useContext(AuthContext);
+  const queryClient = useQueryClient();
   
   // State management
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [loadingCart, setLoadingCart] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch product details with correct endpoint
+  // Fetch product details
   const { data: response, isLoading: productLoading } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
@@ -63,14 +82,7 @@ export default function ProductDetails() {
     }
   });
 
-  // Extract product data from response
   const product = response?.product;
-
-  // Fetch categories
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: GetCategory
-  });
 
   // Handle quantity change
   const handleQuantityChange = (type) => {
@@ -79,6 +91,16 @@ export default function ProductDetails() {
     } else if (type === 'increase' && quantity < product?.stock) {
       setQuantity(prev => prev + 1);
     }
+  };
+
+  // Handle category navigation
+  const handleCategoryClick = (categoryId) => {
+    navigate(`/e-prova/products?category=${categoryId}`);
+  };
+
+  // Handle brand navigation
+  const handleBrandClick = (brandId) => {
+    navigate(`/e-prova/products?brand=${brandId}`);
   };
 
   // Handle wishlist
@@ -93,8 +115,14 @@ export default function ProductDetails() {
 
   // Handle add to cart
   const handleAddToCart = async () => {
-    if (!selectedSize || !selectedColor) {
-      toast.error('Please select size and color');
+    if (!cookies.accessToken) {
+      toast.error('Please login to add items to cart');
+      navigate('/e-prova/login');
+      return;
+    }
+
+    if (!selectedSize) {
+      toast.error('Please select a size');
       return;
     }
 
@@ -103,10 +131,18 @@ export default function ProductDetails() {
       return;
     }
 
+    const loadingToast = toast.loading('Adding to cart...');
     try {
       setLoadingCart(true);
-      await AddCart(id, quantity, selectedSize, selectedColor);
-      toast.success('Added to cart successfully');
+      const response = await AddCart(id, quantity, selectedSize, product.attributes.color);
+      await queryClient.invalidateQueries({ queryKey: ["Cart"] });
+      toast.dismiss(loadingToast);
+      if (response?.data) {
+        toast.success('Added to cart successfully');
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error(error.response?.data?.message || 'Failed to add to cart');
     } finally {
       setLoadingCart(false);
     }
@@ -127,9 +163,6 @@ export default function ProductDetails() {
       </div>
     );
   }
-
-  // Calculate final price with discount
-  const finalPrice = product.price - (product.price * (product.discount / 100));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -156,11 +189,14 @@ export default function ProductDetails() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Images */}
         <div className="space-y-4">
-          <div className="aspect-square overflow-hidden rounded-lg">
+          <div 
+            className="aspect-square overflow-hidden rounded-lg cursor-pointer"
+            onClick={() => setIsModalOpen(true)}
+          >
             <img
               src={selectedImage === 0 ? product.defaultImage.url : product.images[selectedImage - 1].url}
               alt={product.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
           <div className="grid grid-cols-5 gap-2">
@@ -208,7 +244,7 @@ export default function ProductDetails() {
 
           <div className="flex items-center gap-4">
             <span className="text-2xl font-bold text-red-500">
-              ${finalPrice.toFixed(2)}
+              ${product.finalPrice.toFixed(2)}
             </span>
             {product.discount > 0 && (
               <span className="text-lg text-gray-500 line-through">
@@ -227,21 +263,19 @@ export default function ProductDetails() {
             </span>
           </div>
 
-          {/* Color Selection */}
-          {product.attributes?.colors && (
+          {/* Color Display */}
+          {product.attributes?.color && (
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-2">Color</h3>
-              <div className="flex items-center gap-2">
-                {product.attributes.colors.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`w-8 h-8 rounded-full border-2 ${
-                      selectedColor === color ? 'border-black' : 'border-transparent'
-                    }`}
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-8 h-8 rounded-full ${
+                    colorMap[product.attributes.color.toLowerCase()]?.class || 'bg-gray-500'
+                  }`}
+                />
+                <span className="text-sm font-medium capitalize">
+                  {colorMap[product.attributes.color.toLowerCase()]?.label || product.attributes.color}
+                </span>
               </div>
             </div>
           )}
@@ -295,10 +329,13 @@ export default function ProductDetails() {
             <button
               onClick={handleAddToCart}
               disabled={loadingCart || product.stock === 0}
-              className="flex-1 bg-black text-white py-3 rounded-full hover:bg-gray-900 transition-colors disabled:bg-gray-300"
+              className="flex-1 bg-black text-white py-3 rounded-full hover:bg-gray-900 transition-colors disabled:bg-gray-300 relative"
             >
               {loadingCart ? (
-                <AiOutlineLoading3Quarters className="animate-spin mx-auto" size={20} />
+                <div className="flex items-center justify-center">
+                  <AiOutlineLoading3Quarters className="animate-spin" size={20} />
+                  <span className="ml-2">Adding to Cart...</span>
+                </div>
               ) : product.stock === 0 ? (
                 'Out of Stock'
               ) : (
@@ -323,22 +360,36 @@ export default function ProductDetails() {
       {/* Additional Information */}
       <div className="mt-16">
         <div className="border-t pt-8">
-          {/* Tags */}
-          <div className="flex items-center gap-2 mb-8">
-            <FaTag />
-            <h2 className="font-semibold">TAGS</h2>
+          {/* Categories Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <FaTag />
+              <h2 className="font-semibold">CATEGORIES</h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => handleCategoryClick(product.category._id)}
+                className="text-sm font-medium px-3 py-1 rounded-full bg-black text-white transition-colors duration-300 hover:bg-gray-800"
+              >
+                {product.category.name}
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-8">
-            {categories?.data?.categories?.map((category) => (
-              <Link
-                key={category._id}
-                to={`/e-prova/categories/${category.name.toLowerCase()}`}
-                className="text-sm font-medium text-gray-600 bg-gray-100 px-3 py-1 rounded-full outline outline-1 outline-gray-300 hover:text-red-500 transition-colors"
+          {/* Brands Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <FaTag />
+              <h2 className="font-semibold">BRANDS</h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => handleBrandClick(product.brandId._id)}
+                className="text-sm font-medium px-3 py-1 rounded-full bg-black text-white transition-colors duration-300 hover:bg-gray-800"
               >
-                {category.name}
-              </Link>
-            ))}
+                {product.brandId.name}
+              </button>
+            </div>
           </div>
 
           {/* Product Details Accordion */}
@@ -369,6 +420,13 @@ export default function ProductDetails() {
         {/* Policy Section */}
         <PolicySection />
       </div>
+
+      {/* Image Modal */}
+      <ProductDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={product}
+      />
     </div>
   );
 }

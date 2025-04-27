@@ -171,9 +171,9 @@ export default function NewArrivalH() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
           {sortedProducts.map((product) => (
-            <a
+            <Link
               key={product._id}
-              href="#"
+              to={`/e-prova/products/${product._id}`}
               className="group block overflow-hidden"
             >
               {/* image */}
@@ -250,7 +250,7 @@ export default function NewArrivalH() {
                   </p>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       )}

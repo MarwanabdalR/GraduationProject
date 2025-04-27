@@ -67,6 +67,7 @@ export default function Search() {
       // Navigate to products page with search query
       navigate(`/e-prova/products?${searchQuery}`);
       setIsOpen(false);
+      setSearchTerm('');
     } catch (error) {
       console.error('Error during search:', error);
     } finally {
@@ -104,15 +105,10 @@ export default function Search() {
     };
   }, [isOpen]);
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && searchTerm.trim()) {
-      handleSearch('keyword', searchTerm.trim());
-    }
-  };
-
   const hotSearches = [
     { type: 'sort', value: 'price', label: 'Price: Low to High' },
     { type: 'sort', value: '-price', label: 'Price: High to Low' },
+    { type: 'sort', value: '-createdAt', label: 'Newest First' },
     ...(categories?.slice(0, 3)?.map(cat => ({ 
       type: 'category', 
       value: cat._id, 
@@ -171,13 +167,20 @@ export default function Search() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && searchTerm.trim()) {
+                      handleSearch('keyword', searchTerm.trim());
+                    }
+                  }}
                   placeholder="Enter Your Keywords"
                   className="w-full pl-12 pr-10 py-4 rounded-full border-2 border-gray-200 focus:outline-none focus:border-black transition-colors"
                   disabled={loading}
                 />
                 <button 
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setSearchTerm('');
+                  }}
                   className="absolute right-4 text-gray-400 hover:text-black transition-colors"
                 >
                   <IoClose size={24} />

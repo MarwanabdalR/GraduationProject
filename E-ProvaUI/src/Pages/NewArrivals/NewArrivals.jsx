@@ -65,7 +65,7 @@ export default function NewArrivals() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [sortBy, setSortBy] = useState("newest");
+  const [sortBy, setSortBy] = useState("-createdAt");
   const [loadingWishlist, setLoadingWishlist] = useState({});
   const [loadingCart, setLoadingCart] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -79,13 +79,19 @@ export default function NewArrivals() {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      setError(null);
       try {
         const response = await GetPaginatedProducts(currentPage, sortBy);
-        setProducts(response.data.products);
-        setTotalPages(response.data.totalPages);
-        setError(null);
+        if (response?.data?.products) {
+          setProducts(response.data.products);
+          setTotalPages(response.data.totalPages);
+        } else {
+          setError("No products found");
+          setProducts([]);
+        }
       } catch (err) {
-        setError(err.message);
+        setError(err.response?.data?.message || "Failed to fetch products");
+        setProducts([]);
         console.error("Error fetching products:", err);
       } finally {
         setLoading(false);
@@ -102,23 +108,27 @@ export default function NewArrivals() {
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      console.log('Changing to page:', newPage);
       setCurrentPage(newPage);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  // Products are now sorted on the server side
-  const sortedProducts = products || [];
+  const handleSortChange = (newSortValue) => {
+    setSortBy(newSortValue);
+    setCurrentPage(1); // Reset to first page when sorting changes
+  };
 
   // Loading state
-  if (loading && !products.length) {
+  if (loading && !products?.length) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <AiOutlineLoading3Quarters className="animate-spin" size={40} />
       </div>
     );
   }
+
+  // Products are now sorted on the server side
+  const sortedProducts = products || [];
 
   // Error state
   if (error) {
@@ -257,13 +267,14 @@ export default function NewArrivals() {
           <div className="flex items-center gap-4">
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(e) => handleSortChange(e.target.value)}
               className="px-4 py-2 border rounded-full hover:border-black transition-colors cursor-pointer"
             >
-              <option value="newest">Newest</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="discount">Biggest Discount</option>
+              <option value="-createdAt">Newest First</option>
+              <option value="createdAt">Oldest First</option>
+              <option value="price">Price: Low to High</option>
+              <option value="-price">Price: High to Low</option>
+              <option value="-discount">Biggest Discount</option>
             </select>
           </div>
         </div>
