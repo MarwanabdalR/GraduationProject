@@ -18,6 +18,8 @@ import ProductDetailsModal from "../../Components/ProductDetailsModal";
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { CartContext } from "../../Func/context/CartContextProvider";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
+import ProductTab from './ProductTab';
+import AddReview from '../../Components/Review/AddReview.jsx';
 
 // Add this color mapping object at the top of the file after imports
 const colorMap = {
@@ -392,6 +394,9 @@ export default function ProductDetails() {
             </div>
           </div>
 
+          {/* Product Tab */}
+          <ProductTab />
+
           {/* Product Details Accordion */}
           <details className="group border-s-4 border-gray-200 bg-white p-4 [&_summary::-webkit-details-marker]:hidden">
             <summary className="flex items-center justify-between gap-1.5 text-gray-900">
@@ -417,8 +422,13 @@ export default function ProductDetails() {
           </details>
         </div>
 
+
+
         {/* Policy Section */}
         <PolicySection />
+
+        {/* Review Section */}
+        <AddReview />
       </div>
 
       {/* Image Modal */}

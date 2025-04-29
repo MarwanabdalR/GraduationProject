@@ -35,6 +35,7 @@ import { CartContextProvider } from "./Func/context/CartContextProvider";
 import ProductDetails from "./Pages/products/ProductDetails";
 import Categories from "./Pages/Categories/Categories";
 import CategoryDetails from "./Pages/Categories/CategoryDetails";
+import { ReviewContextProvider } from "./Func/context/ReviewContextProvider";
 
 const queryClient = new QueryClient();
 
@@ -221,8 +222,10 @@ function App() {
               <ProductContextProvider>
                 <WishListContextProvider>
                   <CartContextProvider>
-                    <Toaster position="top-right" reverseOrder={false} />
-                    <RouterProvider router={route} />
+                    <ReviewContextProvider>
+                      <Toaster position="top-right" reverseOrder={false} />
+                      <RouterProvider router={route} />
+                    </ReviewContextProvider>
                   </CartContextProvider>
                 </WishListContextProvider>
               </ProductContextProvider>
