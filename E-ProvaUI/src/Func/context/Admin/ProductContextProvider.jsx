@@ -9,7 +9,7 @@ export const ProductContextProvider = ({ children }) => {
   const { cookies } = useContext(AuthContext);
   const token = cookies.accessToken;
 
-  // Get all products (for Dashboard and NewArrivalH)
+  // Get all products 
   async function GetProduct(sort = "") {
     try {
       const url = sort 
@@ -22,7 +22,7 @@ export const ProductContextProvider = ({ children }) => {
   }
 
   // get product by category id
-  async function GetProductByCategoryId(categoryId) {
+  async function GetProductsByCategoryId(categoryId) {
     try {
       const response = await axios.get(`https://e-prova.vercel.app/Product?category=${categoryId}`);
       return response.data;
@@ -32,7 +32,7 @@ export const ProductContextProvider = ({ children }) => {
   }
 
   // get product by brand id
-  async function GetProductByBrandId(brandId) {
+  async function GetProductsByBrandId(brandId) {
     try {
       const response = await axios.get(`https://e-prova.vercel.app/Product?brand=${brandId}`);
       return response.data;
@@ -86,8 +86,8 @@ export const ProductContextProvider = ({ children }) => {
       GetProduct, 
       GetPaginatedProducts, 
       DeleteProduct, 
-      GetProductByCategoryId, 
-      GetProductByBrandId,
+      GetProductsByCategoryId, 
+      GetProductsByBrandId,
       GetSortedProductsByPrice 
     }}>
       {children}

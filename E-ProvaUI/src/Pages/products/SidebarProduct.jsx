@@ -13,7 +13,7 @@ export default function SidebarProduct({ filters, onFilterChange }) {
   const [localFilters, setLocalFilters] = useState({
     priceRange: {
       min: filters.priceRange.min || 0,
-      max: filters.priceRange.max || 156
+      max: filters.priceRange.max || 10000
     },
     selectedBrands: filters.selectedBrands || [],
     selectedCategories: filters.selectedCategories || []
@@ -34,7 +34,7 @@ export default function SidebarProduct({ filters, onFilterChange }) {
     e.stopPropagation();
     setLocalFilters(prev => ({
       ...prev,
-      priceRange: { min: 0, max: 156 }
+      priceRange: { min: 0, max: 10000 }
     }));
   };
 
@@ -60,7 +60,7 @@ export default function SidebarProduct({ filters, onFilterChange }) {
   const handleResetAll = (e) => {
     e.stopPropagation();
     const resetFilters = {
-      priceRange: { min: 0, max: 156 },
+      priceRange: { min: 0, max: 10000 },
       selectedBrands: [],
       selectedCategories: []
     };
@@ -152,9 +152,9 @@ export default function SidebarProduct({ filters, onFilterChange }) {
               name="max"
               value={localFilters.priceRange.max}
               onChange={handlePriceChange}
-              max="156"
+              max="10000"
               className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black"
-              placeholder="156"
+              placeholder="10000"
             />
           </div>
         </div>

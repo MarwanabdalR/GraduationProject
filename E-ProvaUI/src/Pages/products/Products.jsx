@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useContext } from "react";
 import ProductHeader from "./ProductHeader";
 import SidebarProduct from "./SidebarProduct";
 import { Link } from "react-router-dom";
@@ -9,7 +9,6 @@ import { FaRegStar } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { useContext } from "react";
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { CartContext } from "../../Func/context/CartContextProvider";
 import { ProductContext } from "../../Func/context/Admin/ProductContextProvider";
@@ -43,7 +42,12 @@ StarRating.propTypes = {
 export default function Products() {
   const { AddToWishList } = useContext(WishListContext);
   const { AddCart } = useContext(CartContext);
-  const { GetPaginatedProducts } = useContext(ProductContext);
+  const { 
+    GetPaginatedProducts, 
+    GetProductsByCategoryId, 
+    GetProductsByBrandId,
+    GetProduct 
+  } = useContext(ProductContext);
   const queryClient = useQueryClient();
 
   // State management
@@ -56,33 +60,116 @@ export default function Products() {
   const [selectedColor, setSelectedColor] = useState("");
   const [productToAddToCart, setProductToAddToCart] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [filters, setFilters] = useState({
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilters, setActiveFilters] = useState({
     priceRange: { min: 0, max: 156 },
     selectedBrands: [],
     selectedCategories: [],
+    sort: ""
   });
-  const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch products with pagination
+  // Fetch products with filters
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ["products", filters, currentPage],
-    queryFn: () => GetPaginatedProducts(currentPage)
+    queryKey: ["products", currentPage, activeFilters],
+    queryFn: async () => {
+      let response;
+
+      // If we have both category and brand filters
+      if (activeFilters.selectedCategories.length > 0 && activeFilters.selectedBrands.length > 0) {
+        // Get all products and filter client-side (since API doesn't support multiple filters)
+        response = await GetProduct(activeFilters.sort);
+        const allProducts = response.data.products;
+        const filteredProducts = allProducts.filter(product => 
+          activeFilters.selectedCategories.includes(product.category._id) &&
+          activeFilters.selectedBrands.includes(product.brand._id) &&
+          product.finalPrice >= activeFilters.priceRange.min &&
+          product.finalPrice <= activeFilters.priceRange.max
+        );
+        return {
+          data: {
+            products: filteredProducts,
+            totalPages: Math.ceil(filteredProducts.length / 12)
+          }
+        };
+      }
+      
+      // If we have only category filters
+      else if (activeFilters.selectedCategories.length > 0) {
+        const categoryPromises = activeFilters.selectedCategories.map(categoryId => 
+          GetProductsByCategoryId(categoryId)
+        );
+        const categoryResults = await Promise.all(categoryPromises);
+        const products = categoryResults.flatMap(result => result.products)
+          .filter(product => 
+            product.finalPrice >= activeFilters.priceRange.min &&
+            product.finalPrice <= activeFilters.priceRange.max
+          );
+        return {
+          data: {
+            products,
+            totalPages: Math.ceil(products.length / 12)
+          }
+        };
+      }
+      
+      // If we have only brand filters
+      else if (activeFilters.selectedBrands.length > 0) {
+        const brandPromises = activeFilters.selectedBrands.map(brandId => 
+          GetProductsByBrandId(brandId)
+        );
+        const brandResults = await Promise.all(brandPromises);
+        const products = brandResults.flatMap(result => result.products)
+          .filter(product => 
+            product.finalPrice >= activeFilters.priceRange.min &&
+            product.finalPrice <= activeFilters.priceRange.max
+          );
+        return {
+          data: {
+            products,
+            totalPages: Math.ceil(products.length / 12)
+          }
+        };
+      }
+      
+      // If we only have price range or no filters
+      else {
+        response = await GetPaginatedProducts(currentPage, activeFilters.sort);
+        // Filter by price range if needed
+        if (activeFilters.priceRange.min > 0 || activeFilters.priceRange.max < 156) {
+          const filteredProducts = response.data.products.filter(product =>
+            product.finalPrice >= activeFilters.priceRange.min &&
+            product.finalPrice <= activeFilters.priceRange.max
+          );
+          return {
+            data: {
+              products: filteredProducts,
+              totalPages: Math.ceil(filteredProducts.length / 12)
+            }
+          };
+        }
+        return response;
+      }
+    }
   });
 
   // Access products data correctly
   const products = productsData?.data?.products || [];
   const totalPages = productsData?.data?.totalPages || 1;
 
+  // Handle filter changes from SidebarProduct
+  const handleFilterChange = useCallback((newFilters) => {
+    setCurrentPage(1); // Reset to first page when filters change
+    setActiveFilters(prev => ({
+      ...prev,
+      ...newFilters
+    }));
+  }, []);
+
   // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
 
   async function handleAddToWishList(e, productId) {
     try {
@@ -167,14 +254,6 @@ export default function Products() {
     );
   };
 
-  // Handle filter updates
-  const handleFilterChange = useCallback((newFilters) => {
-    setFilters(prev => ({
-      ...prev,
-      ...newFilters
-    }));
-  }, []);
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -217,7 +296,7 @@ export default function Products() {
                 <IoClose size={24} />
               </button>
               <SidebarProduct 
-                filters={filters}
+                filters={activeFilters}
                 onFilterChange={handleFilterChange}
               />
             </div>
