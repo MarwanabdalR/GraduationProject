@@ -240,7 +240,7 @@ export default function NewArrivalH() {
                   {product.name}
                 </h3>
 
-                <StarRating rating={parseFloat(product.rate)} />
+                <StarRating rating={parseFloat(product.averageRating)} />
                 <div className="mt-2 flex items-center justify-between text-gray-900">
                   <p className="font-medium text-red-500 tracking-wide">
                     {product.finalPrice.toFixed(2)}$

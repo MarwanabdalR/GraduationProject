@@ -240,7 +240,7 @@ export default function ProductDetails() {
           </div>
 
           <div className="flex items-center gap-4">
-            <StarRating rating={parseFloat(product.rate || 0)} />
+            <StarRating rating={parseFloat(product.averageRating || 0)} />
             <span className="text-sm text-gray-500">(0 reviews)</span>
           </div>
 

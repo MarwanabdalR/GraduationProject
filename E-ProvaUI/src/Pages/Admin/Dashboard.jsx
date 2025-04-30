@@ -10,7 +10,7 @@ export default function Dashboard() {
   const { GetProduct } = useContext(ProductContext);
   const { GetBrand } = useContext(BrandContext);
   const { GetCategory } = useContext(CategoryContext);
-  const { GetReview } = useContext(ReviewContext);
+  const { getAllReviews } = useContext(ReviewContext);
 
   const { data } = useQuery({
     queryKey: ["GetProduct"],
@@ -28,10 +28,9 @@ export default function Dashboard() {
   });
 
   const { data: reviews } = useQuery({
-    queryKey: ["getReview"],
-    queryFn: () => GetReview(),
+    queryKey: ["getAllReviews"],
+    queryFn: () => getAllReviews(),
   });
-  console.log("🚀 ~ Dashboard ~ reviews:", reviews)
 
   return (
     <div className="min-h-screen p-6">
@@ -74,7 +73,7 @@ export default function Dashboard() {
                   <h3 className="text-gray-500 text-xs uppercase font-semibold">
                     TOTAL REVIEWS
                   </h3>
-                  <p className="text-5xl font-bold text-gray-900">{reviews?.data.reviews.length}</p>
+                  <p className="text-5xl font-bold text-gray-900">{reviews?.data.length}</p>
                 </div>
               </Slide>
             </div>

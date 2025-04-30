@@ -1,38 +1,80 @@
+import { useContext } from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-
-const reviews = [
-  {
-    id: 1,
-    user: "John Doe",
-    rating: 4,
-    comment: "Great product! Really loved the quality.",
-    createdAt: "2025-03-09",
-  },
-  {
-    id: 2,
-    user: "Jane Smith",
-    rating: 5,
-    comment: "Absolutely amazing! Will buy again.",
-    createdAt: "2025-03-08",
-  },
-  {
-    id: 3,
-    user: "Alice Johnson",
-    rating: 3,
-    comment: "Decent, but could be better.",
-    createdAt: "2025-03-07",
-  },
-];
+import { ReviewContext } from "../../Func/context/ReviewContextProvider";
+import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import NoData from "../../Components/NoData";
+import Loader from "../../Components/Loader";
+import CantFetch from "../../Components/CantFetch";
 
 export default function AdminReviews() {
+  const { getAllReviews } = useContext(ReviewContext);
+
+  const { data: response, isLoading, isError } = useQuery({
+    queryKey: ["getAllReviews"],
+    queryFn: () => getAllReviews(),
+  });
+
+  const reviews = response?.data || [];
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  if (reviews.length === 0) {
+    return <NoData />;
+  }
+  if (isLoading) {
+    return <Loader />;
+  }
+  if (isError) {
+    return <CantFetch />;
+  }
   return (
     <>
-      <div className="p-6 bg-gray-100 min-h-screen flex justify-center">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="p-6 bg-gray-100 min-h-screen flex justify-center"
+      >
         <div className="max-w-4xl w-full">
-          <h1 className="text-2xl font-semibold mb-4">
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-2xl font-semibold mb-4"
+          >
             Admin Review Management
-          </h1>
-          <div className="bg-white shadow-md rounded-lg p-4">
+          </motion.h1>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-white shadow-md rounded-lg p-4"
+          >
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-gray-200">
@@ -42,28 +84,45 @@ export default function AdminReviews() {
                   <th className="p-3 text-left">Date</th>
                 </tr>
               </thead>
-              <tbody>
+              <motion.tbody
+                variants={container}
+                initial="hidden"
+                animate="show"
+              >
                 {reviews.map((review) => (
-                  <tr key={review.id} className="border-t">
-                    <td className="p-3">{review.user}</td>
+                  <motion.tr 
+                    key={review._id} 
+                    className="border-t"
+                    variants={item}
+                    whileHover={{ 
+                      backgroundColor: "#f8f9fa",
+                      transition: { duration: 0.2 }
+                    }}
+                  >
+                    <td className="p-3">{review.userId.username}</td>
                     <td className="p-3">
                       <div className="flex text-yellow-500">
                         {Array.from({ length: 5 }, (_, i) => (
-                          <button key={i} className="focus:outline-none">
+                          <motion.button 
+                            key={i} 
+                            className="focus:outline-none"
+                            whileHover={{ scale: 1.2 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
                             {i < review.rating ? <AiFillStar /> : <AiOutlineStar />}
-                          </button>
+                          </motion.button>
                         ))}
                       </div>
                     </td>
                     <td className="p-3">{review.comment}</td>
-                    <td className="p-3">{review.createdAt}</td>
-                  </tr>
+                    <td className="p-3">{formatDate(review.createdAt)}</td>
+                  </motion.tr>
                 ))}
-              </tbody>
+              </motion.tbody>
             </table>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

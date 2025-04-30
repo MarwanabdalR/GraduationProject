@@ -10,18 +10,55 @@ export const ProductContextProvider = ({ children }) => {
   const token = cookies.accessToken;
 
   // Get all products (for Dashboard and NewArrivalH)
-  async function GetProduct() {
+  async function GetProduct(sort = "") {
     try {
-      return await axios.get("https://e-prova.vercel.app/Product");
+      const url = sort 
+        ? `https://e-prova.vercel.app/Product?sort=${sort}`
+        : "https://e-prova.vercel.app/Product";
+      return await axios.get(url);
     } catch (error) {
       toast.error(error.response.data.message);
     }
   }
 
-  // Get paginated products (for NewArrivals)
-  async function GetPaginatedProducts(page = 1, sort = "newest") {
+  // get product by category id
+  async function GetProductByCategoryId(categoryId) {
     try {
-      return await axios.get(`https://e-prova.vercel.app/Product?page=${page}&sort=${sort}`);
+      const response = await axios.get(`https://e-prova.vercel.app/Product?category=${categoryId}`);
+      return response.data;
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  // get product by brand id
+  async function GetProductByBrandId(brandId) {
+    try {
+      const response = await axios.get(`https://e-prova.vercel.app/Product?brand=${brandId}`);
+      return response.data;
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  // Get paginated products with optional sorting
+  async function GetPaginatedProducts(page = 1, sort = "") {
+    try {
+      let url = `https://e-prova.vercel.app/Product?page=${page}`;
+      if (sort) {
+        url += `&sort=${sort}`;
+      }
+      return await axios.get(url);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  // Get sorted products by price (ascending or descending)
+  async function GetSortedProductsByPrice(ascending = true) {
+    try {
+      const sortOrder = ascending ? "price" : "-price";
+      return await axios.get(`https://e-prova.vercel.app/Product?sort=${sortOrder}`);
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -35,15 +72,24 @@ export const ProductContextProvider = ({ children }) => {
           headers: { token },
         }
       );
-      toast.success("Product deleted successfully");
+      console.log("🚀 ~ DeleteProduct ~ response:", response)
+      toast.success(response.data.message);
       return response;
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.log("🚀 ~ DeleteProduct ~ error:", error)
+      toast.error(error.message);
     }
   }
 
   return (
-    <ProductContext.Provider value={{ GetProduct, GetPaginatedProducts, DeleteProduct }}>
+    <ProductContext.Provider value={{ 
+      GetProduct, 
+      GetPaginatedProducts, 
+      DeleteProduct, 
+      GetProductByCategoryId, 
+      GetProductByBrandId,
+      GetSortedProductsByPrice 
+    }}>
       {children}
     </ProductContext.Provider>
   );

@@ -1,8 +1,10 @@
-import { useState, useContext, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import styled from 'styled-components';
-import { ReviewContext } from '../../Func/context/ReviewContextProvider';
-import { useParams } from 'react-router-dom';
+import { useState, useContext, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import styled from "styled-components";
+import { ReviewContext } from "../../Func/context/ReviewContextProvider";
+import { useParams } from "react-router-dom";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { CircleLoader, ClockLoader } from "react-spinners";
 
 const ReviewContainer = styled.div`
   max-width: 800px;
@@ -30,10 +32,10 @@ const Star = styled(motion.button)`
   border: none;
   cursor: pointer;
   font-size: 2rem;
-  color: ${props => props.filled ? '#FFD700' : '#ddd'};
+  color: ${(props) => (props.filled ? "#FFD700" : "#ddd")};
   padding: 0;
   transition: transform 0.2s;
-  
+
   &:hover {
     transform: scale(1.1);
   }
@@ -58,7 +60,7 @@ const TextArea = styled.textarea`
   border-radius: 8px;
   font-size: 1rem;
   resize: vertical;
-  
+
   &:focus {
     outline: none;
     border-color: #4a90e2;
@@ -115,13 +117,16 @@ const LoadingSpinner = styled(motion.div)`
 
 export default function AddReview() {
   const [rating, setRating] = useState(0);
-  const [review, setReview] = useState('');
+  const [review, setReview] = useState("");
   const [reviews, setReviews] = useState([]);
   const [hoveredStar, setHoveredStar] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
   const { id } = useParams();
-  const { getReviews, addReview } = useContext(ReviewContext);
+  const { getReviews, addReview, deleteReview, UpdateReview } =
+    useContext(ReviewContext);
 
   useEffect(() => {
     fetchReviews();
@@ -137,62 +142,79 @@ export default function AddReview() {
         setReviews([]);
       }
     } catch (error) {
-      console.error('Error fetching reviews:', error);
-      setError('Failed to load reviews. Please try again later.');
+      console.error("Error fetching reviews:", error);
+      setError("Failed to load reviews. Please try again later.");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleStarClick = (selectedRating, e) => {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault();
     setRating(Number(selectedRating));
-    setError('');
+    setError("");
+  };
+
+  const handleEdit = (reviewToEdit) => {
+    setEditingReview(reviewToEdit);
+    setRating(reviewToEdit.rating);
+    setReview(reviewToEdit.comment);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!review.trim()) {
-      setError('Please write a review comment');
+      setError("Please write a review comment");
       return;
     }
 
     if (!rating || rating < 1 || rating > 5) {
-      setError('Please select a rating between 1 and 5 stars');
+      setError("Please select a rating between 1 and 5 stars");
       return;
     }
 
     try {
       setIsLoading(true);
-      setError('');
+      setError("");
 
-      await addReview(id, review.trim(), rating);
+      if (editingReview) {
+        await UpdateReview(editingReview._id, review.trim(), rating, id);
+        setEditingReview(null);
+      } else {
+        await addReview(id, review.trim(), rating);
+      }
 
       // Reset form
       setRating(0);
-      setReview('');
-      
+      setReview("");
+
       // Refresh reviews
       await fetchReviews();
     } catch (error) {
-      console.error('Error submitting review:', error);
-      // Error is already handled by toast in the context
+      console.error("Error submitting review:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDelete = async (reviewId) => {
+    setIsDeleteLoading(true);
+    await deleteReview(reviewId, id);
+    await fetchReviews();
+    setIsDeleteLoading(false);
   };
 
   return (
     <ReviewContainer>
       <Title>Reviews</Title>
       <ReviewForm onSubmit={handleSubmit}>
-        <p>Click to review:</p>
+        <p>{editingReview ? "Edit your review:" : "Click to review:"}</p>
         <StarContainer>
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
               key={star}
-              type="button" // Add type="button" to prevent form submission
+              type="button"
               filled={star <= (hoveredStar || rating)}
               onClick={(e) => handleStarClick(star, e)}
               onMouseEnter={() => setHoveredStar(star)}
@@ -210,7 +232,7 @@ export default function AddReview() {
           value={review}
           onChange={(e) => {
             setReview(e.target.value);
-            setError('');
+            setError("");
           }}
           placeholder="Share your thoughts about this product..."
           disabled={isLoading}
@@ -218,14 +240,35 @@ export default function AddReview() {
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        <SubmitButton
-          type="submit"
-          disabled={isLoading || !rating || !review.trim()}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          {isLoading ? 'Submitting...' : 'Submit Review'}
-        </SubmitButton>
+        <div className="flex gap-3">
+          {editingReview && (
+            <SubmitButton
+              type="button"
+              onClick={() => {
+                setEditingReview(null);
+                setRating(0);
+                setReview("");
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ background: "#6c757d" }}
+            >
+              Cancel Edit
+            </SubmitButton>
+          )}
+          <SubmitButton
+            type="submit"
+            disabled={isLoading || !rating || !review.trim()}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isLoading
+              ? "Submitting..."
+              : editingReview
+              ? "Update Review"
+              : "Submit Review"}
+          </SubmitButton>
+        </div>
       </ReviewForm>
 
       <ReviewsList>
@@ -235,7 +278,7 @@ export default function AddReview() {
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           />
         )}
-        
+
         <AnimatePresence>
           {reviews.length > 0 ? (
             reviews.map((review) => (
@@ -246,13 +289,49 @@ export default function AddReview() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <div>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
-                <p>{review.comment}</p>
-                <small>Posted on {new Date(review.createdAt).toLocaleDateString()}</small>
+                <div className="flex justify-between items-center gap-4">
+                  <div className="left">
+                    <div>
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
+                    </div>
+                    <p>{review.comment}</p>
+                    <small>
+                      Posted on{" "}
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </small>
+                  </div>
+                  <div className="flex gap-4">
+                    <button 
+                      className="text-blue-500 hover:text-blue-600 text-2xl transition-all duration-300"
+                      onClick={() => handleEdit(review)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <ClockLoader color="#007bff" size={20} />
+                      ) : (
+                        <FaEdit />
+                      )}
+                    </button>
+                    <button
+                      className="text-red-500 hover:text-red-600 text-2xl transition-all duration-300"
+                      onClick={() => handleDelete(review._id)}
+                      disabled={isDeleteLoading}
+                    >
+                      {isDeleteLoading ? (
+                        <CircleLoader color="#e74c3c" size={20} />
+                      ) : (
+                        <FaTrash />
+                      )}
+                    </button>
+                  </div>
+                </div>
               </ReviewCard>
             ))
           ) : (
-            <Message>No reviews yet, lead the way and share your thoughts</Message>
+            <Message>
+              No reviews yet, lead the way and share your thoughts
+            </Message>
           )}
         </AnimatePresence>
       </ReviewsList>
