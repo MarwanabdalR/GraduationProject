@@ -1,4 +1,5 @@
-import { useState, useCallback, useContext } from "react";
+import { useState, useCallback, useContext, useEffect } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 import ProductHeader from "./ProductHeader";
 import SidebarProduct from "./SidebarProduct";
 import { Link } from "react-router-dom";
@@ -16,6 +17,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../../Components/Button";
 import PropTypes from "prop-types";
 import { HiMenuAlt2 } from "react-icons/hi";
+import axios from "axios";
 
 // Star Rating Component from NewArrivals
 const StarRating = ({ rating }) => {
@@ -49,6 +51,8 @@ export default function Products() {
     GetProduct 
   } = useContext(ProductContext);
   const queryClient = useQueryClient();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   // State management
   const [loadingWishlist, setLoadingWishlist] = useState({});
@@ -62,17 +66,46 @@ export default function Products() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFilters, setActiveFilters] = useState({
-    priceRange: { min: 0, max: 156 },
+    priceRange: { min: 0, max: 10000 },
     selectedBrands: [],
     selectedCategories: [],
-    sort: ""
+    sort: "",
+    keyword: ""
   });
 
-  // Fetch products with filters
+  // Update filters when URL search parameters change
+  useEffect(() => {
+    const keyword = searchParams.get("keyword");
+    const category = searchParams.get("category");
+    const brand = searchParams.get("brand");
+    const sort = searchParams.get("sort");
+
+    setActiveFilters(prev => ({
+      ...prev,
+      selectedCategories: category ? [category] : [],
+      selectedBrands: brand ? [brand] : [],
+      sort: sort || "",
+      keyword: keyword || ""
+    }));
+    setCurrentPage(1);
+  }, [searchParams]);
+
+  // Fetch products with filters and search
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ["products", currentPage, activeFilters],
+    queryKey: ["products", currentPage, activeFilters, location.search],
     queryFn: async () => {
       let response;
+
+      // If there's a search keyword, use the search endpoint
+      if (activeFilters.keyword) {
+        try {
+          response = await axios.get(`https://e-prova.vercel.app/Product?keyword=${activeFilters.keyword}`);
+          return response;
+        } catch (error) {
+          console.error("Error searching products:", error);
+          return { data: { products: [], totalPages: 0 } };
+        }
+      }
 
       // If we have both category and brand filters
       if (activeFilters.selectedCategories.length > 0 && activeFilters.selectedBrands.length > 0) {
@@ -131,11 +164,11 @@ export default function Products() {
         };
       }
       
-      // If we only have price range or no filters
+      // If we only have price range or sorting
       else {
         response = await GetPaginatedProducts(currentPage, activeFilters.sort);
         // Filter by price range if needed
-        if (activeFilters.priceRange.min > 0 || activeFilters.priceRange.max < 156) {
+        if (activeFilters.priceRange.min > 0 || activeFilters.priceRange.max < 10000) {
           const filteredProducts = response.data.products.filter(product =>
             product.finalPrice >= activeFilters.priceRange.min &&
             product.finalPrice <= activeFilters.priceRange.max
@@ -151,6 +184,7 @@ export default function Products() {
       }
     }
   });
+  console.log("🚀 ~ Products ~ productsData:", productsData)
 
   // Access products data correctly
   const products = productsData?.data?.products || [];
@@ -158,7 +192,7 @@ export default function Products() {
 
   // Handle filter changes from SidebarProduct
   const handleFilterChange = useCallback((newFilters) => {
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
     setActiveFilters(prev => ({
       ...prev,
       ...newFilters
@@ -266,6 +300,15 @@ export default function Products() {
     <div className="min-h-screen bg-gray-50">
       <ProductHeader />
       <div className="container mx-auto px-4 py-8">
+        {/* Show active search term if present */}
+        {activeFilters.keyword && (
+          <div className="mb-4">
+            <p className="text-gray-600">
+              Search results for: <span className="font-semibold">{activeFilters.keyword}</span>
+            </p>
+          </div>
+        )}
+
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsSidebarOpen(true)}

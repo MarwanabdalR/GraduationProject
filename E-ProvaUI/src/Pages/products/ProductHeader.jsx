@@ -55,7 +55,12 @@ export default function ProductHeader() {
             <IoIosArrowForward className="size-4" />
           </li>
           <li>
-            <span className="text-white">Products</span>
+            <Link
+              to="/e-prova/products"
+              className="block transition-colors hover:text-red-700"
+            >
+              <span className="text-white hover:text-red-700 transition-all duration-300">Products</span>
+            </Link>
           </li>
         </ol>
       </nav>
