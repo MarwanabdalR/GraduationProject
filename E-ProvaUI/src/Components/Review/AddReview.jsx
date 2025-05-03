@@ -1,119 +1,10 @@
 import { useState, useContext, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import styled from "styled-components";
+import { Box, Typography, Button, TextField, CircularProgress } from "@mui/material";
 import { ReviewContext } from "../../Func/context/ReviewContextProvider";
 import { useParams } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { CircleLoader, ClockLoader } from "react-spinners";
-
-const ReviewContainer = styled.div`
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-`;
-
-const Title = styled.h2`
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-`;
-
-const StarContainer = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-`;
-
-const Star = styled(motion.button)`
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 2rem;
-  color: ${(props) => (props.filled ? "#FFD700" : "#ddd")};
-  padding: 0;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: scale(1.1);
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-`;
-
-const ReviewForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  min-height: 120px;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  resize: vertical;
-
-  &:focus {
-    outline: none;
-    border-color: #4a90e2;
-  }
-`;
-
-const SubmitButton = styled(motion.button)`
-  background: #4a90e2;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  align-self: flex-start;
-
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-`;
-
-const ReviewsList = styled.div`
-  margin-top: 2rem;
-`;
-
-const ReviewCard = styled(motion.div)`
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-`;
-
-const Message = styled.p`
-  color: #666;
-  text-align: center;
-  font-style: italic;
-`;
-
-const ErrorMessage = styled.div`
-  color: #e74c3c;
-  margin: 0.5rem 0;
-  font-size: 0.9rem;
-`;
-
-const LoadingSpinner = styled(motion.div)`
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #4a90e2;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  margin: 1rem auto;
-`;
 
 export default function AddReview() {
   const [rating, setRating] = useState(0);
@@ -125,8 +16,7 @@ export default function AddReview() {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
   const { id } = useParams();
-  const { getReviews, addReview, deleteReview, UpdateReview } =
-    useContext(ReviewContext);
+  const { getReviews, addReview, deleteReview, UpdateReview } = useContext(ReviewContext);
 
   useEffect(() => {
     fetchReviews();
@@ -142,7 +32,6 @@ export default function AddReview() {
         setReviews([]);
       }
     } catch (error) {
-      console.error("Error fetching reviews:", error);
       setError("Failed to load reviews. Please try again later.");
     } finally {
       setIsLoading(false);
@@ -163,36 +52,28 @@ export default function AddReview() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!review.trim()) {
       setError("Please write a review comment");
       return;
     }
-
     if (!rating || rating < 1 || rating > 5) {
       setError("Please select a rating between 1 and 5 stars");
       return;
     }
-
     try {
       setIsLoading(true);
       setError("");
-
       if (editingReview) {
         await UpdateReview(editingReview._id, review.trim(), rating, id);
         setEditingReview(null);
       } else {
         await addReview(id, review.trim(), rating);
       }
-
-      // Reset form
       setRating(0);
       setReview("");
-
-      // Refresh reviews
       await fetchReviews();
     } catch (error) {
-      console.error("Error submitting review:", error);
+      setError("Error submitting review");
     } finally {
       setIsLoading(false);
     }
@@ -206,16 +87,32 @@ export default function AddReview() {
   };
 
   return (
-    <ReviewContainer>
-      <Title>Reviews</Title>
-      <ReviewForm onSubmit={handleSubmit}>
-        <p>{editingReview ? "Edit your review:" : "Click to review:"}</p>
-        <StarContainer>
+    <Box sx={{
+      maxWidth: 800,
+      margin: "2rem auto",
+      padding: 4,
+      background: "white",
+      borderRadius: 3,
+      boxShadow: 3,
+    }}>
+      <Typography variant="h4" sx={{ mb: 3, color: '#333' }}>Reviews</Typography>
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Typography>{editingReview ? "Edit your review:" : "Click to review:"}</Typography>
+        <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
           {[1, 2, 3, 4, 5].map((star) => (
-            <Star
+            <motion.button
               key={star}
               type="button"
-              filled={star <= (hoveredStar || rating)}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                fontSize: '2rem',
+                color: star <= (hoveredStar || rating) ? '#FFD700' : '#ddd',
+                padding: 0,
+                transition: 'transform 0.2s',
+                opacity: isLoading ? 0.7 : 1,
+              }}
               onClick={(e) => handleStarClick(star, e)}
               onMouseEnter={() => setHoveredStar(star)}
               onMouseLeave={() => setHoveredStar(null)}
@@ -224,11 +121,12 @@ export default function AddReview() {
               disabled={isLoading}
             >
               ★
-            </Star>
+            </motion.button>
           ))}
-        </StarContainer>
-
-        <TextArea
+        </Box>
+        <TextField
+          multiline
+          minRows={4}
           value={review}
           onChange={(e) => {
             setReview(e.target.value);
@@ -236,105 +134,96 @@ export default function AddReview() {
           }}
           placeholder="Share your thoughts about this product..."
           disabled={isLoading}
+          sx={{ width: '100%' }}
         />
-
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-
-        <div className="flex gap-3">
+        {error && <Typography color="error" sx={{ fontSize: '0.9rem' }}>{error}</Typography>}
+        <Box sx={{ display: 'flex', gap: 2 }}>
           {editingReview && (
-            <SubmitButton
+            <Button
               type="button"
               onClick={() => {
                 setEditingReview(null);
                 setRating(0);
                 setReview("");
               }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={{ background: "#6c757d" }}
+              variant="contained"
+              sx={{ background: '#6c757d', '&:hover': { background: '#5a6268' } }}
             >
               Cancel Edit
-            </SubmitButton>
+            </Button>
           )}
-          <SubmitButton
+          <Button
             type="submit"
+            variant="contained"
+            color="primary"
             disabled={isLoading || !rating || !review.trim()}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            sx={{ minWidth: 140 }}
           >
             {isLoading
               ? "Submitting..."
               : editingReview
               ? "Update Review"
               : "Submit Review"}
-          </SubmitButton>
-        </div>
-      </ReviewForm>
-
-      <ReviewsList>
+          </Button>
+        </Box>
+      </Box>
+      <Box sx={{ mt: 4 }}>
         {isLoading && (
-          <LoadingSpinner
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          />
+          <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+            <CircularProgress />
+          </Box>
         )}
-
         <AnimatePresence>
           {reviews.length > 0 ? (
             reviews.map((review) => (
-              <ReviewCard
+              <motion.div
                 key={review._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="flex justify-between items-center gap-4">
-                  <div className="left">
-                    <div>
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
-                    </div>
-                    <p>{review.comment}</p>
-                    <small>
-                      Posted on{" "}
-                      {new Date(review.createdAt).toLocaleDateString()}
-                    </small>
-                  </div>
-                  <div className="flex gap-4">
-                    <button 
-                      className="text-blue-500 hover:text-blue-600 text-2xl transition-all duration-300"
-                      onClick={() => handleEdit(review)}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <ClockLoader color="#007bff" size={20} />
-                      ) : (
-                        <FaEdit />
-                      )}
-                    </button>
-                    <button
-                      className="text-red-500 hover:text-red-600 text-2xl transition-all duration-300"
-                      onClick={() => handleDelete(review._id)}
-                      disabled={isDeleteLoading}
-                    >
-                      {isDeleteLoading ? (
-                        <CircleLoader color="#e74c3c" size={20} />
-                      ) : (
-                        <FaTrash />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </ReviewCard>
+                <Box sx={{
+                  background: '#f8f9fa',
+                  p: 2,
+                  borderRadius: 2,
+                  mb: 2,
+                }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
+                    <Box>
+                      <Box>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</Box>
+                      <Typography>{review.comment}</Typography>
+                      <Typography variant="caption">
+                        Posted on {new Date(review.createdAt).toLocaleDateString()}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                      <Button
+                        onClick={() => handleEdit(review)}
+                        disabled={isLoading}
+                        sx={{ color: '#1976d2', minWidth: 0 }}
+                      >
+                        {isLoading ? <ClockLoader color="#007bff" size={20} /> : <FaEdit />}
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(review._id)}
+                        disabled={isDeleteLoading}
+                        sx={{ color: '#e74c3c', minWidth: 0 }}
+                      >
+                        {isDeleteLoading ? <CircleLoader color="#e74c3c" size={20} /> : <FaTrash />}
+                      </Button>
+                    </Box>
+                  </Box>
+                </Box>
+              </motion.div>
             ))
           ) : (
-            <Message>
+            <Typography sx={{ color: '#666', textAlign: 'center', fontStyle: 'italic' }}>
               No reviews yet, lead the way and share your thoughts
-            </Message>
+            </Typography>
           )}
         </AnimatePresence>
-      </ReviewsList>
-    </ReviewContainer>
+      </Box>
+    </Box>
   );
 }
