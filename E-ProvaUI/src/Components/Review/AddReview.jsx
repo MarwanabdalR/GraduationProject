@@ -32,7 +32,7 @@ export default function AddReview() {
         setReviews([]);
       }
     } catch (error) {
-      setError("Failed to load reviews. Please try again later.");
+      console.log("🚀 ~ fetchReviews ~ error:", error)
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +73,7 @@ export default function AddReview() {
       setReview("");
       await fetchReviews();
     } catch (error) {
-      setError("Error submitting review");
+      console.log("🚀 ~ handleSubmit ~ error:", error)
     } finally {
       setIsLoading(false);
     }
