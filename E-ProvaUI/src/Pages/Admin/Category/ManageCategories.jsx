@@ -39,7 +39,6 @@ export default function ManageCategories() {
           },
         };
       });
-      toast.success("Category deleted successfully");
       queryClient.invalidateQueries(["getCategory"]);
     },
     onError: () => {

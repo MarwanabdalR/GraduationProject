@@ -7,12 +7,14 @@ import { useContext, useState } from "react";
 import { ProductContext } from "../../Func/context/Admin/ProductContextProvider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoClose } from "react-icons/io5";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { CartContext } from "../../Func/context/CartContextProvider";
+import { AuthContext } from "../../Func/context/AuthContextProvider";
+import toast from "react-hot-toast";
 
 const StarRating = ({ rating }) => {
   const stars = [];
@@ -41,6 +43,8 @@ export default function NewArrivalH() {
   const { GetProduct } = useContext(ProductContext);
   const { AddToWishList } = useContext(WishListContext);
   const { AddCart } = useContext(CartContext);
+  const { cookies } = useContext(AuthContext);
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [loadingWishlist, setLoadingWishlist] = useState({});
   const [loadingCart, setLoadingCart] = useState({});
@@ -77,6 +81,13 @@ export default function NewArrivalH() {
   const openSizeModal = (e, product) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Check if user is logged in
+    if (!cookies.accessToken) {
+      toast.error("Please login to add items to cart");
+      navigate("/e-prova/login");
+      return;
+    }
     
     // Check if product has sizes available
     if (!product.attributes?.sizes || product.attributes.sizes.length === 0) {

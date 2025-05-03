@@ -34,6 +34,7 @@ export default function AdminProducts() {
     stock,
     attributes,
     defaultImage,
+    AIimage,
     images,
     brandId,
     discount = 0,
@@ -52,6 +53,7 @@ export default function AdminProducts() {
       formData.append("discount", discount);
       formData.append("brandId", brandId);
       formData.append("defaultImage", defaultImage);
+      formData.append("AIimage", AIimage);
 
       images.forEach((image) => {
         formData.append("images", image);
@@ -86,6 +88,7 @@ export default function AdminProducts() {
       sizes: [],
       defaultImage: null,
       images: [],
+      AIimage: null,
       brandId: "",
       discount: 0,
     },
@@ -114,6 +117,7 @@ export default function AdminProducts() {
       sizes: Yup.array().min(1, "At least one size is required"),
       defaultImage: Yup.mixed().required("Default image is required"),
       images: Yup.array().min(1, "At least one image is required"),
+      AIimage: Yup.mixed().required("AI image is required"),
     }),
 
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -230,10 +234,10 @@ export default function AdminProducts() {
               </div>
             </div>
 
-            {/* main image */}
             <div className="bg-white shadow rounded-lg p-6 mt-4 grid grid-cols-2 gap-4">
+              {/* main image */}
               <div>
-                <h2 className="text-xl font-semibold mb-4">Main Picture *</h2>
+                <h2 className="text-xl font-semibold mb-4">Main Picture </h2>
                 <input
                   type="file"
                   accept="image/*"
@@ -253,7 +257,10 @@ export default function AdminProducts() {
 
               {/* sub images */}
               <div>
-                <h2 className="text-xl font-semibold mb-4">Sub Images * <span className="text-sm text-gray-500">(max 5)</span> </h2>
+                <h2 className="text-xl font-semibold mb-4">
+                  Sub Images *{" "}
+                  <span className="text-sm text-gray-500">(max 5)</span>{" "}
+                </h2>
                 <input
                   type="file"
                   accept="image/*"
@@ -276,6 +283,25 @@ export default function AdminProducts() {
                       />
                     ))}
                   </>
+                )}
+              </div>
+
+              {/* AI Image */}
+              <div>
+                <h2 className="text-xl font-semibold mb-4">AI Picture </h2>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="w-full"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    formik.setFieldValue("AIimage", file);
+                  }}
+                />
+                {formik.touched.AIimage && formik.errors.AIimage && (
+                  <div className="text-red-500">
+                    {formik.errors.AIimage}
+                  </div>
                 )}
               </div>
             </div>
@@ -340,7 +366,14 @@ export default function AdminProducts() {
                         className="mr-2"
                         onChange={(e) => {
                           console.log("Size S changed:", e.target.checked);
-                          formik.setFieldValue("sizes", e.target.checked ? [...formik.values.sizes, "s"] : formik.values.sizes.filter(size => size !== "s"));
+                          formik.setFieldValue(
+                            "sizes",
+                            e.target.checked
+                              ? [...formik.values.sizes, "s"]
+                              : formik.values.sizes.filter(
+                                  (size) => size !== "s"
+                                )
+                          );
                         }}
                         checked={formik.values.sizes.includes("s")}
                       />
@@ -356,7 +389,14 @@ export default function AdminProducts() {
                         className="mr-2"
                         onChange={(e) => {
                           console.log("Size M changed:", e.target.checked);
-                          formik.setFieldValue("sizes", e.target.checked ? [...formik.values.sizes, "m"] : formik.values.sizes.filter(size => size !== "m"));
+                          formik.setFieldValue(
+                            "sizes",
+                            e.target.checked
+                              ? [...formik.values.sizes, "m"]
+                              : formik.values.sizes.filter(
+                                  (size) => size !== "m"
+                                )
+                          );
                         }}
                         checked={formik.values.sizes.includes("m")}
                       />
@@ -372,7 +412,14 @@ export default function AdminProducts() {
                         className="mr-2"
                         onChange={(e) => {
                           console.log("Size L changed:", e.target.checked);
-                          formik.setFieldValue("sizes", e.target.checked ? [...formik.values.sizes, "l"] : formik.values.sizes.filter(size => size !== "l"));
+                          formik.setFieldValue(
+                            "sizes",
+                            e.target.checked
+                              ? [...formik.values.sizes, "l"]
+                              : formik.values.sizes.filter(
+                                  (size) => size !== "l"
+                                )
+                          );
                         }}
                         checked={formik.values.sizes.includes("l")}
                       />
@@ -388,7 +435,14 @@ export default function AdminProducts() {
                         className="mr-2"
                         onChange={(e) => {
                           console.log("Size XL changed:", e.target.checked);
-                          formik.setFieldValue("sizes", e.target.checked ? [...formik.values.sizes, "xl"] : formik.values.sizes.filter(size => size !== "xl"));
+                          formik.setFieldValue(
+                            "sizes",
+                            e.target.checked
+                              ? [...formik.values.sizes, "xl"]
+                              : formik.values.sizes.filter(
+                                  (size) => size !== "xl"
+                                )
+                          );
                         }}
                         checked={formik.values.sizes.includes("xl")}
                       />
@@ -461,7 +515,11 @@ export default function AdminProducts() {
                 className="w-full bg-blue-600 text-white py-2 rounded"
                 disabled={formik.isSubmitting}
               >
-                {formik.isSubmitting ? <ClipLoader color="white" size={20} /> : "Create Product"}
+                {formik.isSubmitting ? (
+                  <ClipLoader color="white" size={20} />
+                ) : (
+                  "Create Product"
+                )}
               </button>
             </div>
           </div>

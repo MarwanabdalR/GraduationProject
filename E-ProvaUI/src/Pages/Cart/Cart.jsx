@@ -7,7 +7,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiMinus, FiPlus } from "react-icons/fi";
 
 export default function Cart() {
-  const { GetCart, UpdateCart, RemoveFromCart, ClearCart } = useContext(CartContext);
+  const { GetCart, UpdateCart, RemoveFromCart, ClearCart } =
+    useContext(CartContext);
   const [deletingId, setDeletingId] = useState(null);
   const [isClearing, setIsClearing] = useState(false);
   const [loadingQuantity, setLoadingQuantity] = useState({});
@@ -43,13 +44,13 @@ export default function Cart() {
 
   const handleUpdateQuantity = async (productId, quantity) => {
     try {
-      setLoadingQuantity(prev => ({ ...prev, [productId]: true }));
+      setLoadingQuantity((prev) => ({ ...prev, [productId]: true }));
       await UpdateCart(productId, quantity);
       refetch();
     } catch (error) {
       console.error("Error updating quantity:", error);
     } finally {
-      setLoadingQuantity(prev => ({ ...prev, [productId]: false }));
+      setLoadingQuantity((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
@@ -164,21 +165,36 @@ export default function Cart() {
                 {/* Quantity controls */}
                 <div className="flex items-center gap-4 mt-2 sm:mt-0">
                   <button
-                    onClick={() => handleUpdateQuantity(item.productId._id, item.quantity - 1)}
-                    disabled={item.quantity <= 1 || loadingQuantity[item.productId._id]}
+                    onClick={() =>
+                      handleUpdateQuantity(
+                        item.productId._id,
+                        item.quantity - 1
+                      )
+                    }
+                    disabled={
+                      item.quantity <= 1 || loadingQuantity[item.productId._id]
+                    }
                     className="p-1 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
                   >
                     <FiMinus size={16} />
                   </button>
                   <span className="w-8 text-center">
                     {loadingQuantity[item.productId._id] ? (
-                      <AiOutlineLoading3Quarters className="animate-spin mx-auto" size={16} />
+                      <AiOutlineLoading3Quarters
+                        className="animate-spin mx-auto"
+                        size={16}
+                      />
                     ) : (
                       item.quantity
                     )}
                   </span>
                   <button
-                    onClick={() => handleUpdateQuantity(item.productId._id, item.quantity + 1)}
+                    onClick={() =>
+                      handleUpdateQuantity(
+                        item.productId._id,
+                        item.quantity + 1
+                      )
+                    }
                     disabled={loadingQuantity[item.productId._id]}
                     className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                   >
@@ -189,7 +205,10 @@ export default function Cart() {
 
               <div className="mt-2">
                 <p className="text-sm text-gray-500">
-                  Color: <span className="font-medium capitalize">{item.productId.attributes.color}</span>
+                  Color:{" "}
+                  <span className="font-medium capitalize">
+                    {item.productId.attributes.color}
+                  </span>
                 </p>
               </div>
             </div>
@@ -226,7 +245,9 @@ export default function Cart() {
             </div>
             <div className="flex justify-between items-center py-2">
               <span className="text-gray-600">Subtotal</span>
-              <span className="font-semibold">${data?.data?.cart?.totalPrice.toFixed(2)}</span>
+              <span className="font-semibold">
+                ${data?.data?.cart?.totalPrice.toFixed(2)}
+              </span>
             </div>
             <div className="flex justify-between items-center py-2">
               <span className="text-gray-600">Shipping</span>
@@ -235,17 +256,22 @@ export default function Cart() {
             <div className="border-t border-gray-200 mt-4 pt-4">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold">Total</span>
-                <span className="text-xl font-bold">${data?.data?.cart?.totalPrice.toFixed(2)}</span>
+                <span className="text-xl font-bold">
+                  ${data?.data?.cart?.totalPrice.toFixed(2)}
+                </span>
               </div>
             </div>
-            <button className="w-full mt-6 bg-black text-white py-3 rounded-full hover:bg-gray-900 transition-colors">
-              Proceed to Checkout
-            </button>
+            <Link to={`/e-prova/order/${data?.data?.cart?._id}`}>
+              <button className="w-full mt-6 bg-black text-white py-3 rounded-full hover:bg-gray-900 transition-colors">
+                Proceed to Checkout
+              </button>
+            </Link>
           </div>
         )}
 
         {/* Empty cart */}
-        {(!data?.data?.cart?.products || data.data.cart.products.length === 0) && (
+        {(!data?.data?.cart?.products ||
+          data.data.cart.products.length === 0) && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">Your cart is empty</p>
             <Link

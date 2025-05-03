@@ -40,6 +40,11 @@ export default function WishList() {
     }
   };
 
+  // Filter out any products that might have been deleted
+  const validProducts = data?.data?.wishList?.products?.filter(
+    (item) => item.product && item.product._id
+  ) || [];
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="header">
@@ -98,7 +103,7 @@ export default function WishList() {
         </h1>
       </div>
       <div className="grid grid-cols-1 gap-6">
-        {data?.data?.wishList?.products?.map((item) => (
+        {validProducts.map((item) => (
           <div
             key={item.product._id}
             className="flex flex-col sm:flex-row items-center bg-white p-4 rounded-lg shadow-sm border border-gray-100"
@@ -126,7 +131,7 @@ export default function WishList() {
             <div className="flex-shrink-0 mt-4 sm:mt-0 sm:ml-4">
               <Link to={`/e-prova/products/${item.product._id}`}>
                 <img
-                  src={item.product.defaultImage.url}
+                  src={item.product.defaultImage?.url || '/placeholder-image.jpg'}
                   alt={item.product.name}
                   className="w-24 h-32 sm:w-32 sm:h-40 object-cover rounded-md"
                 />
@@ -140,12 +145,12 @@ export default function WishList() {
               </h2>
               <div className="flex items-center justify-center sm:justify-start">
                 <p className="text-xl font-semibold text-gray-900 mt-2">
-                  ${item.product.finalPrice.toFixed(2)}
+                  ${item.product.finalPrice?.toFixed(2) || '0.00'}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
                   {item.product.discount > 0 && (
                     <span className="text-gray-500 line-through ml-2">
-                      ${item.product.price.toFixed(2)}
+                      ${item.product.price?.toFixed(2) || '0.00'}
                     </span>
                   )}
                 </p>
@@ -167,7 +172,7 @@ export default function WishList() {
         ))}
 
         {/* Clear wishlist button */}
-        {data?.data?.wishList?.products?.length > 0 && (
+        {validProducts.length > 0 && (
           <div className="flex justify-center mt-4">
             <button
               className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-50"
@@ -187,8 +192,7 @@ export default function WishList() {
         )}
 
         {/* Empty wishlist */}
-        {(!data?.data?.wishList?.products ||
-          data.data.wishList.products.length === 0) && (
+        {validProducts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">Your wishlist is empty</p>
             <Link

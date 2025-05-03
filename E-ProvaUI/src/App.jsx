@@ -36,6 +36,8 @@ import ProductDetails from "./Pages/products/ProductDetails";
 import Categories from "./Pages/Categories/Categories";
 import CategoryDetails from "./Pages/Categories/CategoryDetails";
 import { ReviewContextProvider } from "./Func/context/ReviewContextProvider";
+import OrderForm from "./Pages/Order/OrderForm";
+import { OrderContextProvider } from "./Func/context/OrderContextProvider";
 
 const queryClient = new QueryClient();
 
@@ -105,6 +107,10 @@ function App() {
         {
           path: "/e-prova/resetcode",
           element: <ResetCode />,
+        },
+        {
+          path: "/e-prova/order/:id",
+          element: <OrderForm />,
         },
       ],
     },
@@ -223,8 +229,10 @@ function App() {
                 <WishListContextProvider>
                   <CartContextProvider>
                     <ReviewContextProvider>
-                      <Toaster position="top-right" reverseOrder={false} />
-                      <RouterProvider router={route} />
+                      <OrderContextProvider>
+                        <Toaster position="top-right" reverseOrder={false} />
+                        <RouterProvider router={route} />
+                      </OrderContextProvider>
                     </ReviewContextProvider>
                   </CartContextProvider>
                 </WishListContextProvider>

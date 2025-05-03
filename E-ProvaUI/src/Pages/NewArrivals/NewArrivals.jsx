@@ -10,24 +10,24 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 // Components and Hooks
 import { useState, useEffect, useContext } from "react";
 import { Button } from "../../Components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 
 // Context Providers
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { CartContext } from "../../Func/context/CartContextProvider";
 import { ProductContext } from "../../Func/context/Admin/ProductContextProvider";
 import { CategoryContext } from "../../Func/context/Admin/CategoryContextProvider";
+import { AuthContext } from "../../Func/context/AuthContextProvider";
 
 // Components
 import PolicySection from "../Home/Policy";
 import banner from "../../../public/Images/Screenshot 2025-04-22 062516.png";
+import toast from "react-hot-toast";
 
-/**
- * Star Rating Component
- * Displays a star rating based on the provided rating value
- */
+
 const StarRating = ({ rating }) => {
   const stars = [];
   const totalStars = 5;
@@ -57,6 +57,8 @@ export default function NewArrivals() {
   const { AddCart } = useContext(CartContext);
   const { GetCategory } = useContext(CategoryContext);
   const { GetPaginatedProducts } = useContext(ProductContext);
+  const { cookies } = useContext(AuthContext);
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   // State management
@@ -160,6 +162,13 @@ export default function NewArrivals() {
     e.preventDefault();
     e.stopPropagation();
     
+    // Check if user is logged in
+    if (!cookies.accessToken) {
+      toast.error("Please login to add items to cart");
+      navigate("/e-prova/login");
+      return;
+    }
+    
     if (!product.attributes?.sizes || product.attributes.sizes.length === 0) {
       console.log("No sizes available for this product");
       return;
@@ -227,19 +236,39 @@ export default function NewArrivals() {
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Banner Image */}
-      <div className="relative w-full h-[300px] bg-[#06231e] mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-full h-[300px] bg-[#06231e] mb-8"
+      >
         <img
           src={banner}
           alt="E-Prova Banner"
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] object-contain"
         />
-      </div>
+      </motion.div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
         {/* Breadcrumb navigation */}
-        <nav aria-label="Breadcrumb" className="mb-8">
+        <motion.nav 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          aria-label="Breadcrumb" 
+          className="mb-8"
+        >
           <ol className="flex items-center gap-1 text-sm text-red-500">
             <li>
               <Link
@@ -256,15 +285,24 @@ export default function NewArrivals() {
               <span className="text-gray-700">New Arrivals</span>
             </li>
           </ol>
-        </nav>
+        </motion.nav>
 
         {/* Title and sorting */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex flex-col sm:flex-row justify-between items-center mb-8"
+        >
           <h1 className="text-3xl font-bold mb-4 sm:mb-0 bg-gradient-to-r from-black to-red-500 text-transparent bg-clip-text">
             New Arrivals
           </h1>
 
-          <div className="flex items-center gap-4">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-4"
+          >
             <select
               value={sortBy}
               onChange={(e) => handleSortChange(e.target.value)}
@@ -276,8 +314,8 @@ export default function NewArrivals() {
               <option value="-price">Price: High to Low</option>
               <option value="-discount">Biggest Discount</option>
             </select>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Products grid */}
         {!sortedProducts?.length ? (
@@ -379,38 +417,54 @@ export default function NewArrivals() {
             </div>
 
             {/* Simple Pagination */}
-            <div className="flex justify-center items-center gap-4 mt-8 mb-8">
-              <button
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="flex justify-center items-center gap-4 mt-8 mb-8"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1 || loading}
                 className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-red-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
-              </button>
+              </motion.button>
 
               <span className="text-sm text-gray-700">
                 Page <span className="font-semibold text-gray-900">{currentPage}</span> of{" "}
                 <span className="font-semibold text-gray-900">{totalPages}</span>
               </span>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages || loading}
                 className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-red-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </>
         )}
 
         {/* Size and Color Selection Modal */}
         {showSizeModal && productToAddToCart && (
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
             onClick={closeSizeModal}
           >
-            <div
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
               className="bg-white rounded-lg p-6 max-w-sm w-full"
               onClick={(e) => e.stopPropagation()}
             >
@@ -485,17 +539,24 @@ export default function NewArrivals() {
                   "Add to Cart"
                 )}
               </button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Image Carousel Modal */}
         {selectedProduct && (
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
             onClick={handleCloseCarousel}
           >
-            <div
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
               className="relative w-full max-w-2xl bg-white rounded-lg overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -565,32 +626,57 @@ export default function NewArrivals() {
                     )
                   )}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Categories and Tags Section */}
-        <div className="my-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+          className="my-8"
+        >
           {/* Tags */}
-          <div className="mt-20 mb-10 flex">
+          <motion.div 
+            whileHover={{ x: 5 }}
+            transition={{ duration: 0.2 }}
+            className="mt-20 mb-10 flex"
+          >
             <FaTag className="mt-1" />
             <p className="ml-2 font-semibold">TAGS</p>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-wrap gap-2 mb-4 ml-5">
-            {category?.data?.categories?.map((cat) => (
-              <Link
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="flex flex-wrap gap-2 mb-4 ml-5"
+          >
+            {category?.data?.categories?.map((cat, index) => (
+              <motion.div
                 key={cat._id}
-                to={`/e-prova/categories/${cat.name.toLowerCase()}`}
-                className="text-sm font-medium text-gray-600 transition-colors bg-gray-100 px-3 py-1 rounded-full outline outline-1 outline-gray-300 hover:text-red-500 duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
               >
-                {cat.name}
-              </Link>
+                <Link
+                  to={`/e-prova/categories/${cat.name.toLowerCase()}`}
+                  className="text-sm font-medium text-gray-600 transition-colors bg-gray-100 px-3 py-1 rounded-full outline outline-1 outline-gray-300 hover:text-red-500 duration-300"
+                >
+                  {cat.name}
+                </Link>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Flash deal section */}
-          <div className="space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.9 }}
+            className="space-y-4"
+          >
             <details
               className="group border-s-4 border-gray-200 bg-white p-4 [&_summary::-webkit-details-marker]:hidden"
               open
@@ -619,10 +705,10 @@ export default function NewArrivals() {
                 consequuntur distinctio corporis earum similique!
               </p>
             </details>
-          </div>
+          </motion.div>
           <PolicySection />
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }

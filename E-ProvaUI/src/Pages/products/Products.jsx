@@ -12,13 +12,14 @@ import { IoClose } from "react-icons/io5";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { WishListContext } from "../../Func/context/WishListContextProvider";
 import { CartContext } from "../../Func/context/CartContextProvider";
-import { ProductContext } from "../../Func/context/Admin/ProductContextProvider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../../Components/Button";
 import PropTypes from "prop-types";
 import { HiMenuAlt2 } from "react-icons/hi";
 import axios from "axios";
-
+import { AuthContext } from "../../Func/context/AuthContextProvider";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 // Star Rating Component from NewArrivals
 const StarRating = ({ rating }) => {
   const stars = [];
@@ -44,12 +45,8 @@ StarRating.propTypes = {
 export default function Products() {
   const { AddToWishList } = useContext(WishListContext);
   const { AddCart } = useContext(CartContext);
-  const { 
-    GetPaginatedProducts, 
-    GetProductsByCategoryId, 
-    GetProductsByBrandId,
-    GetProduct 
-  } = useContext(ProductContext);
+  const { cookies } = useContext(AuthContext);
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -94,93 +91,93 @@ export default function Products() {
   const { data: productsData, isLoading } = useQuery({
     queryKey: ["products", currentPage, activeFilters, location.search],
     queryFn: async () => {
-      let response;
+      try {
+        let allProducts = [];
+        let response;
 
-      // If there's a search keyword, use the search endpoint
-      if (activeFilters.keyword) {
-        try {
-          response = await axios.get(`https://e-prova.vercel.app/Product?keyword=${activeFilters.keyword}`);
-          return response;
-        } catch (error) {
-          console.error("Error searching products:", error);
-          return { data: { products: [], totalPages: 0 } };
+        // If we have both category and brand filters
+        if (activeFilters.selectedCategories.length > 0 && activeFilters.selectedBrands.length > 0) {
+          // Get products for each category and brand combination
+          const filterPromises = activeFilters.selectedCategories.flatMap(categoryId =>
+            activeFilters.selectedBrands.map(brandId =>
+              axios.get(`https://e-prova.vercel.app/Product?category=${categoryId}&brand=${brandId}${
+                activeFilters.keyword ? `&keyword=${activeFilters.keyword}` : ''
+              }${
+                activeFilters.sort ? `&sort=${activeFilters.sort}` : ''
+              }`)
+            )
+          );
+          const results = await Promise.all(filterPromises);
+          allProducts = results.flatMap(result => result.data.products);
         }
-      }
+        // If we have only category filters
+        else if (activeFilters.selectedCategories.length > 0) {
+          // Make separate API call for each category
+          const categoryPromises = activeFilters.selectedCategories.map(categoryId =>
+            axios.get(`https://e-prova.vercel.app/Product?category=${categoryId}${
+              activeFilters.keyword ? `&keyword=${activeFilters.keyword}` : ''
+            }${
+              activeFilters.sort ? `&sort=${activeFilters.sort}` : ''
+            }`)
+          );
+          const categoryResults = await Promise.all(categoryPromises);
+          allProducts = categoryResults.flatMap(result => result.data.products);
+        }
+        // If we have only brand filters
+        else if (activeFilters.selectedBrands.length > 0) {
+          // Make separate API call for each brand
+          const brandPromises = activeFilters.selectedBrands.map(brandId =>
+            axios.get(`https://e-prova.vercel.app/Product?brand=${brandId}${
+              activeFilters.keyword ? `&keyword=${activeFilters.keyword}` : ''
+            }${
+              activeFilters.sort ? `&sort=${activeFilters.sort}` : ''
+            }`)
+          );
+          const brandResults = await Promise.all(brandPromises);
+          allProducts = brandResults.flatMap(result => result.data.products);
+        }
+        // If we have no category or brand filters
+        else {
+          let url = `https://e-prova.vercel.app/Product?page=${currentPage}`;
+          if (activeFilters.keyword) {
+            url += `&keyword=${activeFilters.keyword}`;
+          }
+          if (activeFilters.sort) {
+            url += `&sort=${activeFilters.sort}`;
+          }
+          response = await axios.get(url);
+          allProducts = response.data.products;
+        }
 
-      // If we have both category and brand filters
-      if (activeFilters.selectedCategories.length > 0 && activeFilters.selectedBrands.length > 0) {
-        // Get all products and filter client-side (since API doesn't support multiple filters)
-        response = await GetProduct(activeFilters.sort);
-        const allProducts = response.data.products;
-        const filteredProducts = allProducts.filter(product => 
-          activeFilters.selectedCategories.includes(product.category._id) &&
-          activeFilters.selectedBrands.includes(product.brand._id) &&
-          product.finalPrice >= activeFilters.priceRange.min &&
-          product.finalPrice <= activeFilters.priceRange.max
-        );
-        return {
-          data: {
-            products: filteredProducts,
-            totalPages: Math.ceil(filteredProducts.length / 12)
-          }
-        };
-      }
-      
-      // If we have only category filters
-      else if (activeFilters.selectedCategories.length > 0) {
-        const categoryPromises = activeFilters.selectedCategories.map(categoryId => 
-          GetProductsByCategoryId(categoryId)
-        );
-        const categoryResults = await Promise.all(categoryPromises);
-        const products = categoryResults.flatMap(result => result.products)
-          .filter(product => 
-            product.finalPrice >= activeFilters.priceRange.min &&
-            product.finalPrice <= activeFilters.priceRange.max
-          );
-        return {
-          data: {
-            products,
-            totalPages: Math.ceil(products.length / 12)
-          }
-        };
-      }
-      
-      // If we have only brand filters
-      else if (activeFilters.selectedBrands.length > 0) {
-        const brandPromises = activeFilters.selectedBrands.map(brandId => 
-          GetProductsByBrandId(brandId)
-        );
-        const brandResults = await Promise.all(brandPromises);
-        const products = brandResults.flatMap(result => result.products)
-          .filter(product => 
-            product.finalPrice >= activeFilters.priceRange.min &&
-            product.finalPrice <= activeFilters.priceRange.max
-          );
-        return {
-          data: {
-            products,
-            totalPages: Math.ceil(products.length / 12)
-          }
-        };
-      }
-      
-      // If we only have price range or sorting
-      else {
-        response = await GetPaginatedProducts(currentPage, activeFilters.sort);
-        // Filter by price range if needed
+        // Apply price range filter
         if (activeFilters.priceRange.min > 0 || activeFilters.priceRange.max < 10000) {
-          const filteredProducts = response.data.products.filter(product =>
+          allProducts = allProducts.filter(product =>
             product.finalPrice >= activeFilters.priceRange.min &&
             product.finalPrice <= activeFilters.priceRange.max
           );
-          return {
-            data: {
-              products: filteredProducts,
-              totalPages: Math.ceil(filteredProducts.length / 12)
-            }
-          };
         }
-        return response;
+
+        // Handle pagination for filtered results
+        const totalProducts = allProducts.length;
+        const productsPerPage = 12;
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+        const paginatedProducts = allProducts.slice(startIndex, endIndex);
+
+        return {
+          data: {
+            products: paginatedProducts,
+            totalPages: Math.ceil(totalProducts / productsPerPage)
+          }
+        };
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        return {
+          data: {
+            products: [],
+            totalPages: 0
+          }
+        };
       }
     }
   });
@@ -223,6 +220,13 @@ export default function Products() {
   const openSizeModal = (e, product) => {
     e.preventDefault();
     e.stopPropagation();
+
+        // Check if user is logged in
+        if (!cookies.accessToken) {
+          toast.error("Please login to add items to cart");
+          navigate("/e-prova/login");
+          return;
+        }
     
     if (!product.attributes?.sizes || product.attributes.sizes.length === 0) {
       console.log("No sizes available for this product");
