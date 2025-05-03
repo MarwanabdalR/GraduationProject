@@ -5,12 +5,14 @@ import { ProductContext } from "../../Func/context/Admin/ProductContextProvider"
 import { BrandContext } from "../../Func/context/Admin/BrandContextProvider";
 import { CategoryContext } from "../../Func/context/Admin/CategoryContextProvider";
 import { ReviewContext } from "../../Func/context/ReviewContextProvider";
+import { OrderContext } from "../../Func/context/OrderContextProvider";
 
 export default function Dashboard() {
   const { GetProduct } = useContext(ProductContext);
   const { GetBrand } = useContext(BrandContext);
   const { GetCategory } = useContext(CategoryContext);
   const { getAllReviews } = useContext(ReviewContext);
+  const { GetOrder } = useContext(OrderContext);
 
   const { data } = useQuery({
     queryKey: ["GetProduct"],
@@ -30,6 +32,11 @@ export default function Dashboard() {
   const { data: reviews } = useQuery({
     queryKey: ["getAllReviews"],
     queryFn: () => getAllReviews(),
+  });
+
+  const { data: orders } = useQuery({
+    queryKey: ["getOrders"],
+    queryFn: () => GetOrder(),
   });
 
   return (
@@ -67,7 +74,9 @@ export default function Dashboard() {
                   <h3 className="text-gray-500 text-xs uppercase font-semibold">
                     TOTAL ORDERS
                   </h3>
-                  <p className="text-5xl font-bold text-gray-900">0</p>
+                  <p className="text-5xl font-bold text-gray-900">
+                    {orders?.data?.data?.length ?? 0}
+                  </p>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg h-full flex flex-col justify-center text-center">
                   <h3 className="text-gray-500 text-xs uppercase font-semibold">

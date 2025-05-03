@@ -121,7 +121,6 @@ export default function AdminProducts() {
     }),
 
     onSubmit: async (values, { setSubmitting, resetForm }) => {
-      console.log("🚀 Debug ~ onSubmit: ~ values:", values);
       const attributes = {
         color: values.color,
         sizes: values.sizes,
@@ -132,7 +131,6 @@ export default function AdminProducts() {
           ...values,
           attributes,
         });
-        console.log("🚀 Debug ~ Product created successfully");
         resetForm();
       } catch (error) {
         console.log("🚀 Debug ~ onSubmit: ~ error:", error);
@@ -160,7 +158,6 @@ export default function AdminProducts() {
                 value={formik.values.name}
                 onChange={(e) => {
                   formik.setFieldValue("name", e.target.value); // Update the field value
-                  console.log("Name changed:", e.target.value); // Log the change
                 }}
               />
             </div>
@@ -175,7 +172,6 @@ export default function AdminProducts() {
                 value={formik.values.description}
                 onChange={(e) => {
                   formik.setFieldValue("description", e.target.value); // Update the field value
-                  console.log("Description changed:", e.target.value); // Log the change
                 }}
               ></textarea>
             </div>
@@ -193,7 +189,6 @@ export default function AdminProducts() {
                     value={formik.values.price}
                     onChange={(e) => {
                       formik.setFieldValue("price", e.target.value); // Update the field value
-                      console.log("Price changed:", e.target.value); // Log the change
                     }}
                   />
                 </div>
@@ -207,7 +202,6 @@ export default function AdminProducts() {
                     value={formik.values.discount}
                     onChange={(e) => {
                       formik.setFieldValue("discount", e.target.value); // Update the field value
-                      console.log("Discount changed:", e.target.value); // Log the change
                     }}
                   />
                 </div>
@@ -227,7 +221,6 @@ export default function AdminProducts() {
                     value={formik.values.stock}
                     onChange={(e) => {
                       formik.setFieldValue("stock", e.target.value); // Update the field value
-                      console.log("Stock changed:", e.target.value); // Log the change
                     }}
                   />
                 </div>
@@ -245,7 +238,6 @@ export default function AdminProducts() {
                   onChange={(e) => {
                     const file = e.target.files[0];
                     formik.setFieldValue("defaultImage", file); // Update the field value
-                    console.log("Default Image selected:", file); // Log the change
                   }}
                 />
                 {formik.touched.defaultImage && formik.errors.defaultImage && (
@@ -268,7 +260,6 @@ export default function AdminProducts() {
                   onChange={(e) => {
                     const files = Array.from(e.target.files);
                     formik.setFieldValue("images", files); // Update the field value
-                    console.log("Images selected:", files); // Log the change
                   }}
                   multiple
                 />
@@ -319,7 +310,6 @@ export default function AdminProducts() {
                     {...formik.getFieldProps("color")}
                     onChange={(e) => {
                       formik.setFieldValue("color", e.target.value);
-                      console.log("Color selected:", e.target.value);
                     }}
                   >
                     <option value="">Select a color</option>
@@ -365,7 +355,6 @@ export default function AdminProducts() {
                         value="s"
                         className="mr-2"
                         onChange={(e) => {
-                          console.log("Size S changed:", e.target.checked);
                           formik.setFieldValue(
                             "sizes",
                             e.target.checked
@@ -388,7 +377,6 @@ export default function AdminProducts() {
                         value="m"
                         className="mr-2"
                         onChange={(e) => {
-                          console.log("Size M changed:", e.target.checked);
                           formik.setFieldValue(
                             "sizes",
                             e.target.checked
@@ -411,7 +399,6 @@ export default function AdminProducts() {
                         value="l"
                         className="mr-2"
                         onChange={(e) => {
-                          console.log("Size L changed:", e.target.checked);
                           formik.setFieldValue(
                             "sizes",
                             e.target.checked
@@ -434,7 +421,6 @@ export default function AdminProducts() {
                         value="xl"
                         className="mr-2"
                         onChange={(e) => {
-                          console.log("Size XL changed:", e.target.checked);
                           formik.setFieldValue(
                             "sizes",
                             e.target.checked
@@ -470,7 +456,6 @@ export default function AdminProducts() {
                       value={category._id}
                       className="mr-2"
                       onChange={(e) => {
-                        console.log("Category changed:", e.target.value);
                         formik.setFieldValue("category", e.target.value);
                       }}
                       checked={formik.values.category === category._id}
@@ -498,7 +483,6 @@ export default function AdminProducts() {
                       className="mr-2"
                       checked={formik.values.brandId === brand._id}
                       onChange={(e) => {
-                        console.log("Brand changed:", e.target.value);
                         formik.setFieldValue("brandId", e.target.value);
                       }}
                     />

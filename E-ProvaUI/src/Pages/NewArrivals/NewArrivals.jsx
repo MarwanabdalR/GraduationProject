@@ -24,8 +24,10 @@ import { AuthContext } from "../../Func/context/AuthContextProvider";
 
 // Components
 import PolicySection from "../Home/Policy";
-import banner from "../../../public/Images/Screenshot 2025-04-22 062516.png";
 import toast from "react-hot-toast";
+import NoData from "../../Components/NoData";
+import Loader from "../../Components/Loader";
+import CantFetch from "../../Components/CantFetch";
 
 
 const StarRating = ({ rating }) => {
@@ -120,26 +122,12 @@ export default function NewArrivals() {
     setCurrentPage(1); // Reset to first page when sorting changes
   };
 
-  // Loading state
-  if (loading && !products?.length) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <AiOutlineLoading3Quarters className="animate-spin" size={40} />
-      </div>
-    );
-  }
+
 
   // Products are now sorted on the server side
   const sortedProducts = products || [];
 
-  // Error state
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-500 text-xl">Error loading products: {error}</p>
-      </div>
-    );
-  }
+
 
   // Wishlist handlers
   async function handleAddToWishList(e, productId) {
@@ -234,6 +222,26 @@ export default function NewArrivals() {
       prev === allImages.length - 1 ? 0 : prev + 1
     );
   };
+  // Error state
+  if (error) {
+    return (
+      <CantFetch  />
+    );
+  }
+
+    // Loading state
+    if (loading && !products?.length) {
+      return (
+        <Loader />
+      );
+    }
+
+  // No data state
+  if (!loading && !products?.length) {
+    return (
+      <NoData />
+    );
+  }
 
   return (
     <motion.div
@@ -249,7 +257,7 @@ export default function NewArrivals() {
         className="relative w-full h-[300px] bg-[#06231e] mb-8"
       >
         <img
-          src={banner}
+          src="https://res.cloudinary.com/dsobcez1a/image/upload/v1746246015/Screenshot_2025-04-22_062516_fsczhi.png"
           alt="E-Prova Banner"
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] object-contain"
         />
@@ -661,7 +669,7 @@ export default function NewArrivals() {
                 transition={{ duration: 0.3, delay: index * 0.1 }}
               >
                 <Link
-                  to={`/e-prova/categories/${cat.name.toLowerCase()}`}
+                  to={`/e-prova/products?category=${cat._id}`}
                   className="text-sm font-medium text-gray-600 transition-colors bg-gray-100 px-3 py-1 rounded-full outline outline-1 outline-gray-300 hover:text-red-500 duration-300"
                 >
                   {cat.name}

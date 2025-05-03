@@ -102,7 +102,6 @@ export default function Nav() {
   };
 
   const handleRemoveFromCart = async (productId) => {
-    console.log("🚀 ~ handleRemoveFromCart ~ productId:", productId)
     try {
       setLoadingStates(prev => ({ ...prev, [productId]: true }));
       await RemoveFromCart(productId);
