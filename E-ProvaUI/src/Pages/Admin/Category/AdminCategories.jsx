@@ -28,10 +28,8 @@ export default function AdminCategories() {
       { setSubmitting, 
         resetForm
        }) => {
-      console.log("Submitting form with values:", values); // Debugging log
       try {
         await CreateCategory(values.title, values.description, values.category);
-        console.log("Category created successfully"); // Debugging log
         resetForm();
       } catch (error) {
         console.log("Error creating category:", error);

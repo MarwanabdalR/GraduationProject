@@ -3,10 +3,26 @@ import { Fade } from "react-awesome-reveal";
 
 export default function Brands() {
     const [activeIcon, setActiveIcon] = useState(0);
+
     const icons = [
-        { id: 0, src: '/Images/brand-1.png', alt: 'Olivia Lindsay', content: '"There are no ugly women, there are just the ones who don\'t know how to make them look good."' },
-        { id: 1, src: '/Images/brand-2.png', alt: 'The Black World', content: '"Beauty is within every woman, fashion is simply the art that reveals it to the world with elegance and grace."' },
-        { id: 2, src: '/Images/brand-3.png', alt: 'Salvador', content: '"There are no bad outfits, only those who haven\'t yet found the courage and confidence to wear them beautifully."' },
+        {
+            id: 0,
+            src: 'https://res.cloudinary.com/dsobcez1a/image/upload/v1746242747/brand-1_cvlscq.png', 
+            alt: 'Olivia Lindsay',
+            content: '"There are no ugly women, there are just the ones who don\'t know how to make them look good."'
+        },
+        {
+            id: 1,
+            src: 'https://res.cloudinary.com/dsobcez1a/image/upload/v1746242747/brand-2_mmf4ey.png', 
+            alt: 'The Black World',
+            content: '"Beauty is within every woman, fashion is simply the art that reveals it to the world with elegance and grace."'
+        },
+        {
+            id: 2,
+            src: 'https://res.cloudinary.com/dsobcez1a/image/upload/v1746242747/brand-3_y9vv2x.png',
+            alt: 'Salvador',
+            content: '"There are no bad outfits, only those who haven\'t yet found the courage and confidence to wear them beautifully."'
+        }
     ];
 
     return (
@@ -31,7 +47,7 @@ export default function Brands() {
                                         <button
                                             key={icon.id}
                                             onClick={() => setActiveIcon(icon.id)}
-                                            className={`p-2 sm:p-3 md:p-4 rounded-lg transition-all duration-200 hover:bg-gray-100`}
+                                            className="p-2 sm:p-3 md:p-4 rounded-lg transition-all duration-200 hover:bg-gray-100"
                                         >
                                             <img
                                                 src={icon.src}

@@ -104,6 +104,7 @@ export const ReviewContextProvider = ({ children }) => {
           },
         }
       );
+      toast.success("Review updated successfully");
       return response.data;
     } catch (error) {
       toast.error(error.response.data.message);
@@ -125,6 +126,7 @@ export const ReviewContextProvider = ({ children }) => {
           },
         }
       );
+      toast.success("Review deleted successfully");
       return response.data;
     } catch (error) {
       toast.error(error.response.data.message);

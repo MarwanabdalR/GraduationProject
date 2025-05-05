@@ -15,6 +15,9 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { CartContext } from "../../Func/context/CartContextProvider";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
 import toast from "react-hot-toast";
+import Loader from "../../Components/Loader";
+import NoData from "../../Components/NoData";
+import CantFetch from "../../Components/CantFetch";
 
 const StarRating = ({ rating }) => {
   const stars = [];
@@ -155,11 +158,15 @@ export default function NewArrivalH() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (isError) {
-    return <div>Error</div>;
+    return <CantFetch />;
+  }
+
+  if (!data) {
+    return <NoData />;
   }
 
   // Sort products by createdAt date (newest first) and limit to 5

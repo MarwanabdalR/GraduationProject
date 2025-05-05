@@ -20,6 +20,9 @@ import { CartContext } from "../../Func/context/CartContextProvider";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
 import ProductTab from './ProductTab';
 import AddReview from '../../Components/Review/AddReview.jsx';
+import Loader from '../../Components/Loader.jsx';
+import NoData from '../../Components/NoData.jsx';
+import CantFetch from '../../Components/CantFetch.jsx';
 
 // Add this color mapping object at the top of the file after imports
 const colorMap = {
@@ -76,7 +79,7 @@ export default function ProductDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch product details
-  const { data: response, isLoading: productLoading } = useQuery({
+  const { data: response, isLoading: productLoading , isError } = useQuery({
     queryKey: ['product', id],
     queryFn: async () => {
       const response = await axios.get(`https://e-prova.vercel.app/Product/get-product/${id}`);
@@ -152,17 +155,21 @@ export default function ProductDetails() {
 
   if (productLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <AiOutlineLoading3Quarters className="animate-spin" size={40} />
-      </div>
+      <Loader />
+
+
     );
   }
 
   if (!product) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-xl text-red-500">Product not found</p>
-      </div>
+      <NoData />
+    );
+  }
+
+  if (isError) {
+    return (
+      <CantFetch />
     );
   }
 

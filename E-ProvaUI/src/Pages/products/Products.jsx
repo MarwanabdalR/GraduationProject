@@ -20,6 +20,9 @@ import axios from "axios";
 import { AuthContext } from "../../Func/context/AuthContextProvider";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../Components/Loader";
+import noProduct from "../../../public/Notfound/undraw_my-files_1xwx.svg";
+import CantFetch from "../../Components/CantFetch";
 // Star Rating Component from NewArrivals
 const StarRating = ({ rating }) => {
   const stars = [];
@@ -88,7 +91,7 @@ export default function Products() {
   }, [searchParams]);
 
   // Fetch products with filters and search
-  const { data: productsData, isLoading } = useQuery({
+  const { data: productsData, isLoading, isError } = useQuery({
     queryKey: ["products", currentPage, activeFilters, location.search],
     queryFn: async () => {
       try {
@@ -181,7 +184,7 @@ export default function Products() {
       }
     }
   });
-  console.log("🚀 ~ Products ~ productsData:", productsData)
+
 
   // Access products data correctly
   const products = productsData?.data?.products || [];
@@ -294,12 +297,17 @@ export default function Products() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <AiOutlineLoading3Quarters className="animate-spin" size={40} />
-      </div>
+      <Loader />
+
+
     );
   }
 
+  if (isError) {
+    return (
+      <CantFetch />
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       <ProductHeader />
@@ -455,6 +463,7 @@ export default function Products() {
                 <p className="text-gray-500 text-lg">
                   No products found.
                 </p>
+              <img src={noProduct} alt="No products found" className="mx-auto h-40 w-40" />
               </div>
             )}
 
