@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { AuthProvider } from "./Func/context/AuthContextProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
-import { SpeedInsights } from "@vercel/speed-insights/next"
 // User
 import Login from "./Pages/Auth/Login";
 import Layout from "./Pages/Layout/Layout";
