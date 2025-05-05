@@ -24,8 +24,20 @@ export const OrderContextProvider = ({ children }) => {
     }
   }
 
+  async function GetOrder() {
+    try {
+      const response = await axios.get(
+        "https://e-prova.vercel.app/Order/",
+        { headers: { token } }
+      );
+      return response;
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
   return (
-    <OrderContext.Provider value={{ CreateOrder }}>
+    <OrderContext.Provider value={{ CreateOrder, GetOrder }}>
       {children}
     </OrderContext.Provider>
   );

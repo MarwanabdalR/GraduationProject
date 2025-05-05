@@ -18,6 +18,7 @@ export default function AddReview() {
   const { id } = useParams();
   const { getReviews, addReview, deleteReview, UpdateReview } = useContext(ReviewContext);
 
+
   useEffect(() => {
     fetchReviews();
   }, [id]);
@@ -32,7 +33,9 @@ export default function AddReview() {
         setReviews([]);
       }
     } catch (error) {
-      console.log("🚀 ~ fetchReviews ~ error:", error)
+    console.log("🚀 ~ fetchReviews ~ error:", error)
+
+      setError("Failed to load reviews. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -52,28 +55,37 @@ export default function AddReview() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!review.trim()) {
       setError("Please write a review comment");
       return;
     }
+
     if (!rating || rating < 1 || rating > 5) {
       setError("Please select a rating between 1 and 5 stars");
       return;
     }
+
     try {
       setIsLoading(true);
       setError("");
+
       if (editingReview) {
         await UpdateReview(editingReview._id, review.trim(), rating, id);
         setEditingReview(null);
       } else {
         await addReview(id, review.trim(), rating);
       }
+
+
       setRating(0);
       setReview("");
+
+
       await fetchReviews();
     } catch (error) {
       console.log("🚀 ~ handleSubmit ~ error:", error)
+      setError("Error submitting review");
     } finally {
       setIsLoading(false);
     }
@@ -138,6 +150,8 @@ export default function AddReview() {
         />
         {error && <Typography color="error" sx={{ fontSize: '0.9rem' }}>{error}</Typography>}
         <Box sx={{ display: 'flex', gap: 2 }}>
+
+
           {editingReview && (
             <Button
               type="button"
@@ -148,6 +162,7 @@ export default function AddReview() {
               }}
               variant="contained"
               sx={{ background: '#6c757d', '&:hover': { background: '#5a6268' } }}
+
             >
               Cancel Edit
             </Button>
@@ -158,6 +173,7 @@ export default function AddReview() {
             color="primary"
             disabled={isLoading || !rating || !review.trim()}
             sx={{ minWidth: 140 }}
+
           >
             {isLoading
               ? "Submitting..."
@@ -168,11 +184,14 @@ export default function AddReview() {
         </Box>
       </Box>
       <Box sx={{ mt: 4 }}>
+
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
             <CircularProgress />
           </Box>
+
         )}
+
         <AnimatePresence>
           {reviews.length > 0 ? (
             reviews.map((review) => (
@@ -216,6 +235,11 @@ export default function AddReview() {
                   </Box>
                 </Box>
               </motion.div>
+
+
+
+
+
             ))
           ) : (
             <Typography sx={{ color: '#666', textAlign: 'center', fontStyle: 'italic' }}>
