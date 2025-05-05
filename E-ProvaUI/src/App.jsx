@@ -34,11 +34,10 @@ import { WishListContextProvider } from "./Func/context/WishListContextProvider"
 import { CartContextProvider } from "./Func/context/CartContextProvider";
 import ProductDetails from "./Pages/products/ProductDetails";
 import Categories from "./Pages/Categories/Categories";
+import CategoryDetails from "./Pages/Categories/CategoryDetails";
 import { ReviewContextProvider } from "./Func/context/ReviewContextProvider";
 import OrderForm from "./Pages/Order/OrderForm";
 import { OrderContextProvider } from "./Func/context/OrderContextProvider";
-import SuccessOrder from "./Pages/Order/SuccessOrder";
-import FaildOrder from "./Pages/Order/FaildOrder";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +93,10 @@ function App() {
           element: <Categories />,
         },
         {
+          path: "/e-prova/categories/:id",
+          element: <CategoryDetails />,
+        },
+        {
           path: "/e-prova/blog",
           element: <Blog />,
         },
@@ -108,14 +111,6 @@ function App() {
         {
           path: "/e-prova/order/:id",
           element: <OrderForm />,
-        },
-        {
-          path: "/e-prova/order/success",
-          element: <SuccessOrder />,
-        },
-        {
-          path: "/e-prova/order/faild",
-          element: <FaildOrder />,
         },
       ],
     },

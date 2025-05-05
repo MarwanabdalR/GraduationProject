@@ -17,7 +17,7 @@ const PersonalStyle = () => {
                 </div>
                 <div className="w-full md:w-1/2 flex justify-center">
                     <img
-                        src="https://res.cloudinary.com/dsobcez1a/image/upload/v1746243324/outfit2_vg5pcz.jpg"
+                        src="../../../public/Images/outfit2.jpg"
                         alt="Outfit"
                         className="rounded-lg w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[500px] h-auto object-cover shadow-md"
                     />

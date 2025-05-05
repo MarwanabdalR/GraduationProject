@@ -1,20 +1,15 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const DropdownItem = ({ to, children }) => (
-  <motion.div
-    whileHover={{ scale: 1.02, x: 5 }}
-    whileTap={{ scale: 0.98 }}
+  <Link
+    to={to}
+    className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
   >
-    <Link
-      to={to}
-      className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
-    >
-      {children}
-    </Link>
-  </motion.div>
+    {children}
+  </Link>
 );
 
 DropdownItem.propTypes = {
@@ -23,17 +18,12 @@ DropdownItem.propTypes = {
 };
 
 const NavItem = ({ to, children }) => (
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
+  <Link
+    to={to}
+    className="block text-center items-center py-3 px-2 sm:px-3 md:px-4 text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200 text-sm md:text-base"
   >
-    <Link
-      to={to}
-      className="block text-center items-center py-3 px-2 sm:px-3 md:px-4 text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200 text-sm md:text-base"
-    >
-      {children}
-    </Link>
-  </motion.div>
+    {children}
+  </Link>
 );
 
 NavItem.propTypes = {
@@ -120,81 +110,59 @@ export default function CategoryNav() {
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
                   </motion.svg>
                 </motion.button>
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute z-10 bg-white divide-y divide-gray-100 rounded-md shadow-lg w-full sm:w-72 border border-gray-100 left-0 md:left-auto"
-                      style={{ maxHeight: '500px', overflowY: 'auto' }}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.1 }}
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
+                  transition={{ duration: 0.2 }}
+                  className={`absolute z-10 ${isOpen ? 'block' : 'hidden'} bg-white divide-y divide-gray-100 rounded-md shadow-lg w-full sm:w-72 border border-gray-100 left-0 md:left-auto`}
+                  style={{ maxHeight: '500px', overflowY: 'auto' }}
+                >
+                  <DropdownItem to="/e-prova/new-arrivals">New Arrivals</DropdownItem>
+                  <ul className="py-2 text-sm" aria-labelledby="dropdownInformationButton">
+                    <li>
+                      <div className="px-4 py-2.5 text-base font-medium text-gray-900">
+                        <div>Women</div>
+                      </div>
+                    </li>
+                    {WomendropdownItems.map((item) => (
+                      <motion.li 
+                        key={item.name}
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
                       >
-                        <DropdownItem to="/e-prova/new-arrivals">New Arrivals</DropdownItem>
-                      </motion.div>
-                      <ul className="py-2 text-sm" aria-labelledby="dropdownInformationButton">
-                        <motion.li
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.2 }}
-                        >
-                          <div className="px-4 py-2.5 text-base font-medium text-gray-900">
-                            <div>Women</div>
-                          </div>
-                        </motion.li>
-                        {WomendropdownItems.map((item, index) => (
-                          <motion.li 
-                            key={item.name}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 + index * 0.05 }}
-                          >
-                            <DropdownItem to={`/e-prova/products?category=women-${item.category}`}>
-                              {item.name}
-                            </DropdownItem>
-                          </motion.li>
-                        ))}
-                      </ul>
-                      <ul className="py-2 text-sm" aria-labelledby="dropdownInformationButton">
-                        <motion.li
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.3 }}
-                        >
-                          <div className="px-4 py-2.5 text-base font-medium text-gray-900">
-                            <div>Men</div>
-                          </div>
-                        </motion.li>
-                        {MenendropdownItems.map((item, index) => (
-                          <motion.li 
-                            key={item.name}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + index * 0.05 }}
-                          >
-                            <DropdownItem to={`/e-prova/products?category=men-${item.category}`}>
-                              {item.name}
-                            </DropdownItem>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                        <DropdownItem to={`/e-prova/products?category=women-${item.category}`}>
+                          {item.name}
+                        </DropdownItem>
+                      </motion.li>
+                    ))}
+                  </ul>
+                  <ul className="py-2 text-sm" aria-labelledby="dropdownInformationButton">
+                    <li>
+                      <div className="px-4 py-2.5 text-base font-medium text-gray-900">
+                        <div>Men</div>
+                      </div>
+                    </li>
+                    {MenendropdownItems.map((item) => (
+                      <motion.li 
+                        key={item.name}
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <DropdownItem to={`/e-prova/products?category=men-${item.category}`}>
+                          {item.name}
+                        </DropdownItem>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
               </div>
             </li>
             <div className="hidden md:flex space-x-1">
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <motion.li 
                   key={item.name}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + index * 0.05 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <NavItem to={item.to}>{item.name}</NavItem>
                 </motion.li>
