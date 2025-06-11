@@ -112,7 +112,7 @@ export default function Outfit() {
             <img
               src={resultImage || "../../../public/cat.png"}
               alt="Result"
-              className="w-40 h-40 object-cover rounded-xl border border-gray-200 shadow-sm bg-gray-50"
+              className={`w-40 h-40 object-cover rounded-xl border border-gray-200 shadow-sm bg-gray-50 ${resultImage ? '' : 'hidden'}`}
             />
           </div>
         </div>
