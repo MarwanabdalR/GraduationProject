@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { CloudUpload } from "lucide-react"; 
 import Loader from "../../Components/Loader";
 import CantFetch from "../../Components/CantFetch";
+import toast from "react-hot-toast";
+import { PropagateLoader } from "react-spinners";
 
 export default function Outfit() {
   const { id: productId } = useParams();
@@ -27,7 +29,6 @@ export default function Outfit() {
   });
 
   const product = response;
-  console.log(product);
 
   const handleUserImageChange = (e) => {
     setUserImage(e.target.files[0]);
@@ -39,23 +40,19 @@ export default function Outfit() {
     setIsProcessing(true);
     try {
       const formData = new FormData();
-      formData.append('userImage', userImage);
-      formData.append('aiImage', product.product.AIimage.url);
+      formData.append('human image', userImage);
+      formData.append('garment_image', product.product.AIimage.url);
+      formData.append('description', product.product.description);
 
       const response = await axios.post(
         'https://e-prova.vercel.app/AI/try-on',
         formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
       );
 
-      setResultImage(response.data.resultImage);
+      setResultImage(response.data.result.result_url);
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to process images');
       console.error('Error processing images:', error);
-      // You might want to add proper error handling here
     } finally {
       setIsProcessing(false);
     }
@@ -128,7 +125,7 @@ export default function Outfit() {
           ${userImage && !isProcessing ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-300 text-gray-500 cursor-not-allowed"}
         `}
       >
-        {isProcessing ? 'Processing...' : 'Try On'}
+        {isProcessing ? <PropagateLoader size={8} color="#000" /> : 'Try On'}
       </button>
     </div>
   );
