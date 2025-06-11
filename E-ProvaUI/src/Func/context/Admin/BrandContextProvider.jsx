@@ -15,22 +15,26 @@ import toast from "react-hot-toast";
       }
     }
 
-    async function CreateBrand(img, name, categoryId) {
+    async function CreateBrand(img, name, categoryIds) {
       try {
         const formData = new FormData();
-        formData.append("brand", img); 
+        formData.append("brand", img);
         formData.append("name", name);
-        formData.append("categories[0]", categoryId);
+    
+        categoryIds.forEach((id, index) => {
+          formData.append(`categories[${index}]`, id);
+        });
     
         return await axios.post("https://e-prova.vercel.app/Brand/create-brand", formData, {
           headers: {
-            token, 
+            token,
           },
         });
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response?.data?.message || "Something went wrong");
       }
     }
+    
     
 
     async function UpdateBrand(id, { name, brand } = {}) {

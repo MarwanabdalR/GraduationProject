@@ -12,7 +12,7 @@ const MenWomenSection = () => {
       </section>
       <div className="flex flex-col md:flex-row items-center justify-center relative md:-ml-4">
         {/* Women Section */}
-        <Bounce delay={1000} duration={1000} triggerOnce>
+        <Bounce duration={1000} triggerOnce>
           <div className="flex justify-center w-full md:w-auto mb-4 md:mb-0">
             <img
               src="https://res.cloudinary.com/dsobcez1a/image/upload/v1746245481/stylish-young-woman-with-christmas-wreath-outside-waiting-christmas_is4vmw.jpg"
@@ -24,7 +24,7 @@ const MenWomenSection = () => {
 
         {/* Center Content */}
         <div className="flex flex-col items-center justify-center text-center absolute bg-white bg-opacity-75 p-4 rounded-lg md:bg-transparent md:p-0 z-10 w-full md:w-auto">
-          <Bounce delay={2000} duration={1500} triggerOnce>
+          <Bounce delay={1000} duration={1500} triggerOnce>
             <p className="uppercase text-xs md:text-sm font-semibold text-slate-300">
               Shop Outfits
             </p>
@@ -39,7 +39,7 @@ const MenWomenSection = () => {
         </div>
 
         {/* Men Section */}
-        <Bounce delay={1700} duration={1000} triggerOnce>
+        <Bounce duration={500} triggerOnce>
           <div className="flex justify-center w-full md:w-auto mb-4 md:mb-0">
             <div className="bg-white">
               <img

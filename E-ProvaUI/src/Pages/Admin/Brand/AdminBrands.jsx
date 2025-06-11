@@ -19,7 +19,7 @@ export default function AdminBrands() {
     initialValues: {
       title: "",
       logo: null,
-      category: "",
+      categories: [],
     },
     validationSchema: Yup.object({
       title: Yup.string()
@@ -27,11 +27,11 @@ export default function AdminBrands() {
         .max(50, "Must be 50 characters or less")
         .required("Required"),
       logo: Yup.mixed().required("Brand logo is required"),
-      category: Yup.string().required("Category is required"),
+      categories: Yup.array().min(1, "At least one category is required"),
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
-        await CreateBrand(values.logo, values.title, values.category);
+        await CreateBrand(values.logo, values.title, values.categories);
         toast.success("Brand created successfully");
         resetForm();
       } catch (error) {
@@ -82,17 +82,21 @@ export default function AdminBrands() {
                   <label className="block text-gray-700">Select Category *</label>
                   <select
                     className="w-full p-2 border rounded"
-                    name="category"
-                    onChange={(e) => formik.setFieldValue("category", e.target.value)}
-                    value={formik.values.category}
+                    name="categories"
+                    multiple
+                    onChange={(e) => {
+                      const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
+                      formik.setFieldValue("categories", selectedOptions);
+                    }}
+                    value={formik.values.categories}
                   >
-                    <option value="">Select Category</option>
                     {data?.data?.categories?.map((category) => (
                       <option key={category._id} value={category._id}>
                         {category.name}
                       </option>
                     ))}
                   </select>
+
                   {formik.touched.category && formik.errors.category && (
                     <div className="text-red-500">{formik.errors.category}</div>
                   )}

@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { Button } from '../../Components/Button';
 
 const PersonalStyle = () => {
@@ -12,7 +13,9 @@ const PersonalStyle = () => {
                         Discover outfit ideas tailored uniquely to your style. Our AI learns from your wardrobe to suggest looks for any occasion.
                     </p>
                     <div className="pt-2">
-                        <Button Name="Learn More" />
+                        <Link to="/e-prova/newarrivals">
+                            <Button Name="Learn More" />
+                        </Link>
                     </div>
                 </div>
                 <div className="w-full md:w-1/2 flex justify-center">

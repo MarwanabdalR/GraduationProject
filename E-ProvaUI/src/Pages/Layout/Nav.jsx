@@ -26,7 +26,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function Nav() {
   const { GetWishList } = useContext(WishListContext);
-  const { GetCart, UpdateCart, RemoveFromCart, ClearCart } = useContext(CartContext);
+  const { GetCart, UpdateCart, RemoveFromCart, ClearCart } =
+    useContext(CartContext);
   const { cookies, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -91,25 +92,25 @@ export default function Nav() {
 
   const handleUpdateQuantity = async (productId, count) => {
     try {
-      setLoadingStates(prev => ({ ...prev, [productId]: true }));
+      setLoadingStates((prev) => ({ ...prev, [productId]: true }));
       await UpdateCart(productId, count);
       await queryClient.invalidateQueries({ queryKey: ["Cart"] });
     } catch (error) {
       console.error("Error updating quantity:", error);
     } finally {
-      setLoadingStates(prev => ({ ...prev, [productId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
   const handleRemoveFromCart = async (productId) => {
     try {
-      setLoadingStates(prev => ({ ...prev, [productId]: true }));
+      setLoadingStates((prev) => ({ ...prev, [productId]: true }));
       await RemoveFromCart(productId);
       await queryClient.invalidateQueries({ queryKey: ["Cart"] });
     } catch (error) {
       console.error("Error deleting from cart:", error);
     } finally {
-      setLoadingStates(prev => ({ ...prev, [productId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
@@ -167,7 +168,12 @@ export default function Nav() {
 
                 {/* Navigation Links */}
                 <ul className="hidden xl:flex items-center gap-6 text-sm basis-auto xl:basis-96 xl:justify-end">
-                  {["Home", "NewArrivals", "Products", "Categories" , "Blog"].map((item) => (
+                  {[
+                    "Home",
+                    "NewArrivals",
+                    "Products",
+                    "Blog",
+                  ].map((item) => (
                     <li key={item}>
                       <Link
                         className="text-gray-500 hover:text-gray-700 transition"
@@ -271,19 +277,15 @@ export default function Nav() {
                   {cookies.accessToken && (
                     <>
                       <Link to="/e-prova/wishlist">
-                          <span className="relative inline-block">
-                            <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
-                              <CiStar
-                                className="m-1 cursor-pointer "
-                                size={20}
-                              />
-                              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                                {data?.data?.wishList?.products?.length || 0}
-                              </span>
-                            </div>
-                          </span>
-                        </Link>
-
+                        <span className="relative inline-block">
+                          <div className="text-black transition hover:text-white/75 hover:bg-black hover:border-black border-2 rounded-full p-2 cursor-pointer shadow-md">
+                            <CiStar className="m-1 cursor-pointer " size={20} />
+                            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                              {data?.data?.wishList?.products?.length || 0}
+                            </span>
+                          </div>
+                        </span>
+                      </Link>
 
                       <span className="relative inline-block mr-3">
                         <div
@@ -313,19 +315,7 @@ export default function Nav() {
               >
                 <List>
                   <ListItem>
-                    <form className="flex items-center w-full">
-                      <input
-                        type="search"
-                        className="w-full px-4 py-2 text-sm border-2 border-gray-300 rounded-lg"
-                        placeholder="Search"
-                      />
-                      <button
-                        type="submit"
-                        className="px-4 py-2 text-sm font-medium text-white bg-black rounded-lg"
-                      >
-                        Search
-                      </button>
-                    </form>
+                      <Search />
                   </ListItem>
 
                   {["Home", "NewArrivals", "Products", "Wishlist", "Blog"].map(
@@ -456,7 +446,10 @@ export default function Nav() {
                     <>
                       <List>
                         {cart?.data?.cart?.products?.map((product) => (
-                          <ListItem key={product._id} className="flex flex-col items-start p-4">
+                          <ListItem
+                            key={product._id}
+                            className="flex flex-col items-start p-4"
+                          >
                             <div className="flex items-center w-full gap-4">
                               <img
                                 src={product.productId.defaultImage.url}
@@ -464,43 +457,78 @@ export default function Nav() {
                                 className="w-16 h-16 object-cover rounded"
                               />
                               <div className="flex-1">
-                                <Typography variant="subtitle1" className="font-medium">
+                                <Typography
+                                  variant="subtitle1"
+                                  className="font-medium"
+                                >
                                   {product.productId.name}
                                 </Typography>
-                                
-                                <Typography variant="body2" color="textSecondary">
-                                  Color: <span className="capitalize">{product.productId.attributes.color}</span>
+
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  Color:{" "}
+                                  <span className="capitalize">
+                                    {product.productId.attributes.color}
+                                  </span>
                                 </Typography>
-                                <Typography variant="body2" className="font-bold">
+                                <Typography
+                                  variant="body2"
+                                  className="font-bold"
+                                >
                                   ${product.productId.finalPrice.toFixed(2)}
                                 </Typography>
                               </div>
                               {/* Remove Button */}
                               <button
-                                onClick={() => handleRemoveFromCart(product.productId._id)}
+                                onClick={() =>
+                                  handleRemoveFromCart(product.productId._id)
+                                }
                                 disabled={loadingStates[product.productId._id]}
                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                               >
                                 {loadingStates[product.productId._id] ? (
-                                  <AiOutlineLoading3Quarters className="animate-spin" size={20} />
+                                  <AiOutlineLoading3Quarters
+                                    className="animate-spin"
+                                    size={20}
+                                  />
                                 ) : (
-                                  <IoTrashOutline size={20} className="text-red-500" />
+                                  <IoTrashOutline
+                                    size={20}
+                                    className="text-red-500"
+                                  />
                                 )}
                               </button>
                             </div>
-                            
+
                             {/* Quantity Controls */}
                             <div className="flex items-center gap-4 mt-4 self-center">
                               <button
-                                onClick={() => handleUpdateQuantity(product.productId._id, product.quantity - 1)}
-                                disabled={product.quantity <= 1 || loadingStates[product.productId._id]}
+                                onClick={() =>
+                                  handleUpdateQuantity(
+                                    product.productId._id,
+                                    product.quantity - 1
+                                  )
+                                }
+                                disabled={
+                                  product.quantity <= 1 ||
+                                  loadingStates[product.productId._id]
+                                }
                                 className="p-1 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
                               >
                                 <FiMinus size={16} />
                               </button>
-                              <span className="w-8 text-center">{product.quantity}</span>
+                              <span className="w-8 text-center">
+                                {product.quantity}
+                              </span>
                               <button
-                                onClick={() => handleUpdateQuantity(product.productId._id, product.quantity + 1)}
+                                onClick={() =>
+                                  handleUpdateQuantity(
+                                    product.productId._id,
+                                    product.quantity + 1
+                                  )
+                                }
                                 disabled={loadingStates[product.productId._id]}
                                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                               >
@@ -532,7 +560,10 @@ export default function Nav() {
                             className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isClearingCart ? (
-                              <AiOutlineLoading3Quarters className="animate-spin mx-auto" size={20} />
+                              <AiOutlineLoading3Quarters
+                                className="animate-spin mx-auto"
+                                size={20}
+                              />
                             ) : (
                               "Clear All"
                             )}

@@ -55,25 +55,19 @@ export default function CategoryNav() {
 
   const WomendropdownItems = [
     { name: 'Blouses', category: 'blouses' },
-    { name: 'Tops', category: 'tops' },
     { name: 'T-shirts', category: 't-shirts' },
     { name: 'Sweatshirts', category: 'sweatshirts' },
     { name: 'Hoodies', category: 'hoodies' },
     { name: 'Jacket', category: 'jacket' },
     { name: 'Dresses', category: 'dresses' },
-    { name: 'Bottoms', category: 'bottoms' },
-    { name: 'Denim', category: 'denim' },
   ];
 
   const MenendropdownItems = [
-    { name: 'Tops', category: 'tops' },
     { name: 'T-shirts', category: 't-shirts' },
     { name: 'Shirts', category: 'shirts' },
     { name: 'Sweatshirts', category: 'sweatshirts' },
     { name: 'Hoodies', category: 'hoodies' },
     { name: 'Jacket', category: 'jacket' },
-    { name: 'Bottoms', category: 'bottoms' },
-    { name: 'Denim', category: 'denim' },
   ];
 
   const navItems = [
@@ -134,13 +128,8 @@ export default function CategoryNav() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
-
-
-
-
-
                       >
-                        <DropdownItem to="/e-prova/new-arrivals">New Arrivals</DropdownItem>
+                        <DropdownItem to="/e-prova/newarrivals">New Arrivals</DropdownItem>
                       </motion.div>
                       <ul className="py-2 text-sm" aria-labelledby="dropdownInformationButton">
                         <motion.li

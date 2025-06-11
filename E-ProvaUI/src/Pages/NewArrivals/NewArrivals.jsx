@@ -434,6 +434,15 @@ export default function NewArrivals() {
                         </p>
                       )}
                     </div>
+                    <div className="mt-4 flex justify-center">
+                      <Link
+                        to={`/e-prova/outfit/${product._id}`}
+                        className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-900 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Try-On
+                      </Link>
+                    </div>
                   </div>
                 </Link>
               ))}
