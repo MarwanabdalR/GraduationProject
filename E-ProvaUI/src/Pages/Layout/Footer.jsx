@@ -1,6 +1,6 @@
 import { Dropdown } from "flowbite-react";
 import img from "../../../public/image.png";
-import logo from "../../../public/LogoDesign.png";
+import logo from "../../../public/Logo_Enhanced_resolution_mega.png";
 import { motion } from "framer-motion";
 
 export default function Footer() {

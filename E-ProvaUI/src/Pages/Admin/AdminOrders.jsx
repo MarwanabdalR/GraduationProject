@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, Select } from "flowbite-react";
 import { Button } from "../../Components/Button";
 import { OrderContext } from "../../Func/context/OrderContextProvider";
+import Loader from "../../Components/Loader";
+import CantFetch from "../../Components/CantFetch";
 
 
 export default function AdminOrders() {
@@ -20,9 +22,9 @@ export default function AdminOrders() {
     ? orders.filter((order) => order.status === filter)
     : orders;
 
-  if (isLoading) return <div className="p-6 text-blue-500">Loading orders...</div>;
+  if (isLoading) return <div className="p-6 text-blue-500"><Loader /></div>;
   if (isError)
-    return <div className="p-6 text-red-500">Failed to load orders.</div>;
+    return <div className="p-6 text-red-500"><CantFetch /></div>;
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -55,7 +57,7 @@ export default function AdminOrders() {
               </p>
 
               <p className="text-sm sm:text-base text-gray-900">
-                Total Price: ${order.totalOrderPrice}
+                Total Price: ${order.totalOrderPrice.toFixed(2)}
               </p>
               <p className="text-sm sm:text-base text-gray-900">
                 Status:{" "}

@@ -20,7 +20,7 @@ export const OrderContextProvider = ({ children }) => {
       console.log("🚀 ~ CreateOrder ~ response:", response);
       return response;
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.error(error.response.data.message);
     }
   }
 

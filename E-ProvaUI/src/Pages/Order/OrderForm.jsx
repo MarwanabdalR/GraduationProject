@@ -17,6 +17,9 @@ import { OrderContext } from "../../Func/context/OrderContextProvider";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import { ScaleLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom"; // لو بتستخدم React Router v6
+import { useQueryClient } from "@tanstack/react-query";
+
 
 const validationSchema = Yup.object().shape({
   phoneNumber: Yup.string()
@@ -34,6 +37,8 @@ const validationSchema = Yup.object().shape({
 
 export default function OrderForm() {
   const { CreateOrder } = useContext(OrderContext);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const initialValues = {
     phoneNumber: "",
     shippingAddress: "",
@@ -47,10 +52,16 @@ export default function OrderForm() {
         values.phoneNumber,
         values.shippingAddress
       );
-      if (response?.data?.paymentUrl) {
+      // Invalidate cart query to refresh the cart
+      await queryClient.invalidateQueries({ queryKey: ["Cart"] });
+      if (values.paymentMethod === "cash") {
+        navigate("/e-prova/order/success");
+      }
+      else if (response?.data?.paymentUrl) {
         window.location.href = response.data.paymentUrl;
-      } else {
-        toast.error("Payment URL not found");
+      }
+      else {
+        console.error("Payment URL not found");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to process order");

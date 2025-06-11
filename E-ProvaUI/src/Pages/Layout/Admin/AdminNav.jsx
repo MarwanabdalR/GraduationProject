@@ -1,4 +1,4 @@
-import img from "../../../../public/LogoDesign.png";
+import img from "../../../../public/Logo_Enhanced_resolution_mega.png";
 import { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiBars3CenterLeft } from "react-icons/hi2";
