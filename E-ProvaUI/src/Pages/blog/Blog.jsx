@@ -35,7 +35,7 @@ export default function Blog() {
           <div className="profile-info">
             <span className="profile-name">SHAMEL</span>
             <span className="profile-role">Machine Learning Engineer</span>
-            <div className="profile-extra">Ai Engineer</div>
+            <div className="profile-extra">Ai Developer.</div>
           </div>
         </div>
         <div className="profile-card magdy">
@@ -53,7 +53,7 @@ export default function Blog() {
           <div className="profile-info">
             <span className="profile-name">FATHI</span>
             <span className="profile-role">Backend Developer</span>
-            <div className="profile-extra"></div>
+            <div className="profile-extra">Backend Developer. Node.js.</div>
           </div>
         </div>
         <div className="profile-card elsaid">
