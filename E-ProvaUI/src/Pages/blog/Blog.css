@@ -1,8 +1,9 @@
 .profile-cards-container {
     display: flex;
+    flex-direction: column;
     gap: 24px;
     justify-content: center;
-    align-items: stretch;
+    align-items: center;
     padding: 40px;
     background: #f5f5f5;
   }
@@ -65,16 +66,6 @@
     color: #fff;
 }
   
-  /* Example background images (replace with your own) */
-  .samantha {
-    background-image: url('https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=facearea&w=400&q=80');
-  }
-  .gabriel {
-    background-image: url('https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=400&q=80');
-  }
-  .adriana {
-    background-image: url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=400&q=80');
-  }
 
 .profile-card:hover {
   flex: 2 1 500px;
@@ -97,11 +88,27 @@
   max-height: 200px;
 }
 
+/* Top row container */
+.top-row {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Bottom row container */
+.bottom-row {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  width: 100%;
+}
+
 .abdalrady {
-  background-image: url('https://randomuser.me/api/portraits/men/32.jpg');
+  background-image: url('https://res.cloudinary.com/dsobcez1a/image/upload/v1749697049/IMG-20250612-WA0022_mp7k0t.jpg');
 }
 .shamel {
-  background-image: url('https://randomuser.me/api/portraits/men/33.jpg');
+  background-image: url('https://res.cloudinary.com/dsobcez1a/image/upload/v1749696772/IMG-20250611-WA0010_mqbs6l.jpg');
 }
 .magdy {
   background-image: url('https://randomuser.me/api/portraits/men/34.jpg');
