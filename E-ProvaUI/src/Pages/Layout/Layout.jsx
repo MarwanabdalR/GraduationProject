@@ -4,7 +4,6 @@ import Nav from "./Nav";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 import BottomMenu from "./BottomMenu";
-import CategoryNav from "./CategoryNav";
 
 export default function Layout() {
   const { scrollYProgress } = useScroll()
@@ -32,7 +31,6 @@ export default function Layout() {
                 className="fixed top-0 left-0 right-0 h-[10px] origin-left bg-[#ff1f1f] z-50"
             />
 
-        <CategoryNav />
         <Outlet />
         <BackToTopButton />
         

@@ -52,7 +52,6 @@ export default function OrderForm() {
         values.phoneNumber,
         values.shippingAddress
       );
-      // Invalidate cart query to refresh the cart
       await queryClient.invalidateQueries({ queryKey: ["Cart"] });
       if (values.paymentMethod === "cash") {
         navigate("/e-prova/order/success");
