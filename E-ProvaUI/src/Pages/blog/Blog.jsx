@@ -47,7 +47,7 @@ export default function Blog() {
         </div>
       </div>
 
-      {/* Bottom Row - 2 cards */}
+      {/* Bottom Row - 3 cards */}
       <div className="bottom-row">
         <div className="profile-card fathi">
           <div className="profile-info">
@@ -60,6 +60,13 @@ export default function Blog() {
           <div className="profile-info">
             <span className="profile-name">ELSAID</span>
             <span className="profile-role">Frontend Developer</span>
+            <div className="profile-extra"></div>
+          </div>
+        </div>
+        <div className="profile-card samy">
+          <div className="profile-info">
+            <span className="profile-name">SAMY</span>
+            <span className="profile-role">Machine Learning Engineer</span>
             <div className="profile-extra"></div>
           </div>
         </div>
