@@ -29,6 +29,7 @@ import toast from "react-hot-toast";
 import NoData from "../../Components/NoData";
 import Loader from "../../Components/Loader";
 import CantFetch from "../../Components/CantFetch";
+import ProductHeader from "../products/ProductHeader";
 
 
 const StarRating = ({ rating }) => {
@@ -125,24 +126,8 @@ export default function NewArrivals() {
 
 
 
-
-
-
-
-
-
-
   // Products are now sorted on the server side
   const sortedProducts = products || [];
-
-
-
-
-
-
-
-
-
 
   // Wishlist handlers
   async function handleAddToWishList(e, productId) {
@@ -269,13 +254,9 @@ export default function NewArrivals() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative w-full h-[300px] bg-[#06231e] mb-8"
+        className="relative w-full mb-8"
       >
-        <img
-          src="https://res.cloudinary.com/dsobcez1a/image/upload/v1746246015/Screenshot_2025-04-22_062516_fsczhi.png"
-          alt="E-Prova Banner"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] object-contain"
-        />
+        <ProductHeader />
       </motion.div>
 
       <motion.div 

@@ -3,6 +3,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectFade, Pagination, Autoplay } from "swiper/modules";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import "swiper/swiper-bundle.css";
 import "swiper/css/effect-fade";
 import "swiper/css/navigation";
@@ -18,6 +19,7 @@ const slides = [
     subtitle: "Fashion",
     description: "AI Powered",
     Button: "AI Model",
+    path: "/e-prova/newarrivals"
   },
   {
     image:
@@ -26,6 +28,7 @@ const slides = [
     subtitle: "Fall Session",
     description: "Trending",
     Button: "Learn More",
+    path: "/e-prova/newarrivals"
   },
   {
     image:
@@ -34,11 +37,13 @@ const slides = [
     subtitle: "Leather",
     description: "Jacket & Coats",
     Button: "Shop Now",
+    path: "/e-prova/products"
   },
 ];
 
 export default function Slideshow() {
   const [hoveredButton, setHoveredButton] = useState(null);
+  const navigate = useNavigate();
 
   const handleMouseEnter = (button) => {
     setHoveredButton(button);
@@ -46,6 +51,10 @@ export default function Slideshow() {
 
   const handleMouseLeave = () => {
     setHoveredButton(null);
+  };
+
+  const handleImageClick = (path) => {
+    navigate(path);
   };
 
   return (
@@ -67,10 +76,15 @@ export default function Slideshow() {
         {slides.map((slide, index) => (
           <SwiperSlide key={index}>
             <div className="relative">
-              <img src={slide.image} alt={slide.title} className="relative" />
+              <img 
+                src={slide.image} 
+                alt={slide.title} 
+                className="relative cursor-pointer" 
+                onClick={() => handleImageClick(slide.path)}
+              />
               <div className="absolute inset-0 flex items-start justify-center flex-col ml-5 md:ml-20">
                 <motion.p
-                  key={index} // Forces animation reset when the slide changes
+                  key={index}
                   initial={{ x: -100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 1 }}
@@ -106,6 +120,7 @@ export default function Slideshow() {
                     className="bg-white mb-1 text-black font-semibold text-xs md:text-sm px-2 md:px-4 py-1 md:py-2 rounded-full hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center overflow-hidden"
                     onMouseEnter={() => handleMouseEnter(slide.Button)}
                     onMouseLeave={handleMouseLeave}
+                    onClick={() => handleImageClick(slide.path)}
                   >
                     {slide.Button}
                     {hoveredButton === slide.Button ? (

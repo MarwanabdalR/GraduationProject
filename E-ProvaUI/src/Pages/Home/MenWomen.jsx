@@ -1,9 +1,14 @@
 // Abdalrady
 import { Bounce } from "react-awesome-reveal";
 import { Button } from "../../Components/Button";
+import { useNavigate } from "react-router-dom";
 
 const MenWomenSection = () => {
+  const navigate = useNavigate();
 
+  const handleCategoryClick = (category) => {
+    navigate(`/e-prova/products?category=${category.toLowerCase()}`);
+  };
 
   return (
     <div className="my-6 bg-slate-100">
@@ -17,7 +22,8 @@ const MenWomenSection = () => {
             <img
               src="https://res.cloudinary.com/dsobcez1a/image/upload/v1746245481/stylish-young-woman-with-christmas-wreath-outside-waiting-christmas_is4vmw.jpg"
               alt="Women Shop"
-              className="w-full md:w-auto max-w-[500px] max-h-[600px] object-cover md:object-center rounded-lg"
+              className="w-full md:w-auto max-w-[500px] max-h-[600px] object-cover md:object-center rounded-lg cursor-pointer"
+              onClick={() => handleCategoryClick("women")}
             />
           </div>
         </Bounce>
@@ -32,8 +38,8 @@ const MenWomenSection = () => {
               Hello Sweet Customer
             </h1>
             <div className="mt-4 md:mt-6 flex flex-col md:flex-row gap-2 md:gap-7">
-              <Button Name="WOMEN" />
-              <Button Name="MEN" />
+              <Button Name="WOMEN" onClick={() => handleCategoryClick("women")} />
+              <Button Name="MEN" onClick={() => handleCategoryClick("men")} />
             </div>
           </Bounce>
         </div>
@@ -45,7 +51,8 @@ const MenWomenSection = () => {
               <img
                 src="https://res.cloudinary.com/dsobcez1a/image/upload/v1746245215/van-gogh-portrait_yjowvy.jpg"
                 alt="Men Shop"
-                className="w-full md:w-auto max-w-[500px] max-h-[600px] object-cover md:object-center rounded-lg"
+                className="w-full md:w-auto max-w-[500px] max-h-[600px] object-cover md:object-center rounded-lg cursor-pointer"
+                onClick={() => handleCategoryClick("men")}
               />
             </div>
           </div>

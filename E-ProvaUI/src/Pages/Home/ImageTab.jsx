@@ -3,14 +3,20 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { GoArrowRight, GoArrowUpRight } from "react-icons/go";
 import { Fade } from "react-awesome-reveal";
+import { useNavigate } from "react-router-dom";
 
 export default function ImageTab() {
   const [activeTab, setActiveTab] = useState("men");
   const [hoveredItem, setHoveredItem] = useState(null);
+  const navigate = useNavigate();
 
   const handleTabClick = (tab) => setActiveTab(tab);
   const handleMouseEnter = (item) => setHoveredItem(item);
   const handleMouseLeave = () => setHoveredItem(null);
+
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/e-prova/products?category=${categoryName.toLowerCase()}`);
+  };
 
   const renderTabContent = (tab) => {
     const items = tab === "men"
@@ -31,6 +37,7 @@ export default function ImageTab() {
           <div 
             key={item.name} 
             className="relative group cursor-pointer h-[250px] sm:h-[300px] md:h-[350px] overflow-hidden rounded-lg"
+            onClick={() => handleCategoryClick(item.name)}
           >
             <motion.div
               className="w-full h-full"
@@ -48,6 +55,10 @@ export default function ImageTab() {
                 className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white text-black font-semibold text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-black hover:text-white transition-all duration-300 flex items-center justify-center"
                 onMouseEnter={() => handleMouseEnter(item.name)}
                 onMouseLeave={handleMouseLeave}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCategoryClick(item.name);
+                }}
               >
                 {item.name}
                 {hoveredItem === item.name ? (

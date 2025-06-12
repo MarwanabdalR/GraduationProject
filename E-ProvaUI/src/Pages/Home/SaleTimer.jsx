@@ -2,6 +2,7 @@ import { Fade } from "react-awesome-reveal";
 import { useState, useEffect } from "react";
 import saleTimerBackground from "../../../public/Images/SaleTimerBG.webp";
 import { GoArrowRight, GoArrowUpRight } from "react-icons/go"; // Ensure icons are imported
+import { Link } from "react-router";
 
 const SaleTimer = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
@@ -74,6 +75,7 @@ const SaleTimer = () => {
                   </div>
                 ))}
               </Fade>
+              <Link to="/e-prova/products">
               <button
                 className="text-white font-semibold text-xs sm:text-sm lg:text-base px-3 py-2 sm:px-4 sm:py-2 lg:px-6 lg:py-3 rounded-full hover:bg-white hover:text-black transition-all duration-300 flex items-center justify-center border border-white whitespace-nowrap"
                 onMouseEnter={() => handleMouseEnter("View All Details")}
@@ -86,6 +88,7 @@ const SaleTimer = () => {
                   <GoArrowUpRight className="inline-block ml-1 sm:ml-2" />
                 )}
               </button>
+              </Link>
             </div>
           </div>
         </div>

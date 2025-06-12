@@ -1,0 +1,117 @@
+.profile-cards-container {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: stretch;
+    padding: 40px;
+    background: #f5f5f5;
+  }
+  
+  .profile-card {
+    position: relative;
+    width: 300px;
+    height: 480px;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    transition: flex 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1 1 300px;
+  }
+  
+  .profile-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.1) 100%);
+    z-index: 1;
+  }
+  
+  .profile-info {
+    position: absolute;
+    left: 12px; /* align left just like the example image */
+    bottom: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    z-index: 2;
+    padding: 16px 0;
+}
+  
+.profile-name {
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    margin: 0;
+    color: #fff;
+}
+  
+.profile-role {
+    font-size: 1.2rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    margin: 12px 0 0 0;
+    opacity: 0.85;
+    color: #fff;
+}
+  
+  /* Example background images (replace with your own) */
+  .samantha {
+    background-image: url('https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=facearea&w=400&q=80');
+  }
+  .gabriel {
+    background-image: url('https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=400&q=80');
+  }
+  .adriana {
+    background-image: url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=400&q=80');
+  }
+
+.profile-card:hover {
+  flex: 2 1 500px;
+  width: 500px;
+}
+
+.profile-extra {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  color: #fff;
+  font-size: 1.1rem;
+  margin-top: 24px;
+  transition: opacity 0.4s, max-height 0.4s;
+  z-index: 2;
+}
+
+.profile-card:hover .profile-extra {
+  opacity: 1;
+  max-height: 200px;
+}
+
+.abdalrady {
+  background-image: url('https://randomuser.me/api/portraits/men/32.jpg');
+}
+.shamel {
+  background-image: url('https://randomuser.me/api/portraits/men/33.jpg');
+}
+.magdy {
+  background-image: url('https://randomuser.me/api/portraits/men/34.jpg');
+}
+.fathi {
+  background-image: url('https://randomuser.me/api/portraits/men/35.jpg');
+}
+.elsaid {
+  background-image: url('https://randomuser.me/api/portraits/men/36.jpg');
+}
+.samy {
+  background-image: url('https://randomuser.me/api/portraits/men/37.jpg');
+}

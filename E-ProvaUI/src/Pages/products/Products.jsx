@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../../Components/Loader";
 import noProduct from "../../../public/Notfound/undraw_my-files_1xwx.svg";
 import CantFetch from "../../Components/CantFetch";
+import { motion } from "framer-motion";
 // Star Rating Component from NewArrivals
 const StarRating = ({ rating }) => {
   const stars = [];
@@ -32,7 +33,9 @@ const StarRating = ({ rating }) => {
     if (i <= Math.floor(rating)) {
       stars.push(<FaStar key={i} className="text-yellow-400" size={14} />);
     } else if (i - 0.5 <= rating) {
-      stars.push(<FaStarHalfAlt key={i} className="text-yellow-400" size={14} />);
+      stars.push(
+        <FaStarHalfAlt key={i} className="text-yellow-400" size={14} />
+      );
     } else {
       stars.push(<FaRegStar key={i} className="text-yellow-400" size={14} />);
     }
@@ -70,7 +73,7 @@ export default function Products() {
     selectedBrands: [],
     selectedCategories: [],
     sort: "",
-    keyword: ""
+    keyword: "",
   });
 
   // Update filters when URL search parameters change
@@ -80,18 +83,22 @@ export default function Products() {
     const brand = searchParams.get("brand");
     const sort = searchParams.get("sort");
 
-    setActiveFilters(prev => ({
+    setActiveFilters((prev) => ({
       ...prev,
       selectedCategories: category ? [category] : [],
       selectedBrands: brand ? [brand] : [],
       sort: sort || "",
-      keyword: keyword || ""
+      keyword: keyword || "",
     }));
     setCurrentPage(1);
   }, [searchParams]);
 
   // Fetch products with filters and search
-  const { data: productsData, isLoading, isError } = useQuery({
+  const {
+    data: productsData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["products", currentPage, activeFilters, location.search],
     queryFn: async () => {
       try {
@@ -99,45 +106,56 @@ export default function Products() {
         let response;
 
         // If we have both category and brand filters
-        if (activeFilters.selectedCategories.length > 0 && activeFilters.selectedBrands.length > 0) {
+        if (
+          activeFilters.selectedCategories.length > 0 &&
+          activeFilters.selectedBrands.length > 0
+        ) {
           // Get products for each category and brand combination
-          const filterPromises = activeFilters.selectedCategories.flatMap(categoryId =>
-            activeFilters.selectedBrands.map(brandId =>
-              axios.get(`https://e-prova.vercel.app/Product?category=${categoryId}&brand=${brandId}${
-                activeFilters.keyword ? `&keyword=${activeFilters.keyword}` : ''
-              }${
-                activeFilters.sort ? `&sort=${activeFilters.sort}` : ''
-              }`)
-            )
+          const filterPromises = activeFilters.selectedCategories.flatMap(
+            (categoryId) =>
+              activeFilters.selectedBrands.map((brandId) =>
+                axios.get(
+                  `https://e-prova.vercel.app/Product?category=${categoryId}&brand=${brandId}${
+                    activeFilters.keyword
+                      ? `&keyword=${activeFilters.keyword}`
+                      : ""
+                  }${activeFilters.sort ? `&sort=${activeFilters.sort}` : ""}`
+                )
+              )
           );
           const results = await Promise.all(filterPromises);
-          allProducts = results.flatMap(result => result.data.products);
+          allProducts = results.flatMap((result) => result.data.products);
         }
         // If we have only category filters
         else if (activeFilters.selectedCategories.length > 0) {
           // Make separate API call for each category
-          const categoryPromises = activeFilters.selectedCategories.map(categoryId =>
-            axios.get(`https://e-prova.vercel.app/Product?category=${categoryId}${
-              activeFilters.keyword ? `&keyword=${activeFilters.keyword}` : ''
-            }${
-              activeFilters.sort ? `&sort=${activeFilters.sort}` : ''
-            }`)
+          const categoryPromises = activeFilters.selectedCategories.map(
+            (categoryId) =>
+              axios.get(
+                `https://e-prova.vercel.app/Product?category=${categoryId}${
+                  activeFilters.keyword
+                    ? `&keyword=${activeFilters.keyword}`
+                    : ""
+                }${activeFilters.sort ? `&sort=${activeFilters.sort}` : ""}`
+              )
           );
           const categoryResults = await Promise.all(categoryPromises);
-          allProducts = categoryResults.flatMap(result => result.data.products);
+          allProducts = categoryResults.flatMap(
+            (result) => result.data.products
+          );
         }
         // If we have only brand filters
         else if (activeFilters.selectedBrands.length > 0) {
           // Make separate API call for each brand
-          const brandPromises = activeFilters.selectedBrands.map(brandId =>
-            axios.get(`https://e-prova.vercel.app/Product?brand=${brandId}${
-              activeFilters.keyword ? `&keyword=${activeFilters.keyword}` : ''
-            }${
-              activeFilters.sort ? `&sort=${activeFilters.sort}` : ''
-            }`)
+          const brandPromises = activeFilters.selectedBrands.map((brandId) =>
+            axios.get(
+              `https://e-prova.vercel.app/Product?brand=${brandId}${
+                activeFilters.keyword ? `&keyword=${activeFilters.keyword}` : ""
+              }${activeFilters.sort ? `&sort=${activeFilters.sort}` : ""}`
+            )
           );
           const brandResults = await Promise.all(brandPromises);
-          allProducts = brandResults.flatMap(result => result.data.products);
+          allProducts = brandResults.flatMap((result) => result.data.products);
         }
         // If we have no category or brand filters
         else {
@@ -153,10 +171,14 @@ export default function Products() {
         }
 
         // Apply price range filter
-        if (activeFilters.priceRange.min > 0 || activeFilters.priceRange.max < 10000) {
-          allProducts = allProducts.filter(product =>
-            product.finalPrice >= activeFilters.priceRange.min &&
-            product.finalPrice <= activeFilters.priceRange.max
+        if (
+          activeFilters.priceRange.min > 0 ||
+          activeFilters.priceRange.max < 10000
+        ) {
+          allProducts = allProducts.filter(
+            (product) =>
+              product.finalPrice >= activeFilters.priceRange.min &&
+              product.finalPrice <= activeFilters.priceRange.max
           );
         }
 
@@ -170,21 +192,20 @@ export default function Products() {
         return {
           data: {
             products: paginatedProducts,
-            totalPages: Math.ceil(totalProducts / productsPerPage)
-          }
+            totalPages: Math.ceil(totalProducts / productsPerPage),
+          },
         };
       } catch (error) {
         console.error("Error fetching products:", error);
         return {
           data: {
             products: [],
-            totalPages: 0
-          }
+            totalPages: 0,
+          },
         };
       }
-    }
+    },
   });
-
 
   // Access products data correctly
   const products = productsData?.data?.products || [];
@@ -193,16 +214,16 @@ export default function Products() {
   // Handle filter changes from SidebarProduct
   const handleFilterChange = useCallback((newFilters) => {
     setCurrentPage(1);
-    setActiveFilters(prev => ({
+    setActiveFilters((prev) => ({
       ...prev,
-      ...newFilters
+      ...newFilters,
     }));
   }, []);
 
   // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   async function handleAddToWishList(e, productId) {
@@ -224,18 +245,18 @@ export default function Products() {
     e.preventDefault();
     e.stopPropagation();
 
-        // Check if user is logged in
-        if (!cookies.accessToken) {
-          toast.error("Please login to add items to cart");
-          navigate("/e-prova/login");
-          return;
-        }
-    
+    // Check if user is logged in
+    if (!cookies.accessToken) {
+      toast.error("Please login to add items to cart");
+      navigate("/e-prova/login");
+      return;
+    }
+
     if (!product.attributes?.sizes || product.attributes.sizes.length === 0) {
       console.log("No sizes available for this product");
       return;
     }
-    
+
     setProductToAddToCart(product);
     setSelectedSize("");
     setSelectedColor(product.attributes?.color || "");
@@ -252,7 +273,7 @@ export default function Products() {
   async function handleAddToCart(e) {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!selectedSize || !selectedColor || !productToAddToCart) return;
 
     try {
@@ -281,7 +302,10 @@ export default function Products() {
 
   const handlePrevImage = () => {
     if (!selectedProduct) return;
-    const allImages = [selectedProduct.defaultImage, ...(selectedProduct.images || [])];
+    const allImages = [
+      selectedProduct.defaultImage,
+      ...(selectedProduct.images || []),
+    ];
     setCurrentImageIndex((prev) =>
       prev === 0 ? allImages.length - 1 : prev - 1
     );
@@ -289,34 +313,39 @@ export default function Products() {
 
   const handleNextImage = () => {
     if (!selectedProduct) return;
-    const allImages = [selectedProduct.defaultImage, ...(selectedProduct.images || [])];
+    const allImages = [
+      selectedProduct.defaultImage,
+      ...(selectedProduct.images || []),
+    ];
     setCurrentImageIndex((prev) =>
       prev === allImages.length - 1 ? 0 : prev + 1
     );
   };
 
   if (isLoading) {
-    return (
-      <Loader />
-
-
-    );
+    return <Loader />;
   }
 
   if (isError) {
-    return (
-      <CantFetch />
-    );
+    return <CantFetch />;
   }
   return (
     <div className="min-h-screen bg-gray-50">
-      <ProductHeader />
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-full mb-8"
+      >
+        <ProductHeader />
+      </motion.div>
       <div className="container mx-auto px-4 py-8">
         {/* Show active search term if present */}
         {activeFilters.keyword && (
           <div className="mb-4">
             <p className="text-gray-600">
-              Search results for: <span className="font-semibold">{activeFilters.keyword}</span>
+              Search results for:{" "}
+              <span className="font-semibold">{activeFilters.keyword}</span>
             </p>
           </div>
         )}
@@ -341,7 +370,7 @@ export default function Products() {
               className="absolute inset-0 bg-black bg-opacity-50 lg:hidden"
               onClick={() => setIsSidebarOpen(false)}
             />
-            
+
             {/* Sidebar Content */}
             <div className="absolute left-0 top-0 bottom-0 w-80 bg-white p-4 overflow-y-auto lg:relative lg:w-64 transform transition-transform duration-300 ease-in-out">
               <button
@@ -350,7 +379,7 @@ export default function Products() {
               >
                 <IoClose size={24} />
               </button>
-              <SidebarProduct 
+              <SidebarProduct
                 filters={activeFilters}
                 onFilterChange={handleFilterChange}
               />
@@ -395,7 +424,10 @@ export default function Products() {
                         className="my-2 bg-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {loadingWishlist[product._id] ? (
-                          <AiOutlineLoading3Quarters className="animate-spin" size={20} />
+                          <AiOutlineLoading3Quarters
+                            className="animate-spin"
+                            size={20}
+                          />
                         ) : (
                           <CiStar size={20} />
                         )}
@@ -416,7 +448,10 @@ export default function Products() {
                         className="my-2 text-xs bg-white flex items-center justify-center hover:bg-black hover:text-white transition-all duration-300 shadow-md text-nowrap disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {loadingCart[product._id] ? (
-                          <AiOutlineLoading3Quarters className="animate-spin" size={20} />
+                          <AiOutlineLoading3Quarters
+                            className="animate-spin"
+                            size={20}
+                          />
                         ) : (
                           <Button Name={"ADD TO CART"} />
                         )}
@@ -460,10 +495,12 @@ export default function Products() {
             {/* Show "No products found" message when no results */}
             {products.length === 0 && !isLoading && (
               <div className="text-center py-8">
-                <p className="text-gray-500 text-lg">
-                  No products found.
-                </p>
-              <img src={noProduct} alt="No products found" className="mx-auto h-40 w-40" />
+                <p className="text-gray-500 text-lg">No products found.</p>
+                <img
+                  src={noProduct}
+                  alt="No products found"
+                  className="mx-auto h-40 w-40"
+                />
               </div>
             )}
 
@@ -481,7 +518,7 @@ export default function Products() {
                 {/* Page Numbers */}
                 <div className="flex items-center gap-2">
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(pageNum => {
+                    .filter((pageNum) => {
                       // Show first page, last page, current page, and pages around current page
                       return (
                         pageNum === 1 ||
@@ -594,7 +631,10 @@ export default function Products() {
               }`}
             >
               {loadingCart[productToAddToCart?._id] ? (
-                <AiOutlineLoading3Quarters className="animate-spin mx-auto" size={20} />
+                <AiOutlineLoading3Quarters
+                  className="animate-spin mx-auto"
+                  size={20}
+                />
               ) : (
                 "Add to Cart"
               )}
@@ -648,7 +688,8 @@ export default function Products() {
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/80 px-3 py-1 rounded-full text-sm">
                 {currentImageIndex + 1} /{" "}
                 {selectedProduct
-                  ? [selectedProduct.defaultImage, ...selectedProduct.images].length
+                  ? [selectedProduct.defaultImage, ...selectedProduct.images]
+                      .length
                   : 0}
               </div>
             </div>
