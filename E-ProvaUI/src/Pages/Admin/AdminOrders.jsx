@@ -84,9 +84,18 @@ export default function AdminOrders() {
                   Total Price: ${order.totalOrderPrice?.toFixed(2) || "0.00"}
                 </p>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm sm:text-base text-gray-900">
+                  <span className="text-sm sm:text-base text-gray-900">
                     Status:
-                  </p>
+                  </span>
+                  <span className={
+                    order.status === "Pending" ? "text-yellow-500 font-semibold" :
+                    order.status === "Shipped" ? "text-green-500 font-semibold" :
+                    order.status === "Delivered" ? "text-blue-500 font-semibold" :
+                    order.status === "Cancelled" ? "text-red-500 font-semibold" :
+                    "font-semibold"
+                  }>
+                    {order.status}
+                  </span>
                   <Select
                     value={order.status}
                     onChange={(e) => handleStatusChange(order._id, e.target.value)}

@@ -19,7 +19,6 @@ export default function AdminReviews() {
     queryKey: ["getAllReviews"],
     queryFn: () => getAllReviews(),
   });
-  console.log("🚀 ~ AdminReviews ~ response:", response)
 
   const reviews = response?.data || [];
 
