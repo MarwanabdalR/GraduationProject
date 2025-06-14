@@ -39,6 +39,7 @@ import { OrderContextProvider } from "./Func/context/OrderContextProvider";
 import SuccessOrder from "./Pages/Order/SuccessOrder";
 import FaildOrder from "./Pages/Order/FaildOrder";
 import Outfit from "./Pages/Ai/Outfit";
+import Cust_Orders from "./Pages/Order/Cust_Orders";
 
 const queryClient = new QueryClient();
 
@@ -117,6 +118,10 @@ function App() {
           path: "/e-prova/outfit/:id",
           element: <Outfit />,
         },
+        {
+          path: "/e-prova/orders",
+          element: <Cust_Orders />,
+        }
       ],
     },
     // Admin

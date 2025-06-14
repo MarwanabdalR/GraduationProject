@@ -173,6 +173,7 @@ export default function Nav() {
                     "NewArrivals",
                     "Products",
                     "Blog",
+                    "Orders",
                   ].map((item) => (
                     <li key={item}>
                       <Link

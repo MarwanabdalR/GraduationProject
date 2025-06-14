@@ -36,8 +36,23 @@ export const OrderContextProvider = ({ children }) => {
     }
   }
 
+  async function CancelOrder(orderId) {
+    try {
+      const response = await axios.patch(
+        `https://e-prova.vercel.app/Order/${orderId}`,
+        {},
+        { headers: { token } }
+      );
+      toast.success("Order cancelled successfully");
+      return response;
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to cancel order");
+      throw error;
+    }
+  }
+
   return (
-    <OrderContext.Provider value={{ CreateOrder, GetOrder }}>
+    <OrderContext.Provider value={{ CreateOrder, GetOrder, CancelOrder }}>
       {children}
     </OrderContext.Provider>
   );

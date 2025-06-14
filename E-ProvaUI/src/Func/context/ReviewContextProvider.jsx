@@ -129,7 +129,7 @@ export const ReviewContextProvider = ({ children }) => {
       toast.success("Review deleted successfully");
       return response.data;
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.error(error.response.data.message);
       return { data: [] };
     }
   }

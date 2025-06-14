@@ -56,17 +56,17 @@ export default function Blog() {
             <div className="profile-extra">Backend Developer. Node.js.</div>
           </div>
         </div>
-        <div className="profile-card elsaid">
-          <div className="profile-info">
-            <span className="profile-name">ELSAID</span>
-            <span className="profile-role">Frontend Developer</span>
-            <div className="profile-extra"></div>
-          </div>
-        </div>
         <div className="profile-card samy">
           <div className="profile-info">
             <span className="profile-name">SAMY</span>
             <span className="profile-role">Machine Learning Engineer</span>
+            <div className="profile-extra"></div>
+          </div>
+        </div>
+        <div className="profile-card elsaid">
+          <div className="profile-info">
+            <span className="profile-name">ELSAID</span>
+            <span className="profile-role">Frontend Developer</span>
             <div className="profile-extra"></div>
           </div>
         </div>
